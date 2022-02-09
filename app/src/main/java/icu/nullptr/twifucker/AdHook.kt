@@ -20,8 +20,10 @@ private val OnLayoutChangeListener = View.OnLayoutChangeListener { v, _, _, _, _
     handleView(v as ViewGroup, false)
 }
 
+private fun ViewGroup.isAd() = findViewById<View>(AdTextId)?.visibility == View.VISIBLE
+
 private fun handleView(viewGroup: ViewGroup, delayed: Boolean) {
-    val isAd = viewGroup.findViewById<View>(AdTextId)?.visibility == View.VISIBLE
+    val isAd = viewGroup.isAd()
     if (isAd) Log.i("Handle Ad")
     if (delayed) viewGroup.visibility = if (isAd) View.GONE else View.VISIBLE
     else {
@@ -39,8 +41,10 @@ fun adHook() {
             vg.removeOnLayoutChangeListener(OnLayoutChangeListener)
             vg.addOnLayoutChangeListener(OnLayoutChangeListener)
 
-            Handler(Looper.getMainLooper()).post {
-                handleView(vg, true)
+            if (vg.isAd()) {
+                Handler(Looper.getMainLooper()).post {
+                    handleView(vg, true)
+                }
             }
         }
     }

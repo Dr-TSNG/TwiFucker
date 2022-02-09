@@ -15,8 +15,8 @@ android {
         applicationId = "icu.nullptr.twifucker"
         minSdk = 24
         targetSdk = 32
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
     }
 
     signingConfigs.create("config") {
@@ -47,7 +47,7 @@ android {
 }
 
 dependencies {
-    implementation("com.github.kyuubiran:EzXHelper:0.6.1")
+    implementation("com.github.kyuubiran:EzXHelper:0.6.2")
 
     compileOnly("de.robv.android.xposed:api:82")
     compileOnly("de.robv.android.xposed:api:82:sources")

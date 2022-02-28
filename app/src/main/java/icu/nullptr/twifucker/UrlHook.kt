@@ -3,6 +3,7 @@ package icu.nullptr.twifucker
 import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
+import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.findAllMethods
 import com.github.kyuubiran.ezxhelper.utils.hookBefore
 
@@ -33,6 +34,7 @@ fun urlHook() {
         if (!extraText.isTwitterUrl()) {
             return@hookBefore
         }
+        Log.i("Handle Url")
         intent.putExtra(Intent.EXTRA_TEXT, clearExtraParams(extraText))
     }
     findAllMethods(ClipData::class.java) { name == "newPlainText" }.hookBefore { param ->
@@ -40,6 +42,7 @@ fun urlHook() {
         if (!text.isTwitterUrl()) {
             return@hookBefore
         }
+        Log.i("Handle Url")
         param.args[1] = clearExtraParams(text)
     }
 }

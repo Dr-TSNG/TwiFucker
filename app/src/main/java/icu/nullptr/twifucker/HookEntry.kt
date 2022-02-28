@@ -33,7 +33,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
             EzXHelperInit.initAppContext(param.args[0] as Context)
             EzXHelperInit.setEzClassLoader(appContext.classLoader)
             Log.d("AttachContext")
-            Log.toast("TwiFucker version ${BuildConfig.VERSION_NAME}")
+            if (BuildConfig.DEBUG) Log.toast("TwiFucker version ${BuildConfig.VERSION_NAME}")
 
             adHook()
             urlHook()

@@ -36,6 +36,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
             Log.toast("TwiFucker version ${BuildConfig.VERSION_NAME}")
 
             adHook()
+            urlHook()
         }
     }
 }

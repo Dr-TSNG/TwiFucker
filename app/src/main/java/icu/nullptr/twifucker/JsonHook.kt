@@ -49,7 +49,7 @@ fun removeSensitiveMediaWarning(entries: JSONArray) {
                 ?.optJSONObject("result")?.optJSONObject("legacy")
                 ?.optJSONObject("extended_entities")?.optJSONArray("media")
                 ?.forEach<JSONObject> { media ->
-                    if (media.optJSONObject("sensitive_media_warning") != null) {
+                    if (media.has("sensitive_media_warning")) {
                         media.remove("sensitive_media_warning")
                         Log.d("Handle tweet sensitive media warning")
                     }

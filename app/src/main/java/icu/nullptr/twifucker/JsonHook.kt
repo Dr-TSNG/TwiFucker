@@ -78,8 +78,13 @@ fun JSONObject.instructionGetAddEntries(): JSONArray? =
     optJSONObject("addEntries")?.optJSONArray("entries")
 
 // media
-fun JSONObject.mediaHasSensitiveMediaWarning(): Boolean = has("sensitive_media_warning")
-fun JSONObject.mediaRemoveSensitiveMediaWarning(): Any? = remove("sensitive_media_warning")
+fun JSONObject.mediaHasSensitiveMediaWarning(): Boolean =
+    has("sensitive_media_warning") || has("ext_sensitive_media_warning")
+
+fun JSONObject.mediaRemoveSensitiveMediaWarning() {
+    remove("sensitive_media_warning")
+    remove("ext_sensitive_media_warning")
+}
 
 // entries
 fun JSONArray.entriesRemoveTimelineAds() {

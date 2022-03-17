@@ -54,7 +54,9 @@ fun JSONObject.tweetCheckAndRemove() {
 // entry
 fun JSONObject.entryHasPromotedMetadata(): Boolean =
     optJSONObject("content")?.optJSONObject("item")?.optJSONObject("content")
-        ?.optJSONObject("tweet")?.has("promotedMetadata") == true
+        ?.optJSONObject("tweet")
+        ?.has("promotedMetadata") == true || optJSONObject("content")?.optJSONObject("content")
+        ?.has("tweetPromotedMetadata") == true
 
 fun JSONObject.entryHasWhoToFollow(): Boolean = optString("entryId").startsWith("whoToFollow-")
 

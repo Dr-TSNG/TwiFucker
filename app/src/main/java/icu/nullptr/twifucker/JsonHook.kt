@@ -70,6 +70,27 @@ fun JSONObject.entryGetLegacy(): JSONObject? =
     optJSONObject("content")?.optJSONObject("content")?.optJSONObject("tweetResult")
         ?.optJSONObject("result")?.optJSONObject("legacy")
 
+fun JSONObject.entryGetTrends(): JSONArray? =
+    optJSONObject("content")?.optJSONObject("timelineModule")?.optJSONArray("items")
+
+// trend
+fun JSONObject.trendHasPromotedMetadata(): Boolean =
+    optJSONObject("item")?.optJSONObject("content")?.optJSONObject("trend")
+        ?.has("promotedMetadata") == true
+
+fun JSONArray.trendRemoveAds() {
+    val trendRemoveIndex = mutableListOf<Int>()
+    forEachIndexed<JSONObject> { trendIndex, trend ->
+        if (trend.trendHasPromotedMetadata()) {
+            Log.d("Handle trends ads $trendIndex $trend")
+            trendRemoveIndex.add(trendIndex)
+        }
+    }
+    for (i in trendRemoveIndex.asReversed()) {
+        remove(i)
+    }
+}
+
 // legacy
 fun JSONObject.legacyGetRetweetedStatusLegacy(): JSONObject? =
     optJSONObject("retweeted_status_result")?.optJSONObject("result")?.optJSONObject("legacy")
@@ -88,8 +109,11 @@ fun JSONObject.legacyCheckAndRemove() {
 }
 
 // item
-fun JSONObject.itemContainsPromotedUser(): Boolean =
-    optJSONObject("item")?.optJSONObject("content")?.has("userPromotedMetadata") == true
+fun JSONObject.itemContainsPromotedUser(): Boolean = optJSONObject("item")?.optJSONObject("content")
+    ?.has("userPromotedMetadata") == true || optJSONObject("item")?.optJSONObject("content")
+    ?.optJSONObject("user")
+    ?.has("userPromotedMetadata") == true || optJSONObject("item")?.optJSONObject("content")
+    ?.optJSONObject("user")?.has("promotedMetadata") == true
 
 // timeline
 fun JSONObject.timelinePinEntry(): JSONObject? = optJSONObject("entry")
@@ -117,7 +141,7 @@ fun JSONObject.instructionCheckAndRemove() {
 
 // media
 fun JSONObject.mediaHasSensitiveMediaWarning(): Boolean =
-    has("sensitive_media_warning") || has("ext_sensitive_media_warning")
+    has("sensitive_media_warning") || (has("ext_sensitive_media_warning") && optJSONObject("ext_sensitive_media_warning") != null)
 
 fun JSONObject.mediaRemoveSensitiveMediaWarning() {
     remove("sensitive_media_warning")
@@ -126,18 +150,19 @@ fun JSONObject.mediaRemoveSensitiveMediaWarning() {
 
 fun JSONObject.mediaCheckAndRemove() {
     if (mediaHasSensitiveMediaWarning()) {
+        Log.d("Handle sensitive media warning $this")
         mediaRemoveSensitiveMediaWarning()
-        Log.d("Handle sensitive media warning")
     }
 }
 
 // entries
 fun JSONArray.entriesRemoveTimelineAds() {
     val removeIndex = mutableListOf<Int>()
-    forEachIndexed<JSONObject> { index, entry ->
+    forEachIndexed<JSONObject> { entryIndex, entry ->
+        entry.entryGetTrends()?.trendRemoveAds()
         if (entry.entryHasPromotedMetadata()) {
-            removeIndex.add(index)
-            Log.d("Handle timeline ads $index")
+            Log.d("Handle timeline ads $entryIndex $entry")
+            removeIndex.add(entryIndex)
         }
     }
     for (i in removeIndex.reversed()) {
@@ -153,8 +178,8 @@ fun JSONArray.entriesRemovePromotedWhoToFollow() {
             items?.forEachIndexed<JSONObject> { index, item ->
                 item.itemContainsPromotedUser().let {
                     if (it) {
+                        Log.d("Handle whoToFollow promoted user $index $item")
                         removeIndex.add(index)
-                        Log.d("Handle whoToFollow promoted user $index")
                     }
                 }
             }

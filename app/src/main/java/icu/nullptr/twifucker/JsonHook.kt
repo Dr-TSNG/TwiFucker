@@ -115,27 +115,16 @@ fun JSONObject.itemContainsPromotedUser(): Boolean = optJSONObject("item")?.optJ
     ?.has("userPromotedMetadata") == true || optJSONObject("item")?.optJSONObject("content")
     ?.optJSONObject("user")?.has("promotedMetadata") == true
 
-// timeline
-fun JSONObject.timelinePinEntry(): JSONObject? = optJSONObject("entry")
-fun JSONObject.timelineAddEntries(): JSONArray? = optJSONArray("entries")
-
 // instruction
-fun JSONObject.instructionIsTimelineAddEntries(): Boolean =
-    optString("__typename") == "TimelineAddEntries"
-
-fun JSONObject.instructionIsTimelinePinEntry(): Boolean =
-    optString("__typename") == "TimelinePinEntry"
+fun JSONObject.instructionTimelinePinEntry(): JSONObject? = optJSONObject("entry")
+fun JSONObject.instructionTimelineAddEntries(): JSONArray? = optJSONArray("entries")
 
 fun JSONObject.instructionGetAddEntries(): JSONArray? =
     optJSONObject("addEntries")?.optJSONArray("entries")
 
 fun JSONObject.instructionCheckAndRemove() {
-    if (instructionIsTimelineAddEntries()) {
-        timelineAddEntries()?.entriesRemoveAnnoyance()
-    }
-    if (instructionIsTimelinePinEntry()) {
-        timelinePinEntry()?.entryRemoveSensitiveMediaWarning()
-    }
+    instructionTimelineAddEntries()?.entriesRemoveAnnoyance()
+    instructionTimelinePinEntry()?.entryRemoveSensitiveMediaWarning()
     instructionGetAddEntries()?.entriesRemoveAnnoyance()
 }
 

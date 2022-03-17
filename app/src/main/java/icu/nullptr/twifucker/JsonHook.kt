@@ -24,6 +24,9 @@ fun JSONObject.dataGetInstructions(): JSONArray? =
         "timeline_response"
     )?.optJSONArray("instructions")
 
+fun JSONObject.dataGetLegacy(): JSONObject? =
+    optJSONObject("tweet_result")?.optJSONObject("result")?.optJSONObject("legacy")
+
 // tweets
 fun JSONObject.tweetsForEach(action: (JSONObject) -> Unit) {
     for (i in keys()) {
@@ -181,14 +184,31 @@ fun handleJson(param: XC_MethodHook.MethodHookParam) {
             }
             instruction.instructionGetAddEntries()?.entriesRemoveAnnoyance()
         }
-        json.jsonGetData()?.dataGetInstructions()?.forEach<JSONObject> { instruction ->
-            if (instruction.instructionIsTimelineAddEntries()) {
-                instruction.timelineAddEntries()?.entriesRemoveAnnoyance()
+        json.jsonGetData()?.let { data ->
+            data.dataGetInstructions()?.forEach<JSONObject> { instruction ->
+                if (instruction.instructionIsTimelineAddEntries()) {
+                    instruction.timelineAddEntries()?.entriesRemoveAnnoyance()
+                }
+                if (instruction.instructionIsTimelinePinEntry()) {
+                    instruction.timelinePinEntry()?.entryRemoveSensitiveMediaWarning()
+                }
+                instruction.instructionGetAddEntries()?.entriesRemoveAnnoyance()
             }
-            if (instruction.instructionIsTimelinePinEntry()) {
-                instruction.timelinePinEntry()?.entryRemoveSensitiveMediaWarning()
+            data.dataGetLegacy()?.let { legacy ->
+                legacy.legacyGetExtendedEntitiesMedias()?.forEach<JSONObject> { media ->
+                    if (media.mediaHasSensitiveMediaWarning()) {
+                        media.mediaRemoveSensitiveMediaWarning()
+                        Log.d("Handle sensitive media warning")
+                    }
+                }
+                legacy.legacyGetRetweetedStatusLegacy()?.legacyGetExtendedEntitiesMedias()
+                    ?.forEach<JSONObject> { media ->
+                        if (media.mediaHasSensitiveMediaWarning()) {
+                            media.mediaRemoveSensitiveMediaWarning()
+                            Log.d("Handle sensitive media warning")
+                        }
+                    }
             }
-            instruction.instructionGetAddEntries()?.entriesRemoveAnnoyance()
         }
 
         content = json.toString()

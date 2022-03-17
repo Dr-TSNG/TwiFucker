@@ -24,6 +24,13 @@ fun JSONObject.dataGetInstructions(): JSONArray? =
         "timeline_response"
     )?.optJSONArray("instructions")
 
+fun JSONObject.dataCheckAndRemove() {
+    dataGetInstructions()?.forEach<JSONObject> { instruction ->
+        instruction.instructionCheckAndRemove()
+    }
+    dataGetLegacy()?.legacyCheckAndRemove()
+}
+
 fun JSONObject.dataGetLegacy(): JSONObject? =
     optJSONObject("tweet_result")?.optJSONObject("result")?.optJSONObject("legacy")
 
@@ -37,6 +44,12 @@ fun JSONObject.tweetsForEach(action: (JSONObject) -> Unit) {
 // tweet
 fun JSONObject.tweetGetExtendedEntitiesMedias(): JSONArray? =
     optJSONObject("extended_entities")?.optJSONArray("media")
+
+fun JSONObject.tweetCheckAndRemove() {
+    tweetGetExtendedEntitiesMedias()?.forEach<JSONObject> { media ->
+        media.mediaCheckAndRemove()
+    }
+}
 
 // entry
 fun JSONObject.entryHasPromotedMetadata(): Boolean =
@@ -62,6 +75,16 @@ fun JSONObject.legacyGetRetweetedStatusLegacy(): JSONObject? =
 fun JSONObject.legacyGetExtendedEntitiesMedias(): JSONArray? =
     optJSONObject("extended_entities")?.optJSONArray("media")
 
+fun JSONObject.legacyCheckAndRemove() {
+    legacyGetExtendedEntitiesMedias()?.forEach<JSONObject> { media ->
+        media.mediaCheckAndRemove()
+    }
+    legacyGetRetweetedStatusLegacy()?.legacyGetExtendedEntitiesMedias()
+        ?.forEach<JSONObject> { media ->
+            media.mediaCheckAndRemove()
+        }
+}
+
 // item
 fun JSONObject.itemContainsPromotedUser(): Boolean =
     optJSONObject("item")?.optJSONObject("content")?.has("userPromotedMetadata") == true
@@ -80,6 +103,16 @@ fun JSONObject.instructionIsTimelinePinEntry(): Boolean =
 fun JSONObject.instructionGetAddEntries(): JSONArray? =
     optJSONObject("addEntries")?.optJSONArray("entries")
 
+fun JSONObject.instructionCheckAndRemove() {
+    if (instructionIsTimelineAddEntries()) {
+        timelineAddEntries()?.entriesRemoveAnnoyance()
+    }
+    if (instructionIsTimelinePinEntry()) {
+        timelinePinEntry()?.entryRemoveSensitiveMediaWarning()
+    }
+    instructionGetAddEntries()?.entriesRemoveAnnoyance()
+}
+
 // media
 fun JSONObject.mediaHasSensitiveMediaWarning(): Boolean =
     has("sensitive_media_warning") || has("ext_sensitive_media_warning")
@@ -87,6 +120,13 @@ fun JSONObject.mediaHasSensitiveMediaWarning(): Boolean =
 fun JSONObject.mediaRemoveSensitiveMediaWarning() {
     remove("sensitive_media_warning")
     remove("ext_sensitive_media_warning")
+}
+
+fun JSONObject.mediaCheckAndRemove() {
+    if (mediaHasSensitiveMediaWarning()) {
+        mediaRemoveSensitiveMediaWarning()
+        Log.d("Handle sensitive media warning")
+    }
 }
 
 // entries
@@ -127,17 +167,11 @@ fun JSONObject.entryRemoveSensitiveMediaWarning() {
     if (entryIsTweet()) {
         entryGetLegacy()?.let {
             it.legacyGetExtendedEntitiesMedias()?.forEach<JSONObject> { media ->
-                if (media.mediaHasSensitiveMediaWarning()) {
-                    media.mediaRemoveSensitiveMediaWarning()
-                    Log.d("Handle sensitive media warning")
-                }
+                media.mediaCheckAndRemove()
             }
             it.legacyGetRetweetedStatusLegacy()?.legacyGetExtendedEntitiesMedias()
                 ?.forEach<JSONObject> { media ->
-                    if (media.mediaHasSensitiveMediaWarning()) {
-                        media.mediaRemoveSensitiveMediaWarning()
-                        Log.d("Handle sensitive media warning")
-                    }
+                    media.mediaCheckAndRemove()
                 }
         }
     }
@@ -168,48 +202,12 @@ fun handleJson(param: XC_MethodHook.MethodHookParam) {
         val json = JSONObject(content)
 
         json.jsonGetTweets()?.tweetsForEach { tweet ->
-            tweet.tweetGetExtendedEntitiesMedias()?.forEach<JSONObject> { media ->
-                if (media.mediaHasSensitiveMediaWarning()) {
-                    media.mediaRemoveSensitiveMediaWarning()
-                    Log.d("Handle sensitive media warning")
-                }
-            }
+            tweet.tweetCheckAndRemove()
         }
         json.jsonGetInstructions()?.forEach<JSONObject> { instruction ->
-            if (instruction.instructionIsTimelineAddEntries()) {
-                instruction.timelineAddEntries()?.entriesRemoveAnnoyance()
-            }
-            if (instruction.instructionIsTimelinePinEntry()) {
-                instruction.timelinePinEntry()?.entryRemoveSensitiveMediaWarning()
-            }
-            instruction.instructionGetAddEntries()?.entriesRemoveAnnoyance()
+            instruction.instructionCheckAndRemove()
         }
-        json.jsonGetData()?.let { data ->
-            data.dataGetInstructions()?.forEach<JSONObject> { instruction ->
-                if (instruction.instructionIsTimelineAddEntries()) {
-                    instruction.timelineAddEntries()?.entriesRemoveAnnoyance()
-                }
-                if (instruction.instructionIsTimelinePinEntry()) {
-                    instruction.timelinePinEntry()?.entryRemoveSensitiveMediaWarning()
-                }
-                instruction.instructionGetAddEntries()?.entriesRemoveAnnoyance()
-            }
-            data.dataGetLegacy()?.let { legacy ->
-                legacy.legacyGetExtendedEntitiesMedias()?.forEach<JSONObject> { media ->
-                    if (media.mediaHasSensitiveMediaWarning()) {
-                        media.mediaRemoveSensitiveMediaWarning()
-                        Log.d("Handle sensitive media warning")
-                    }
-                }
-                legacy.legacyGetRetweetedStatusLegacy()?.legacyGetExtendedEntitiesMedias()
-                    ?.forEach<JSONObject> { media ->
-                        if (media.mediaHasSensitiveMediaWarning()) {
-                            media.mediaRemoveSensitiveMediaWarning()
-                            Log.d("Handle sensitive media warning")
-                        }
-                    }
-            }
-        }
+        json.jsonGetData()?.dataCheckAndRemove()
 
         content = json.toString()
     } catch (_: JSONException) {

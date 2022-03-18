@@ -1,4 +1,4 @@
-package icu.nullptr.twifucker
+package icu.nullptr.twifucker.hook
 
 import com.github.kyuubiran.ezxhelper.utils.*
 import de.robv.android.xposed.XC_MethodHook

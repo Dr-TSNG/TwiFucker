@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/settings_general">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="show_toast"
+            android:summary="@string/show_toast_summary"
+            android:title="@string/show_toast_title" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_main">
         <SwitchPreference
             android:defaultValue="true"

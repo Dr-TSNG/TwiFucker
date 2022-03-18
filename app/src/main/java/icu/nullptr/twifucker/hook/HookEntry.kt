@@ -1,4 +1,4 @@
-package icu.nullptr.twifucker
+package icu.nullptr.twifucker.hook
 
 import android.app.Application
 import android.content.Context
@@ -10,6 +10,8 @@ import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import icu.nullptr.twifucker.hook.activity.settingsActivityHook
+import icu.nullptr.twifucker.hook.activity.mainActivityHook
 
 private const val TAG = "TwiFucker"
 
@@ -33,9 +35,9 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
             EzXHelperInit.initAppContext(param.args[0] as Context)
             EzXHelperInit.setEzClassLoader(appContext.classLoader)
             Log.d("AttachContext")
-            if (BuildConfig.DEBUG) Log.toast("TwiFucker version ${BuildConfig.VERSION_NAME}")
 
-            settingsHook()
+            mainActivityHook()
+            settingsActivityHook()
             jsonHook()
             urlHook()
         }

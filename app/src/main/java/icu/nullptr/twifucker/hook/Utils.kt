@@ -1,4 +1,4 @@
-package icu.nullptr.twifucker
+package icu.nullptr.twifucker.hook
 
 import android.content.Context
 import android.content.SharedPreferences

@@ -1,1 +1,1 @@
--keep class icu.nullptr.twifucker.HookEntry
+-keep class icu.nullptr.twifucker.hook.HookEntry

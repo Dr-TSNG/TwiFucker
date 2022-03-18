@@ -4,9 +4,11 @@
     <string name="save_restart">save and restart</string>
 
     <string name="settings_dismiss">dismiss</string>
+    <string name="settings_general">General</string>
     <string name="settings_main">Main</string>
     <string name="settings_extra">Extra</string>
 
+    <string name="show_toast_title">Show Toast on Start</string>
     <string name="disable_promoted_content_title">Disable Promoted Content</string>
     <string name="disable_promoted_user_title">Disable Promoted User</string>
     <string name="disable_promoted_trends_title">Disable Promoted Trends</string>
@@ -14,6 +16,7 @@
     <string name="disable_who_to_follow_title">Disable Who to Follow</string>
     <string name="disable_topics_to_follow_title">Disable Topics to Follow</string>
 
+    <string name="show_toast_summary">You can find this page through settings/additional/version</string>
     <string name="disable_promoted_content_summary">home/profile/search timeline</string>
     <string name="disable_promoted_user_summary">home/profile/search timeline</string>
     <string name="disable_promoted_trends_summary">search</string>

@@ -24,11 +24,9 @@
 
     <PreferenceCategory android:title="@string/settings_extra">
         <SwitchPreference
-            android:enabled="false"
             android:key="disable_who_to_follow"
             android:title="@string/disable_who_to_follow_title" />
         <SwitchPreference
-            android:enabled="false"
             android:key="disable_topics_to_follow"
             android:title="@string/disable_topics_to_follow_title" />
     </PreferenceCategory>

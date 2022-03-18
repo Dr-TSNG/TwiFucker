@@ -1,11 +1,26 @@
+import java.io.ByteArrayOutputStream
 import java.util.*
-
-val properties = Properties()
-properties.load(project.rootProject.file("local.properties").inputStream())
 
 plugins {
     id("com.android.application")
     kotlin("android")
+}
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
+
+val verName = "1.2"
+val gitCommitCount = "git rev-list HEAD --count".execute().toInt()
+val gitCommitHash = "git rev-parse --verify --short HEAD".execute()
+
+fun String.execute(currentWorkingDir: File = file("./")): String {
+    val byteOut = ByteArrayOutputStream()
+    project.exec {
+        workingDir = currentWorkingDir
+        commandLine = split("\\s".toRegex())
+        standardOutput = byteOut
+    }
+    return String(byteOut.toByteArray()).trim()
 }
 
 android {
@@ -15,8 +30,11 @@ android {
         applicationId = "icu.nullptr.twifucker"
         minSdk = 24
         targetSdk = 32
-        versionCode = 3
-        versionName = "1.1"
+        versionCode = gitCommitCount
+        versionName = verName
+
+        if (properties.getProperty("buildWithGitSuffix").toBoolean())
+            versionNameSuffix = ".r${gitCommitCount}.${gitCommitHash}"
     }
 
     signingConfigs.create("config") {
@@ -48,8 +66,25 @@ android {
     }
 }
 
+fun afterEval() = android.applicationVariants.forEach { variant ->
+    val variantCapped = variant.name.capitalize()
+    val packageTask = tasks["package$variantCapped"]
+    task<Copy>("build$variantCapped") {
+        dependsOn(packageTask)
+        into("$buildDir/outputs/apk/${variant.name}")
+        from(packageTask.outputs) {
+            include("*.apk")
+            rename(".*\\.apk", "TwiFucker-V${variant.versionName}-${variant.name}.apk")
+        }
+    }
+}
+
+afterEvaluate {
+    afterEval()
+}
+
 dependencies {
-    implementation("com.github.kyuubiran:EzXHelper:0.6.2")
+    implementation("com.github.kyuubiran:EzXHelper:0.7.5")
 
     compileOnly("de.robv.android.xposed:api:82")
     compileOnly("de.robv.android.xposed:api:82:sources")

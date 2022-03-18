@@ -4,9 +4,12 @@
     <string name="save_restart">儲存並重新啟動</string>
 
     <string name="settings_dismiss">取消</string>
+    <string name="settings_general">一般</string>
     <string name="settings_main">主頁</string>
     <string name="settings_extra">其他</string>
 
+    <string name="about_title">TwiFucker by Nullptr</string>
+    <string name="show_toast_title">啟動時顯示快顯通知</string>
     <string name="disable_promoted_content_title">禁用建議的內容</string>
     <string name="disable_promoted_user_title">禁用使用者推廣</string>
     <string name="disable_promoted_trends_title">禁用流行趨勢</string>
@@ -14,6 +17,8 @@
     <string name="disable_who_to_follow_title">禁用關注物件</string>
     <string name="disable_topics_to_follow_title">禁用要關注的主題</string>
 
+    <string name="about_summary">訪問GitHub頁面以獲得更多支援</string>
+    <string name="show_toast_summary">你可以透過設定和隱私 > 其他資源 > 版本找到 TwiFucker 設定</string>
     <string name="disable_promoted_content_summary">主頁 > 個人資料 > 搜尋時間線</string>
     <string name="disable_promoted_user_summary">主頁 > 個人資料 > 搜尋時間線</string>
     <string name="disable_promoted_trends_summary">搜尋</string>

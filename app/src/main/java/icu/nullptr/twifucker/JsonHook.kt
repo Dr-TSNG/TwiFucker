@@ -79,6 +79,7 @@ fun JSONObject.trendHasPromotedMetadata(): Boolean =
         ?.has("promotedMetadata") == true
 
 fun JSONArray.trendRemoveAds() {
+    if (!modulePrefs.getBoolean("disable_promoted_trends", true)) return
     val trendRemoveIndex = mutableListOf<Int>()
     forEachIndexed<JSONObject> { trendIndex, trend ->
         if (trend.trendHasPromotedMetadata()) {
@@ -123,8 +124,8 @@ fun JSONObject.instructionGetAddEntries(): JSONArray? =
     optJSONObject("addEntries")?.optJSONArray("entries")
 
 fun JSONObject.instructionCheckAndRemove() {
-    instructionTimelineAddEntries()?.entriesRemoveAnnoyance()
     instructionTimelinePinEntry()?.entryRemoveSensitiveMediaWarning()
+    instructionTimelineAddEntries()?.entriesRemoveAnnoyance()
     instructionGetAddEntries()?.entriesRemoveAnnoyance()
 }
 
@@ -138,6 +139,7 @@ fun JSONObject.mediaRemoveSensitiveMediaWarning() {
 }
 
 fun JSONObject.mediaCheckAndRemove() {
+    if (!modulePrefs.getBoolean("disable_sensitive_media_warning", false)) return
     if (mediaHasSensitiveMediaWarning()) {
         Log.d("Handle sensitive media warning $this")
         mediaRemoveSensitiveMediaWarning()
@@ -149,6 +151,8 @@ fun JSONArray.entriesRemoveTimelineAds() {
     val removeIndex = mutableListOf<Int>()
     forEachIndexed<JSONObject> { entryIndex, entry ->
         entry.entryGetTrends()?.trendRemoveAds()
+
+        if (!modulePrefs.getBoolean("disable_promoted_content", true)) return@forEachIndexed
         if (entry.entryHasPromotedMetadata()) {
             Log.d("Handle timeline ads $entryIndex $entry")
             removeIndex.add(entryIndex)
@@ -160,6 +164,7 @@ fun JSONArray.entriesRemoveTimelineAds() {
 }
 
 fun JSONArray.entriesRemovePromotedWhoToFollow() {
+    if (!modulePrefs.getBoolean("disable_promoted_user", true)) return
     forEach<JSONObject> { entry ->
         if (entry.entryHasWhoToFollow()) {
             val items = entry.entryGetWhoToFollowItems()

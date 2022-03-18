@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/settings_main">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="disable_promoted_content"
+            android:summary="@string/disable_promoted_content_summary"
+            android:title="@string/disable_promoted_content_title" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="disable_promoted_user"
+            android:summary="@string/disable_promoted_user_summary"
+            android:title="@string/disable_promoted_user_title" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="disable_promoted_trends"
+            android:summary="@string/disable_promoted_trends_summary"
+            android:title="@string/disable_promoted_trends_title" />
+        <SwitchPreference
+            android:key="disable_sensitive_media_warning"
+            android:summary="@string/disable_sensitive_media_warning_summary"
+            android:title="@string/disable_sensitive_media_warning_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_extra">
+        <SwitchPreference
+            android:enabled="false"
+            android:key="disable_who_to_follow"
+            android:title="@string/disable_who_to_follow_title" />
+        <SwitchPreference
+            android:enabled="false"
+            android:key="disable_topics_to_follow"
+            android:title="@string/disable_topics_to_follow_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

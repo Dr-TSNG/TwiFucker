@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
@@ -35,6 +35,8 @@ android {
             }
         }
     }
+
+    androidResources.additionalParameters("--allow-reserved-package-id", "--package-id", "0x64")
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

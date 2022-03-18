@@ -270,10 +270,16 @@ fun handleJson(param: XC_MethodHook.MethodHookParam) {
 
 fun jsonHook() {
     try {
-        findMethod("com.fasterxml.jackson.core.b") { name == "i" }.hookAfter { param ->
+        val jsonClass = findField("com.bluelinelabs.logansquare.LoganSquare") { name == "JSON_FACTORY" }.type
+        Log.d("Located json class")
+        val jsonMethod = findMethod(jsonClass) {
+            isFinal && parameterTypes.size == 2 && parameterTypes[0] == InputStream::class.java && returnType == InputStream::class.java
+        }
+        Log.d("Located json method")
+        jsonMethod.hookAfter { param ->
             handleJson(param)
         }
     } catch (e: Throwable) {
-        Log.e(e)
+        Log.e("Failed to relocate json method", e)
     }
 }

@@ -13,7 +13,7 @@ fun mainActivityHook() {
         name == "onResume"
     }.hookAfter { param ->
         Log.d("MainActivity onResume")
-        if (modulePrefs.getBoolean("first_run", true)) {
+        if (BuildConfig.DEBUG || modulePrefs.getBoolean("first_run", true)) {
             SettingsDialog(param.thisObject as Activity)
             modulePrefs.edit().putBoolean("first_run", false).apply()
         }

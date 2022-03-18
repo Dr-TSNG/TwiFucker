@@ -8,6 +8,7 @@
     <string name="settings_main">Main</string>
     <string name="settings_extra">Extra</string>
 
+    <string name="about_title">TwiFucker by Nullptr</string>
     <string name="show_toast_title">Show Toast on Start</string>
     <string name="disable_promoted_content_title">Disable Promoted Content</string>
     <string name="disable_promoted_user_title">Disable Promoted User</string>
@@ -16,6 +17,7 @@
     <string name="disable_who_to_follow_title">Disable Who to Follow</string>
     <string name="disable_topics_to_follow_title">Disable Topics to Follow</string>
 
+    <string name="about_summary">Visit the GitHub page for more support</string>
     <string name="show_toast_summary">You can find this page through settings/additional/version</string>
     <string name="disable_promoted_content_summary">home/profile/search timeline</string>
     <string name="disable_promoted_user_summary">home/profile/search timeline</string>

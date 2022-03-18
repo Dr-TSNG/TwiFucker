@@ -5,7 +5,9 @@ package icu.nullptr.twifucker.ui
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.preference.Preference
 import android.preference.PreferenceFragment
@@ -28,6 +30,10 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             preferenceManager.sharedPreferencesName = PREFS_NAME
             addPreferencesFromResource(R.xml.settings_dialog)
             prefs = preferenceManager.sharedPreferences
+            findPreference("about").setOnPreferenceClickListener {
+                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Dr-TSNG/TwiFucker")))
+                true
+            }
         }
 
         override fun onPreferenceChange(p0: Preference?, p1: Any?): Boolean {

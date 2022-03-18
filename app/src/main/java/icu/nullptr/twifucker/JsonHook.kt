@@ -58,7 +58,9 @@ fun JSONObject.entryHasPromotedMetadata(): Boolean =
         ?.has("promotedMetadata") == true || optJSONObject("content")?.optJSONObject("content")
         ?.has("tweetPromotedMetadata") == true
 
-fun JSONObject.entryHasWhoToFollow(): Boolean = optString("entryId").startsWith("whoToFollow-")
+fun JSONObject.entryIsWhoToFollow(): Boolean = optString("entryId").startsWith("whoToFollow-")
+
+fun JSONObject.entryIsTopicsModule(): Boolean = optString("entryId").startsWith("TopicsModule-")
 
 fun JSONObject.entryGetWhoToFollowItems(): JSONArray? =
     optJSONObject("content")?.optJSONArray("items")
@@ -163,24 +165,51 @@ fun JSONArray.entriesRemoveTimelineAds() {
     }
 }
 
-fun JSONArray.entriesRemovePromotedWhoToFollow() {
-    if (!modulePrefs.getBoolean("disable_promoted_user", true)) return
-    forEach<JSONObject> { entry ->
-        if (entry.entryHasWhoToFollow()) {
-            val items = entry.entryGetWhoToFollowItems()
-            val removeIndex = mutableListOf<Int>()
-            items?.forEachIndexed<JSONObject> { index, item ->
-                item.itemContainsPromotedUser().let {
-                    if (it) {
-                        Log.d("Handle whoToFollow promoted user $index $item")
-                        removeIndex.add(index)
-                    }
+fun JSONArray.entriesRemoveWhoToFollow() {
+    val entryRemoveIndex = mutableListOf<Int>()
+    forEachIndexed<JSONObject> { entryIndex, entry ->
+        if (!entry.entryIsWhoToFollow()) return@forEachIndexed
+
+        if (modulePrefs.getBoolean("disable_who_to_follow", false)) {
+            Log.d("Handle whoToFollow $entryIndex $entry")
+            entryRemoveIndex.add(entryIndex)
+            return@forEachIndexed
+        }
+
+        if (!modulePrefs.getBoolean("disable_promoted_user", true)) return@forEachIndexed
+
+        val items = entry.entryGetWhoToFollowItems()
+        val userRemoveIndex = mutableListOf<Int>()
+        items?.forEachIndexed<JSONObject> { index, item ->
+            item.itemContainsPromotedUser().let {
+                if (it) {
+                    Log.d("Handle whoToFollow promoted user $index $item")
+                    userRemoveIndex.add(index)
                 }
             }
-            for (i in removeIndex.reversed()) {
-                items?.remove(i)
-            }
         }
+        for (i in userRemoveIndex.reversed()) {
+            items?.remove(i)
+        }
+    }
+    for (i in entryRemoveIndex.reversed()) {
+        remove(i)
+    }
+}
+
+fun JSONArray.entriesRemoveTopicsToFollow() {
+    val entryRemoveIndex = mutableListOf<Int>()
+    forEachIndexed<JSONObject> { entryIndex, entry ->
+        if (!entry.entryIsTopicsModule()) return@forEachIndexed
+
+        if (modulePrefs.getBoolean("disable_topics_to_follow", false)) {
+            Log.d("Handle TopicsModule $entryIndex $entry")
+            entryRemoveIndex.add(entryIndex)
+            return@forEachIndexed
+        }
+    }
+    for (i in entryRemoveIndex.reversed()) {
+        remove(i)
     }
 }
 
@@ -206,7 +235,8 @@ fun JSONArray.entriesRemoveSensitiveMediaWarning() {
 
 fun JSONArray.entriesRemoveAnnoyance() {
     entriesRemoveTimelineAds()
-    entriesRemovePromotedWhoToFollow()
+    entriesRemoveWhoToFollow()
+    entriesRemoveTopicsToFollow()
     entriesRemoveSensitiveMediaWarning()
 }
 

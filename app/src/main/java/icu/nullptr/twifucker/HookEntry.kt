@@ -35,6 +35,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
             Log.d("AttachContext")
             if (BuildConfig.DEBUG) Log.toast("TwiFucker version ${BuildConfig.VERSION_NAME}")
 
+            settingsHook()
             jsonHook()
             urlHook()
         }

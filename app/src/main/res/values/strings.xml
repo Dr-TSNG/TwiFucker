@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">TwiFucker</string>
+    <string name="twifucker_settings">TwiFucker Settings</string>
+    <string name="save_restart">save and restart</string>
+
+    <string name="settings_dismiss">dismiss</string>
+    <string name="settings_main">Main</string>
+    <string name="settings_extra">Extra</string>
+
+    <string name="disable_promoted_content_title">Disable Promoted Content</string>
+    <string name="disable_promoted_user_title">Disable Promoted User</string>
+    <string name="disable_promoted_trends_title">Disable Promoted Trends</string>
+    <string name="disable_sensitive_media_warning_title">Disable Sensitive Media Warning</string>
+    <string name="disable_who_to_follow_title">Disable Who to Follow</string>
+    <string name="disable_topics_to_follow_title">Disable Topics to Follow</string>
+
+    <string name="disable_promoted_content_summary">home/profile/search timeline</string>
+    <string name="disable_promoted_user_summary">home/profile/search timeline</string>
+    <string name="disable_promoted_trends_summary">search</string>
+    <string name="disable_sensitive_media_warning_summary">home/profile timeline and tweet details</string>
 </resources>

@@ -4,12 +4,15 @@ import android.app.Activity
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookAfter
+import de.robv.android.xposed.XC_MethodHook.Unhook
 import icu.nullptr.twifucker.BuildConfig
 import icu.nullptr.twifucker.hook.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog
 
+private lateinit var theHook: Unhook;
+
 fun mainActivityHook() {
-    findMethod("com.twitter.app.main.MainActivity") {
+    theHook = findMethod("com.twitter.app.main.MainActivity") {
         name == "onResume"
     }.hookAfter { param ->
         Log.d("MainActivity onResume")
@@ -20,5 +23,6 @@ fun mainActivityHook() {
         if (modulePrefs.getBoolean("show_toast", true)) {
             Log.toast("TwiFucker version ${BuildConfig.VERSION_NAME}")
         }
+        theHook.unhook()
     }
 }

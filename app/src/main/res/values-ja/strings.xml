@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TwiFucker</string>
+    <string name="twifucker_settings">TwiFucker 設定</string>
+    <string name="save_restart">保存して再起動</string>
+    <string name="settings_dismiss">無視</string>
+    <string name="settings_general">一般</string>
+    <string name="settings_main">メイン</string>
+    <string name="settings_extra">エクストラ</string>
+    <string name="about_title">TwiFucker by Nullptr</string>
+    <string name="show_toast_title">起動時にトーストを表示</string>
+    <string name="disable_promoted_content_title">プロモーション コンテンツを無効化</string>
+    <string name="disable_promoted_user_title">プロモーション ユーザーを無効化</string>
+    <string name="disable_promoted_trends_title">プロモーション トレンドを無効化</string>
+    <string name="disable_sensitive_media_warning_title">センシティブなメディア警告を無効化</string>
+    <string name="disable_who_to_follow_title">おすすめユーザーを無効化</string>
+    <string name="disable_topics_to_follow_title">おすすめトピックを無効化</string>
+    <string name="about_summary">GitHub ページでサポートを受ける</string>
+    <string name="show_toast_summary">このページは 設定/その他のリソース/バージョン から確認できます</string>
+    <string name="disable_promoted_content_summary">ホーム/プロフィール/検索 タイムライン</string>
+    <string name="disable_promoted_user_summary">ホーム/プロフィール/検索 タイムライン</string>
+    <string name="disable_promoted_trends_summary">検索</string>
+    <string name="disable_sensitive_media_warning_summary">ホーム/プロフィール タイムラインとツイート詳細画面</string>
+</resources>

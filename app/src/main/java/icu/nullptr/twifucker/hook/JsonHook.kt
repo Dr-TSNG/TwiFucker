@@ -62,15 +62,26 @@ fun JSONObject.entryIsWhoToFollow(): Boolean = optString("entryId").startsWith("
 
 fun JSONObject.entryIsTopicsModule(): Boolean = optString("entryId").startsWith("TopicsModule-")
 
-fun JSONObject.entryGetWhoToFollowItems(): JSONArray? =
+fun JSONObject.entryGetContentItems(): JSONArray? =
     optJSONObject("content")?.optJSONArray("items")
         ?: optJSONObject("content")?.optJSONObject("timelineModule")?.optJSONArray("items")
 
 fun JSONObject.entryIsTweet(): Boolean = optString("entryId").startsWith("tweet-")
+fun JSONObject.entryIsConversationThread(): Boolean = optString("entryId").startsWith("conversationthread-")
 
-fun JSONObject.entryGetLegacy(): JSONObject? =
-    optJSONObject("content")?.optJSONObject("content")?.optJSONObject("tweetResult")
+fun JSONObject.entryGetLegacy(): JSONObject? {
+    val temp = when {
+        has("content") -> {
+            optJSONObject("content")
+        }
+        has("item") -> {
+            optJSONObject("item")
+        }
+        else -> return null
+    }
+    return temp?.optJSONObject("content")?.optJSONObject("tweetResult")
         ?.optJSONObject("result")?.optJSONObject("legacy")
+}
 
 fun JSONObject.entryGetTrends(): JSONArray? =
     optJSONObject("content")?.optJSONObject("timelineModule")?.optJSONArray("items")
@@ -178,7 +189,7 @@ fun JSONArray.entriesRemoveWhoToFollow() {
 
         if (!modulePrefs.getBoolean("disable_promoted_user", true)) return@forEachIndexed
 
-        val items = entry.entryGetWhoToFollowItems()
+        val items = entry.entryGetContentItems()
         val userRemoveIndex = mutableListOf<Int>()
         items?.forEachIndexed<JSONObject> { index, item ->
             item.itemContainsPromotedUser().let {
@@ -223,6 +234,14 @@ fun JSONObject.entryRemoveSensitiveMediaWarning() {
                 ?.forEach<JSONObject> { media ->
                     media.mediaCheckAndRemove()
                 }
+        }
+    } else if (entryIsConversationThread()) {
+        entryGetContentItems()?.forEach<JSONObject> { item ->
+            item.entryGetLegacy()?.let { legacy ->
+                legacy.legacyGetExtendedEntitiesMedias()?.forEach<JSONObject> { media ->
+                    media.mediaCheckAndRemove()
+                }
+            }
         }
     }
 }

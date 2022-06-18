@@ -14,10 +14,10 @@ pluginManagement {
         mavenCentral()
     }
     plugins {
-        id("org.jetbrains.kotlin.android") version "1.6.10"
+        id("org.jetbrains.kotlin.android") version "1.7.0"
     }
 }
 
-rootProject.name = "Twifucker"
+rootProject.name = "TwiFucker"
 
 include(":app")

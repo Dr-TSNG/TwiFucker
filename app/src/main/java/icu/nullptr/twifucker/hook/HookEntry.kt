@@ -40,6 +40,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
             settingsActivityHook()
             jsonHook()
             urlHook()
+            altTextHook()
         }
     }
 }

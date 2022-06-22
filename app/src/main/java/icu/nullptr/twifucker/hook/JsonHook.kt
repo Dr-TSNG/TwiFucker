@@ -67,7 +67,8 @@ fun JSONObject.entryGetContentItems(): JSONArray? =
         ?: optJSONObject("content")?.optJSONObject("timelineModule")?.optJSONArray("items")
 
 fun JSONObject.entryIsTweet(): Boolean = optString("entryId").startsWith("tweet-")
-fun JSONObject.entryIsConversationThread(): Boolean = optString("entryId").startsWith("conversationthread-")
+fun JSONObject.entryIsConversationThread(): Boolean =
+    optString("entryId").startsWith("conversationthread-")
 
 fun JSONObject.entryGetLegacy(): JSONObject? {
     val temp = when {
@@ -283,13 +284,30 @@ fun handleJson(param: XC_MethodHook.MethodHookParam) {
     } catch (_: JSONException) {
     } catch (e: Throwable) {
         Log.e(e)
+        Log.d(content)
     }
+
+    try {
+        val json = JSONArray(content)
+        json.forEach<Any> {
+            if (it is JSONObject) {
+                it.tweetCheckAndRemove()
+            }
+        }
+        content = json.toString()
+    } catch (_: JSONException) {
+    } catch (e: Throwable) {
+        Log.e(e)
+        Log.d(content)
+    }
+
     param.result = content.byteInputStream()
 }
 
 fun jsonHook() {
     try {
-        val jsonClass = findField("com.bluelinelabs.logansquare.LoganSquare") { name == "JSON_FACTORY" }.type
+        val jsonClass =
+            findField("com.bluelinelabs.logansquare.LoganSquare") { name == "JSON_FACTORY" }.type
         Log.d("Located json class")
         val jsonMethod = findMethod(jsonClass) {
             isFinal && parameterTypes.size == 2 && parameterTypes[0] == InputStream::class.java && returnType == InputStream::class.java

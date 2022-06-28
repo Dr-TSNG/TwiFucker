@@ -3,9 +3,8 @@ package icu.nullptr.twifucker.hook
 import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.findAllMethods
-import com.github.kyuubiran.ezxhelper.utils.hookBefore
+import android.os.Bundle
+import com.github.kyuubiran.ezxhelper.utils.*
 
 private fun String.isTwitterUrl(): Boolean {
     return this.startsWith("https://twitter.com/")
@@ -28,6 +27,14 @@ private fun clearExtraParams(url: String): String {
 }
 
 fun urlHook() {
+    findAllMethods(Intent::class.java) { name == "replaceExtras" }.hookBefore { param ->
+        val bundle = param.args[0] as Bundle
+        val extraText = bundle.getString(Intent.EXTRA_TEXT)
+        if (extraText != null && extraText.isTwitterUrl()) {
+            val newExtraText = clearExtraParams(extraText)
+            bundle.putString(Intent.EXTRA_TEXT, newExtraText)
+        }
+    }
     findAllMethods(Intent::class.java) { name == "createChooser" }.hookBefore { param ->
         val intent = param.args[0] as Intent
         val extraText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: return@hookBefore

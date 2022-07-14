@@ -265,8 +265,12 @@ fun handleJson(param: XC_MethodHook.MethodHookParam) {
     val inputStream = param.result as InputStream
     val reader = BufferedReader(inputStream.reader())
     var content: String
-    reader.use { r ->
-        content = r.readText()
+    try {
+        reader.use { r ->
+            content = r.readText()
+        }
+    } catch (_: java.net.SocketTimeoutException) {
+        return
     }
 
     try {

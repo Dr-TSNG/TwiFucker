@@ -262,12 +262,6 @@ fun JSONArray.entriesRemoveAnnoyance() {
 
 
 fun handleJson(param: XC_MethodHook.MethodHookParam) {
-    val emptyInputStream: InputStream = object : InputStream() {
-        override fun read(): Int {
-            return -1
-        }
-    }
-    
     val inputStream = param.result as InputStream
     val reader = BufferedReader(inputStream.reader())
     var content: String
@@ -276,7 +270,11 @@ fun handleJson(param: XC_MethodHook.MethodHookParam) {
             content = r.readText()
         }
     } catch (_: java.io.IOException) {
-        param.result = emptyInputStream
+        param.result = object : InputStream() {
+            override fun read(): Int {
+                return -1
+            }
+        }
         return
     }
 

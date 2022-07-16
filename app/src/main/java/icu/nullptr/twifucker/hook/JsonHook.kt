@@ -262,6 +262,12 @@ fun JSONArray.entriesRemoveAnnoyance() {
 
 
 fun handleJson(param: XC_MethodHook.MethodHookParam) {
+    val emptyInputStream: InputStream = object : InputStream() {
+        override fun read(): Int {
+            return -1
+        }
+    }
+    
     val inputStream = param.result as InputStream
     val reader = BufferedReader(inputStream.reader())
     var content: String
@@ -269,7 +275,8 @@ fun handleJson(param: XC_MethodHook.MethodHookParam) {
         reader.use { r ->
             content = r.readText()
         }
-    } catch (_: java.net.SocketTimeoutException) {
+    } catch (e: java.io.IOException) {
+        param.result = emptyInputStream
         return
     }
 
@@ -287,7 +294,7 @@ fun handleJson(param: XC_MethodHook.MethodHookParam) {
         content = json.toString()
     } catch (_: JSONException) {
     } catch (e: Throwable) {
-        Log.e(e)
+        Log.e("json hook failed to parse JSONObject", e)
         Log.d(content)
     }
 
@@ -301,7 +308,7 @@ fun handleJson(param: XC_MethodHook.MethodHookParam) {
         content = json.toString()
     } catch (_: JSONException) {
     } catch (e: Throwable) {
-        Log.e(e)
+        Log.e("json hook failed to parse JSONArray", e)
         Log.d(content)
     }
 
@@ -312,15 +319,19 @@ fun jsonHook() {
     try {
         val jsonClass =
             findField("com.bluelinelabs.logansquare.LoganSquare") { name == "JSON_FACTORY" }.type
-        Log.d("Located json class")
+        Log.d("Located json class ${jsonClass.simpleName}")
         val jsonMethod = findMethod(jsonClass) {
             isFinal && parameterTypes.size == 2 && parameterTypes[0] == InputStream::class.java && returnType == InputStream::class.java
         }
-        Log.d("Located json method")
+        Log.d("Located json method ${jsonMethod.name}")
         jsonMethod.hookAfter { param ->
             handleJson(param)
         }
+    } catch (e: NoSuchFieldException) {
+        Log.d("Failed to relocate json field", e)
+    } catch (e: NoSuchMethodException) {
+        Log.d("Failed to relocate json method", e)
     } catch (e: Throwable) {
-        Log.e("Failed to relocate json method", e)
+        Log.e("json hook failed", e)
     }
 }

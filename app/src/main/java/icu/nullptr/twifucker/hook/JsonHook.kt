@@ -275,7 +275,7 @@ fun handleJson(param: XC_MethodHook.MethodHookParam) {
         reader.use { r ->
             content = r.readText()
         }
-    } catch (e: java.io.IOException) {
+    } catch (_: java.io.IOException) {
         param.result = emptyInputStream
         return
     }

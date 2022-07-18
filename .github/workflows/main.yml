@@ -1,6 +1,10 @@
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - '.github/'
+      - 'README.md'
+      - '.gitignore'
 
 jobs:
   build:

@@ -67,6 +67,10 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    
+    dependenciesInfo {
+        includeInApk = false
+    }
 }
 
 afterEvaluate {

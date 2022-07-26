@@ -38,9 +38,13 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
             mainActivityHook()
             settingsActivityHook()
-            jsonHook()
             urlHook()
             altTextHook()
+            timelineEntryHook()
+            timelineModuleItemHook()
+            timelineUserHook()
+            timelineTrendHook()
+            sensitiveMediaWarningHook()
         }
     }
 }

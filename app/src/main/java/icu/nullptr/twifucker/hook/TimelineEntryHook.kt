@@ -30,7 +30,7 @@ fun isEntryNeedsRemove(entryId: String): Boolean {
         return true
     }
     // topics to follow module
-    if (entryId.startsWith("TopicModule-") && modulePrefs.getBoolean(
+    if (entryId.startsWith("TopicsModule-") && modulePrefs.getBoolean(
             "disable_topics_to_follow",
             false
         )

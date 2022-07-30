@@ -20,6 +20,7 @@ private fun String.hasExtraParam(): Boolean {
 }
 
 private fun clearExtraParams(url: String): String {
+    Log.d("Handle Url before: $url")
     val oldUri = Uri.parse(url)
     val newUri = oldUri.buildUpon().clearQuery()
     oldUri.queryParameterNames.forEach {
@@ -28,7 +29,9 @@ private fun clearExtraParams(url: String): String {
         }
         newUri.appendQueryParameter(it, oldUri.getQueryParameter(it))
     }
-    return newUri.build().toString()
+    val newUrl = newUri.build().toString()
+    Log.d("Handle Url after: $newUrl")
+    return newUrl
 }
 
 fun urlHook() {
@@ -46,7 +49,6 @@ fun urlHook() {
         if (!extraText.isTwitterUrl()) {
             return@hookBefore
         }
-        Log.i("Handle Url")
         intent.putExtra(Intent.EXTRA_TEXT, clearExtraParams(extraText))
     }
     findAllMethods(ClipData::class.java) { name == "newPlainText" }.hookBefore { param ->
@@ -54,7 +56,6 @@ fun urlHook() {
         if (!text.isTwitterUrl()) {
             return@hookBefore
         }
-        Log.i("Handle Url")
         param.args[1] = clearExtraParams(text)
     }
     findMethod("com.twitter.deeplink.implementation.UrlInterpreterActivity") {
@@ -65,10 +66,7 @@ fun urlHook() {
         if (!url.isTwitterUrl()) {
             return@hookBefore
         }
-        Log.d("Handle Url before: $url")
-        Log.i("Handle Url")
         val newUrl = clearExtraParams(url)
-        Log.d("Handle Url after: $newUrl")
         intent.data = Uri.parse(newUrl)
     }
 }

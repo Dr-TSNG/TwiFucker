@@ -5,10 +5,14 @@ import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.utils.Log
+import com.github.kyuubiran.ezxhelper.utils.findAllMethods
+import com.github.kyuubiran.ezxhelper.utils.findMethod
+import com.github.kyuubiran.ezxhelper.utils.hookBefore
 
 private fun String.isTwitterUrl(): Boolean {
-    return this.startsWith("https://twitter.com/")
+    val uri = Uri.parse(this)
+    return (uri.scheme == "https" || uri.scheme == "http") && (uri.host == "twitter.com" || uri.host == "www.twitter.com" || uri.host == "mobile.twitter.com")
 }
 
 private fun String.hasExtraParam(): Boolean {

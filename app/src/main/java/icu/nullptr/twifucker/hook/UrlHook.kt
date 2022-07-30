@@ -1,5 +1,6 @@
 package icu.nullptr.twifucker.hook
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
@@ -51,5 +52,19 @@ fun urlHook() {
         }
         Log.i("Handle Url")
         param.args[1] = clearExtraParams(text)
+    }
+    findMethod("com.twitter.deeplink.implementation.UrlInterpreterActivity") {
+        name == "onCreate"
+    }.hookBefore { param ->
+        val intent = (param.thisObject as Activity).intent
+        val url = intent.data.toString()
+        if (!url.isTwitterUrl()) {
+            return@hookBefore
+        }
+        Log.d("Handle Url before: $url")
+        Log.i("Handle Url")
+        val newUrl = clearExtraParams(url)
+        Log.d("Handle Url after: $newUrl")
+        intent.data = Uri.parse(newUrl)
     }
 }

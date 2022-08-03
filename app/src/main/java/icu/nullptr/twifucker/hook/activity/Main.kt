@@ -9,10 +9,10 @@ import icu.nullptr.twifucker.BuildConfig
 import icu.nullptr.twifucker.hook.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog
 
-private lateinit var theHook: Unhook;
+private lateinit var theHook: Unhook
 
 fun mainActivityHook() {
-    theHook = findMethod("com.twitter.app.main.MainActivity") {
+    theHook = findMethod("com.twitter.app.main.MainActivity", findSuper = true) {
         name == "onResume"
     }.hookAfter { param ->
         Log.d("MainActivity onResume")

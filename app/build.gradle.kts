@@ -9,7 +9,7 @@ plugins {
 val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
 
-val verName = "1.3"
+val verName = "1.4"
 val gitCommitCount = "git rev-list HEAD --count".execute().toInt()
 val gitCommitHash = "git rev-parse --verify --short HEAD".execute()
 
@@ -24,12 +24,12 @@ fun String.execute(currentWorkingDir: File = file("./")): String {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "icu.nullptr.twifucker"
         minSdk = 24
-        targetSdk = 32
+        targetSdk = 33
         versionCode = gitCommitCount
         versionName = verName
 
@@ -100,7 +100,7 @@ afterEvaluate {
 }
 
 dependencies {
-    implementation("com.github.kyuubiran:EzXHelper:0.9.9")
+    implementation("com.github.kyuubiran:EzXHelper:1.0.0")
 
     compileOnly("de.robv.android.xposed:api:82")
 }

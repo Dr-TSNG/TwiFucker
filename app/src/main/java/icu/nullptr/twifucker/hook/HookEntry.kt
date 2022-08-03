@@ -40,7 +40,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
             settingsActivityHook()
             urlHook()
             altTextHook()
-            if (modulePrefs.getBoolean("enable_legacy_hook", false)) {
+            if (modulePrefs.getBoolean("use_legacy_hook", false)) {
                 jsonHook()
             } else {
                 timelineEntryHook()

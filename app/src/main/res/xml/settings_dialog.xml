@@ -13,6 +13,11 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_main">
         <SwitchPreference
+            android:defaultValue="false"
+            android:key="enable_legacy_hook"
+            android:summary="@string/enable_legacy_hook_summary"
+            android:title="@string/enable_legacy_hook" />
+        <SwitchPreference
             android:defaultValue="true"
             android:key="disable_promoted_content"
             android:summary="@string/disable_promoted_content_summary"

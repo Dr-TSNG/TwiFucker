@@ -10,8 +10,8 @@ import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import icu.nullptr.twifucker.hook.activity.settingsActivityHook
 import icu.nullptr.twifucker.hook.activity.mainActivityHook
+import icu.nullptr.twifucker.hook.activity.settingsActivityHook
 
 private const val TAG = "TwiFucker"
 
@@ -40,11 +40,15 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
             settingsActivityHook()
             urlHook()
             altTextHook()
-            timelineEntryHook()
-            timelineModuleItemHook()
-            timelineUserHook()
-            timelineTrendHook()
-            sensitiveMediaWarningHook()
+            if (modulePrefs.getBoolean("enable_legacy_hook", false)) {
+                jsonHook()
+            } else {
+                timelineEntryHook()
+                timelineModuleItemHook()
+                timelineUserHook()
+                timelineTrendHook()
+                sensitiveMediaWarningHook()
+            }
         }
     }
 }

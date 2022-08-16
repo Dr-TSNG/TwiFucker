@@ -47,6 +47,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 timelineModuleItemHook()
                 timelineUserHook()
                 timelineTrendHook()
+                timelineTweetHook()
                 sensitiveMediaWarningHook()
             }
         }

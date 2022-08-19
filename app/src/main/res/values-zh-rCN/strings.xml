@@ -23,4 +23,10 @@
     <string name="disable_promoted_user_summary">主页 > 个人资料 > 搜索 时间线</string>
     <string name="disable_promoted_trends_summary">搜索</string>
     <string name="disable_sensitive_media_warning_summary">主页 > 个人资料 时间线和推特细节</string>
+
+    <string name="download_or_copy">下载与复制</string>
+    <string name="download_photo">图片 %1$d</string>
+    <string name="download_video">%1$s - 每秒 %2$d 千兆字节</string>
+    <string name="download_link_copied">已复制下载链接</string>
+    <string name="download_started">已开始下载</string>
 </resources>

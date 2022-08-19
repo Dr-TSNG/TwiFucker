@@ -46,5 +46,12 @@
             android:key="disable_topics_to_follow"
             android:title="@string/disable_topics_to_follow_title" />
     </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/settings_experimental">
+        <SwitchPreference
+            android:key="enable_download_hook"
+            android:summary="@string/enable_download_hook_summary"
+            android:title="@string/enable_download_hook" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

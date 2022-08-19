@@ -12,10 +12,20 @@ import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import icu.nullptr.twifucker.hook.activity.mainActivityHook
 import icu.nullptr.twifucker.hook.activity.settingsActivityHook
+import me.iacn.biliroaming.utils.DexHelper
 
 private const val TAG = "TwiFucker"
 
 class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
+
+    companion object {
+        lateinit var dexHelper: DexHelper
+
+        fun loadDexHelper() {
+            if (this::dexHelper.isInitialized) return
+            dexHelper = DexHelper(appContext.classLoader)
+        }
+    }
 
     override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
         EzXHelperInit.initZygote(startupParam)
@@ -50,6 +60,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 timelineTweetHook()
                 sensitiveMediaWarningHook()
             }
+            downloadHook()
         }
     }
 }

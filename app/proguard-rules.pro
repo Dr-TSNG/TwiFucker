@@ -1,2 +1,2 @@
 -keep class icu.nullptr.twifucker.hook.HookEntry
--keep class me.iacn.biliroaming.utils.DexHelper
+-keepnames class me.iacn.biliroaming.utils.DexHelper { *; }

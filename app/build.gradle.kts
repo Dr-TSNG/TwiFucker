@@ -1,5 +1,7 @@
 import java.io.ByteArrayOutputStream
 import java.util.Properties
+import java.nio.file.Paths
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id("com.android.application")
@@ -23,6 +25,16 @@ fun String.execute(currentWorkingDir: File = file("./")): String {
     return String(byteOut.toByteArray()).trim()
 }
 
+fun findInPath(executable: String): String? {
+    val pathEnv = System.getenv("PATH")
+    return pathEnv.split(File.pathSeparator).map { folder ->
+        Paths.get("${folder}${File.separator}${executable}${if (OperatingSystem.current().isWindows) ".exe" else ""}")
+            .toFile()
+    }.firstOrNull { path ->
+        path.exists()
+    }?.absolutePath
+}
+
 android {
     compileSdk = 33
 
@@ -33,8 +45,23 @@ android {
         versionCode = gitCommitCount
         versionName = verName
 
-        if (properties.getProperty("buildWithGitSuffix").toBoolean())
-            versionNameSuffix = ".r${gitCommitCount}.${gitCommitHash}"
+        if (properties.getProperty("buildWithGitSuffix").toBoolean()) versionNameSuffix =
+            ".r${gitCommitCount}.${gitCommitHash}"
+
+        externalNativeBuild {
+            cmake {
+                abiFilters("arm64-v8a")
+                findInPath("ccache")?.let {
+                    println("Using ccache $it")
+                    arguments += listOf(
+                        "-DANDROID_CCACHE=$it",
+                        "-DCMAKE_C_COMPILER_LAUNCHER=ccache",
+                        "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",
+                        "-DNDK_CCACHE=ccache"
+                    )
+                }
+            }
+        }
     }
 
     val config = properties.getProperty("fileDir")?.let {
@@ -53,8 +80,19 @@ android {
 
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
+    }
+
+    buildFeatures {
+        prefab = true
+    }
+
+    androidResources {
+        noCompress("libtwifucker.so")
     }
 
     androidResources.additionalParameters("--allow-reserved-package-id", "--package-id", "0x64")
@@ -67,9 +105,16 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    
+
     dependenciesInfo {
         includeInApk = false
+    }
+
+    externalNativeBuild {
+        cmake {
+            path("src/main/jni/CMakeLists.txt")
+            version = "3.22.1+"
+        }
     }
 }
 
@@ -100,6 +145,7 @@ afterEvaluate {
 }
 
 dependencies {
+    implementation("androidx.annotation:annotation:1.4.0")
     implementation("com.github.kyuubiran:EzXHelper:1.0.0")
 
     compileOnly("de.robv.android.xposed:api:82")

@@ -139,6 +139,7 @@ afterEvaluate {
         doLast {
             val apk = file("$buildDir/outputs/apk/debug").listFiles()!!.single().absolutePath
             "$adb install $apk".execute()
+            "$adb shell am force-stop com.twitter.android".execute()
             "$adb shell am start com.twitter.android/com.twitter.android.StartActivity".execute()
         }
     }

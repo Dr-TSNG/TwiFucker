@@ -34,5 +34,8 @@
     <string name="download_video">%1$s - %2$d Mbps</string>
     <string name="download_link_copied">Download link copied</string>
     <string name="download_started">Download started</string>
+    <string name="downloading">Downloading…</string>
+    <string name="download_failed">Download failed</string>
+    <string name="download_copy_failed">Copy file failed</string>
 
 </resources>

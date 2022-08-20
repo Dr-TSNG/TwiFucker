@@ -11,7 +11,6 @@ import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
 import icu.nullptr.twifucker.ui.DownloadDialog
 import java.io.File
-import java.io.FileOutputStream
 import java.lang.reflect.Method
 
 data class VideoVariant(val bitrate: Int, val url: String, val contentType: String)
@@ -346,12 +345,51 @@ private fun loadHookInfo() {
 
 }
 
-private fun startHook() {
+fun downloadHook() {
+    if (!modulePrefs.getBoolean("enable_download_hook", false)) return
+
     try {
         loadHookInfo()
     } catch (t: Throwable) {
         Log.e(t)
         return
+    }
+
+    findMethod(Activity::class.java) {
+        name == "onResume"
+    }.hookAfter { param ->
+        currentActivity = param.thisObject as Activity
+    }
+
+    findMethod(Activity::class.java) {
+        name == "onActivityResult"
+    }.hookAfter { param ->
+        val requestCode = param.args[0] as Int
+        val resultCode = param.args[1] as Int
+        val resultData = param.args[2] as Intent?
+
+        if (requestCode != DownloadDialog.CREATE_FILE) return@hookAfter
+        if (DownloadDialog.lastSelectedFile == "") return@hookAfter
+
+        val inputFile = File(appContext.cacheDir, DownloadDialog.lastSelectedFile)
+        if (resultCode == Activity.RESULT_OK) {
+            resultData?.data?.also { uri ->
+                val contentResolver = (param.thisObject as Activity).contentResolver
+                try {
+                    contentResolver.openFileDescriptor(uri, "w")?.use {
+                        val inputStream = inputFile.inputStream()
+                        val outputStream = contentResolver.openOutputStream(uri) ?: return@use
+                        inputStream.copyTo(outputStream)
+                    }
+                } catch (t: Throwable) {
+                    Log.e(t)
+                    currentActivity.addModuleAssetPath()
+                    Log.toast(currentActivity.getString(R.string.download_copy_failed))
+                }
+            }
+        }
+        inputFile.delete()
+        DownloadDialog.lastSelectedFile = ""
     }
 
     findMethod(carouselActionItemFactoryClassName) {
@@ -439,36 +477,4 @@ private fun startHook() {
         urlPhotos = photoList
         urlVideos = videoList
     }
-}
-
-fun downloadHook() {
-    if (!modulePrefs.getBoolean("enable_download_hook", false)) return
-
-    findMethod(Activity::class.java) {
-        name == "onResume"
-    }.hookAfter { param ->
-        currentActivity = param.thisObject as Activity
-    }
-    findMethod(Activity::class.java) {
-        name == "onActivityResult"
-    }.hookAfter { param ->
-        val requestCode = param.args[0] as Int
-        val resultCode = param.args[1] as Int
-        val resultData = param.args[2] as Intent?
-        if (requestCode != DownloadDialog.CREATE_FILE && resultCode != Activity.RESULT_OK) return@hookAfter
-        resultData?.data?.also { uri ->
-            val contentResolver = (param.thisObject as Activity).contentResolver
-            try {
-                contentResolver.openFileDescriptor(uri, "w")?.use {
-                    val inputStream =
-                        File(appContext.cacheDir, DownloadDialog.lastSelectedFile).inputStream()
-                    val outputStream = contentResolver.openOutputStream(uri) ?: return@use
-                    inputStream.copyTo(outputStream)
-                }
-            } catch (t: Throwable) {
-                Log.e(t)
-            }
-        }
-    }
-    startHook()
 }

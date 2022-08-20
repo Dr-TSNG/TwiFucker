@@ -1,6 +1,7 @@
 package icu.nullptr.twifucker.ui
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -11,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.Log
+import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
 import icu.nullptr.twifucker.R
 import icu.nullptr.twifucker.hook.VideoVariant
 import icu.nullptr.twifucker.hook.currentActivity
@@ -25,7 +27,7 @@ class DownloadDialog(
     companion object {
         const val CREATE_FILE = 114514
         var lastSelectedFile = ""
-        
+
         private fun contentTypeToExt(contentType: String): String {
             return when {
                 contentType.contains("image/jpeg") -> ".jpg"
@@ -36,48 +38,68 @@ class DownloadDialog(
                 else -> ""
             }
         }
-        
+
         private fun copyFile(fileName: String, contentType: String) {
             lastSelectedFile = fileName
-            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply { 
+            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = contentType
                 putExtra(Intent.EXTRA_TITLE, fileName)
             }
             currentActivity.startActivityForResult(intent, CREATE_FILE)
         }
-
-        fun download(url: String) {
-            Thread {
-                try {
-                    val downloadUrl = URL(url)
-                    val httpConnection = downloadUrl.openConnection() as HttpURLConnection
-                    httpConnection.connect()
-                    val inputStream = httpConnection.inputStream
-                    val buffer = ByteArray(1024)
-                    var len = inputStream.read(buffer)
-                    val file = File(
-                        appContext.cacheDir,
-                        "" + System.currentTimeMillis() + contentTypeToExt(httpConnection.contentType)
-                    )
-                    val outputStream = FileOutputStream(file)
-                    while (len != -1) {
-                        outputStream.write(buffer, 0, len)
-                        len = inputStream.read(buffer)
-                    }
-                    outputStream.close()
-                    inputStream.close()
-                    httpConnection.disconnect()
-                    Log.d("Downloaded to ${file.absolutePath}")
-                    copyFile(file.name, httpConnection.contentType)
-                } catch (t: Throwable) {
-                    Log.e(t)
-                }
-            }.start()
-        }
     }
-    
+
+    private fun download(url: String) {
+        Log.toast(context.getString(R.string.downloading))
+
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(R.string.downloading)
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+        Thread {
+            try {
+                val downloadUrl = URL(url)
+                val httpConnection = downloadUrl.openConnection() as HttpURLConnection
+                httpConnection.connect()
+                val inputStream = httpConnection.inputStream
+                val buffer = ByteArray(1024)
+                var len = inputStream.read(buffer)
+
+                val file = File(
+                    appContext.cacheDir,
+                    "" + System.currentTimeMillis() + contentTypeToExt(httpConnection.contentType)
+                )
+
+                val outputStream = FileOutputStream(file)
+                while (len != -1) {
+                    outputStream.write(buffer, 0, len)
+                    len = inputStream.read(buffer)
+                }
+
+                outputStream.close()
+                inputStream.close()
+                httpConnection.disconnect()
+
+                copyFile(file.name, httpConnection.contentType)
+            } catch (t: Throwable) {
+                Log.e(t)
+                Log.toast(context.getString(R.string.download_failed))
+            }
+            progressDialog.cancel()
+        }.start()
+    }
+
+    private fun toClipboard(text: String) {
+        val clipboardManager = appContext.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("label", text)
+        clipboardManager.setPrimaryClip(clip)
+        Log.toast(context.getString(R.string.download_link_copied))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        context.addModuleAssetPath()
         val linearLayout = LinearLayout(context)
         linearLayout.orientation = LinearLayout.VERTICAL
         linearLayout.setPadding(32, 32, 32, 32)
@@ -93,9 +115,7 @@ class DownloadDialog(
                 download(url)
             }
             textView.setOnLongClickListener {
-                val clip = ClipData.newPlainText("label", url)
-                clipboardManager.setPrimaryClip(clip)
-                Log.toast(context.getString(R.string.download_link_copied))
+                toClipboard(url)
                 true
             }
             textView.setPadding(0, 16, 0, 16)
@@ -105,13 +125,11 @@ class DownloadDialog(
         }
         urlVideos.forEach { variant ->
             val textView = TextView(context)
-            textView.setOnClickListener { 
+            textView.setOnClickListener {
                 download(variant.url)
             }
             textView.setOnLongClickListener {
-                val clip = ClipData.newPlainText("label", variant.url)
-                clipboardManager.setPrimaryClip(clip)
-                Log.toast(context.getString(R.string.download_link_copied))
+                toClipboard(variant.url)
                 true
             }
             textView.setPadding(0, 16, 0, 16)

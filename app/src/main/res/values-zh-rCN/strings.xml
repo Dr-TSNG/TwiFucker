@@ -8,6 +8,7 @@
     <string name="settings_main">主页</string>
     <string name="settings_extra">其他</string>
 
+    <string name="settings_experimental">试验</string>
     <string name="about_title">TwiFucker by Nullptr</string>
     <string name="show_toast_title">启动时显示提示</string>
     <string name="disable_promoted_content_title">禁用建议的内容</string>
@@ -17,6 +18,7 @@
     <string name="disable_who_to_follow_title">禁用推荐关注</string>
     <string name="disable_topics_to_follow_title">禁用要关注的主题</string>
 
+    <string name="enable_download_hook">启用下载钩子</string>
     <string name="about_summary">访问GitHub页面以获得更多支持</string>
     <string name="show_toast_summary">你可以通过 设置和隐私 > 更多资源 > 版本 找到 TwiFucker 设置</string>
     <string name="disable_promoted_content_summary">主页 > 个人资料 > 搜索 时间线</string>
@@ -24,9 +26,13 @@
     <string name="disable_promoted_trends_summary">搜索</string>
     <string name="disable_sensitive_media_warning_summary">主页 > 个人资料 时间线和推特细节</string>
 
+    <string name="enable_download_hook_summary">[分享 -> 下载与复制] 轻点下载, 长按复制链接</string>
     <string name="download_or_copy">下载与复制</string>
     <string name="download_photo">图片 %1$d</string>
     <string name="download_video">%1$s - 每秒 %2$d 千兆字节</string>
     <string name="download_link_copied">已复制下载链接</string>
     <string name="download_started">已开始下载</string>
+    <string name="downloading">下载中…</string>
+    <string name="download_failed">下载失败</string>
+    <string name="download_copy_failed">复制文件失败</string>
 </resources>

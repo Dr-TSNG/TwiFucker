@@ -116,6 +116,7 @@ android {
             version = "3.22.1+"
         }
     }
+    buildToolsVersion = "33.0.0"
 }
 
 afterEvaluate {
@@ -147,7 +148,7 @@ afterEvaluate {
 
 dependencies {
     implementation("androidx.annotation:annotation:1.4.0")
-    implementation("com.github.kyuubiran:EzXHelper:1.0.0")
+    implementation("com.github.kyuubiran:EzXHelper:1.0.1")
 
     compileOnly("de.robv.android.xposed:api:82")
 }

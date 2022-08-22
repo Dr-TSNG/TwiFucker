@@ -38,4 +38,6 @@
     <string name="download_failed">Download failed</string>
     <string name="download_copy_failed">Copy file failed</string>
 
+    <string name="deleted_n_promoted_tweet">Deleted %1$d promoted tweet(s) from database</string>
+
 </resources>

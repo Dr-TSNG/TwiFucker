@@ -27,7 +27,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
     }
 
     private fun deleteFromDatabase() {
-        val disablePromotedContent = modulePrefs.getBoolean("disable_promoted_content", false)
+        val disablePromotedContent = modulePrefs.getBoolean("disable_promoted_content", true)
         if (!disablePromotedContent) return
         val re = Regex("^\\d+-\\d+\\.db$")
         var count = 0

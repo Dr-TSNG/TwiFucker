@@ -50,7 +50,7 @@ android {
 
         externalNativeBuild {
             cmake {
-                abiFilters("arm64-v8a")
+                abiFilters("arm64-v8a", "armeabi-v7a")
                 findInPath("ccache")?.let {
                     println("Using ccache $it")
                     arguments += listOf(

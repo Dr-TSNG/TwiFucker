@@ -19,7 +19,3 @@ You can find Beta version / Rootless integration (automatically embed latest Twi
 ## Usage
 
 - `Settings and privacy` > `Additional resources` > Tap version
-
-## Known Issues
-
-- Loaded promoted content before switching on TwiFucker is not removed because it's cached.

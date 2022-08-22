@@ -1,7 +1,7 @@
-import java.io.ByteArrayOutputStream
-import java.util.Properties
-import java.nio.file.Paths
 import org.gradle.internal.os.OperatingSystem
+import java.io.ByteArrayOutputStream
+import java.nio.file.Paths
+import java.util.*
 
 plugins {
     id("com.android.application")
@@ -51,13 +51,31 @@ android {
         externalNativeBuild {
             cmake {
                 abiFilters("arm64-v8a", "armeabi-v7a")
+//                arguments("-DANDROID_STL=none")
+                val flags = arrayOf(
+                    "-Wall",
+                    "-Werror",
+                    "-Qunused-arguments",
+                    "-Wno-gnu-string-literal-operator-template",
+                    "-fno-rtti",
+                    "-fvisibility=hidden",
+                    "-fvisibility-inlines-hidden",
+                    "-fno-exceptions",
+                    "-fno-stack-protector",
+                    "-fomit-frame-pointer",
+                    "-Wno-builtin-macro-redefined",
+                    "-Wno-unused-value",
+                    "-D__FILE__=__FILE_NAME__",
+                )
+                cppFlags("-std=c++20", *flags)
+                cFlags("-std=c18", *flags)
                 findInPath("ccache")?.let {
                     println("Using ccache $it")
                     arguments += listOf(
                         "-DANDROID_CCACHE=$it",
-                        "-DCMAKE_C_COMPILER_LAUNCHER=ccache",
-                        "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",
-                        "-DNDK_CCACHE=ccache"
+                        "-DCMAKE_C_COMPILER_LAUNCHER=$it",
+                        "-DCMAKE_CXX_COMPILER_LAUNCHER=$it",
+                        "-DNDK_CCACHE=$it"
                     )
                 }
             }
@@ -84,6 +102,31 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            externalNativeBuild {
+                cmake {
+                    val flags = arrayOf(
+                        "-flto",
+                        "-ffunction-sections",
+                        "-fdata-sections",
+                        "-Wl,--gc-sections",
+                        "-fno-unwind-tables",
+                        "-fno-asynchronous-unwind-tables",
+                        "-Wl,--exclude-libs,ALL",
+                    )
+                    cppFlags.addAll(flags)
+                    cFlags.addAll(flags)
+                    val configFlags = arrayOf(
+                        "-Oz",
+                        "-DNDEBUG"
+                    ).joinToString(" ")
+                    arguments(
+                        "-DCMAKE_BUILD_TYPE=Release",
+                        "-DCMAKE_CXX_FLAGS_RELEASE=$configFlags",
+                        "-DCMAKE_C_FLAGS_RELEASE=$configFlags",
+                        "-DDEBUG_SYMBOLS_PATH=${project.buildDir.absolutePath}/symbols/$name",
+                    )
+                }
+            }
         }
     }
 
@@ -117,6 +160,7 @@ android {
         }
     }
     buildToolsVersion = "33.0.0"
+    ndkVersion = "25.0.8775105"
 }
 
 afterEvaluate {

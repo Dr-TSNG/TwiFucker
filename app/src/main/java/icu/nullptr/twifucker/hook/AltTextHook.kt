@@ -1,7 +1,6 @@
 package icu.nullptr.twifucker.hook
 
 import android.widget.TextView
-import com.github.kyuubiran.ezxhelper.init.InitFields
 import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookAfter
 

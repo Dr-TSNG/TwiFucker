@@ -14,12 +14,17 @@ object JsonHook : BaseHook() {
             val jsonClass =
                 findField("com.bluelinelabs.logansquare.LoganSquare") { name == "JSON_FACTORY" }.type
             Log.d("Located json class ${jsonClass.simpleName}")
+            // com.fasterxml.jackson.core.JsonFactory
             val jsonMethod = findMethod(jsonClass) {
-                isFinal && parameterTypes.size == 2 && parameterTypes[0] == InputStream::class.java && returnType == InputStream::class.java
+                isFinal && parameterTypes.size == 1 && parameterTypes[0] == InputStream::class.java
             }
             Log.d("Located json method ${jsonMethod.name}")
-            jsonMethod.hookAfter { param ->
-                handleJson(param)
+            jsonMethod.hookBefore { param ->
+                try {
+                    handleJson(param)
+                } catch (t: Throwable) {
+                    Log.e(t)
+                }
             }
         } catch (e: NoSuchFieldException) {
             Log.d("Failed to relocate json field", e)
@@ -41,9 +46,8 @@ object JsonHook : BaseHook() {
 
     // data
     private fun JSONObject.dataGetInstructions(): JSONArray? =
-        optJSONObject("user_result")?.optJSONObject("result")
-            ?.optJSONObject("timeline_response")?.optJSONObject("timeline")
-            ?.optJSONArray("instructions") ?: optJSONObject(
+        optJSONObject("user_result")?.optJSONObject("result")?.optJSONObject("timeline_response")
+            ?.optJSONObject("timeline")?.optJSONArray("instructions") ?: optJSONObject(
             "timeline_response"
         )?.optJSONArray("instructions")
 
@@ -105,8 +109,8 @@ object JsonHook : BaseHook() {
             }
             else -> return null
         }
-        return temp?.optJSONObject("content")?.optJSONObject("tweetResult")
-            ?.optJSONObject("result")?.optJSONObject("legacy")
+        return temp?.optJSONObject("content")?.optJSONObject("tweetResult")?.optJSONObject("result")
+            ?.optJSONObject("legacy")
     }
 
     private fun JSONObject.entryGetTrends(): JSONArray? =
@@ -133,8 +137,7 @@ object JsonHook : BaseHook() {
 
     // legacy
     private fun JSONObject.legacyGetRetweetedStatusLegacy(): JSONObject? =
-        optJSONObject("retweeted_status_result")?.optJSONObject("result")
-            ?.optJSONObject("legacy")
+        optJSONObject("retweeted_status_result")?.optJSONObject("result")?.optJSONObject("legacy")
 
     private fun JSONObject.legacyGetExtendedEntitiesMedias(): JSONArray? =
         optJSONObject("extended_entities")?.optJSONArray("media")
@@ -288,7 +291,7 @@ object JsonHook : BaseHook() {
 
 
     private fun handleJson(param: XC_MethodHook.MethodHookParam) {
-        val inputStream = param.result as InputStream
+        val inputStream = param.args[0] as InputStream
         val reader = BufferedReader(inputStream.reader())
         var content: String
         try {
@@ -296,7 +299,7 @@ object JsonHook : BaseHook() {
                 content = r.readText()
             }
         } catch (_: java.io.IOException) {
-            param.result = object : InputStream() {
+            param.args[0] = object : InputStream() {
                 override fun read(): Int {
                     return -1
                 }
@@ -336,7 +339,7 @@ object JsonHook : BaseHook() {
             Log.d(content)
         }
 
-        param.result = content.byteInputStream()
+        param.args[0] = content.byteInputStream()
     }
 
 }

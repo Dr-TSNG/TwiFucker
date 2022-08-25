@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package icu.nullptr.twifucker.ui
 
 import android.app.AlertDialog
@@ -14,7 +16,7 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
 import icu.nullptr.twifucker.R
-import icu.nullptr.twifucker.hook.VideoVariant
+import icu.nullptr.twifucker.data.VideoVariant
 import icu.nullptr.twifucker.hook.currentActivity
 import java.io.File
 import java.io.FileOutputStream
@@ -46,7 +48,7 @@ class DownloadDialog(
                 type = contentType
                 putExtra(Intent.EXTRA_TITLE, fileName)
             }
-            currentActivity.startActivityForResult(intent, CREATE_FILE)
+            currentActivity.get()?.startActivityForResult(intent, CREATE_FILE)
         }
     }
 
@@ -106,8 +108,6 @@ class DownloadDialog(
         linearLayout.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
-
-        val clipboardManager = appContext.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
         urlPhotos.forEachIndexed { i, url ->
             val textView = TextView(context)

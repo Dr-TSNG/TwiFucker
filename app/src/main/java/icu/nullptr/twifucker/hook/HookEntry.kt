@@ -24,7 +24,13 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         fun loadDexHelper() {
             if (this::dexHelper.isInitialized) return
+            val ts = System.currentTimeMillis()
             dexHelper = DexHelper(appContext.classLoader)
+            Log.i("DexHelper load in ${System.currentTimeMillis() - ts} ms")
+        }
+
+        fun closeDexHelper() {
+            if (this::dexHelper.isInitialized) dexHelper.close()
         }
     }
 
@@ -65,6 +71,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 )
             }
             initHooks(hooks)
+            closeDexHelper()
         }
     }
 
@@ -72,9 +79,10 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
         hook.forEach {
             kotlin.runCatching {
                 if (it.isInit) return@forEach
+                val ts = System.currentTimeMillis()
                 it.init()
                 it.isInit = true
-                Log.d("Inited hook: ${it.javaClass.simpleName}")
+                Log.i("Inited ${it.javaClass.simpleName} hook in ${System.currentTimeMillis() - ts} ms")
             }.logexIfThrow("Failed init hook: ${it.javaClass.simpleName}")
         }
     }

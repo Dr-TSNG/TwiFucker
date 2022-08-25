@@ -445,25 +445,25 @@ object DownloadHook : BaseHook() {
     }
 
     private fun loadHookInfo() {
-        val hookLastUpdate = modulePrefs.getLong("hook_last_update", 0)
+        val hookDownloadLastUpdate = modulePrefs.getLong("hook_download_last_update", 0)
 
         @Suppress("DEPRECATION") val appLastUpdateTime =
             appContext.packageManager.getPackageInfo(appContext.packageName, 0).lastUpdateTime
         val moduleLastUpdate = File(modulePath).lastModified()
 
-        Log.d("hookLastUpdate: $hookLastUpdate, appLastUpdateTime: $appLastUpdateTime, moduleLastUpdate: $moduleLastUpdate")
+        Log.d("hookDownloadLastUpdate: $hookDownloadLastUpdate, appLastUpdateTime: $appLastUpdateTime, moduleLastUpdate: $moduleLastUpdate")
 
         val timeStart = System.currentTimeMillis()
 
-        if (hookLastUpdate > appLastUpdateTime && hookLastUpdate > moduleLastUpdate) {
+        if (hookDownloadLastUpdate > appLastUpdateTime && hookDownloadLastUpdate > moduleLastUpdate) {
             loadCachedHookInfo()
-            Log.d("Hook load time: ${System.currentTimeMillis() - timeStart} ms")
+            Log.d("Download Hook load time: ${System.currentTimeMillis() - timeStart} ms")
         } else {
             loadDexHelper()
             searchHook()
-            Log.d("Hook search time: ${System.currentTimeMillis() - timeStart} ms")
+            Log.d("Download Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()
-            modulePrefs.edit().putLong("hook_last_update", System.currentTimeMillis()).apply()
+            modulePrefs.edit().putLong("hook_download_last_update", System.currentTimeMillis()).apply()
         }
     }
 }

@@ -3,6 +3,7 @@ package icu.nullptr.twifucker.hook
 import android.app.Activity
 import android.content.Intent
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
+import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.utils.*
 import icu.nullptr.twifucker.R
@@ -12,6 +13,7 @@ import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
 import icu.nullptr.twifucker.ui.DownloadDialog
 import java.io.File
 import java.lang.ref.WeakReference
+import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 
 lateinit var currentActivity: WeakReference<Activity>
@@ -113,7 +115,7 @@ object DownloadHook : BaseHook() {
             val newList = mutableListOf<Any>()
             newList.add(item)
             val newSecondRow = loadClass(carouselViewDataClassName).newInstance(
-                args(newList.toList(), true), argTypes(List::class.java, Boolean::class.java)
+                args(newList.toList()), argTypes(List::class.java)
             ) ?: return@hookAfter
             result.add(1, newSecondRow)
         }
@@ -264,23 +266,19 @@ object DownloadHook : BaseHook() {
 
 
     private fun searchHook() {
-        val carouselActionItemFactoryClass = dexHelper.findMethodUsingString(
-            "carouselActionItemFactory",
+        val genCarouselActionItemMethod = dexHelper.findMethodUsingString(
+            "viewOptions.actionItems",
             false,
-            dexHelper.encodeClassIndex(Void.TYPE),
-            5,
+            dexHelper.encodeClassIndex(Object::class.java),
+            0,
             null,
             -1,
             null,
             null,
             null,
             true,
-        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
-            ?: throw NoSuchMethodError()
-        val genCarouselActionItemMethod =
-            carouselActionItemFactoryClass.declaredMethods.firstOrNull { m ->
-                m.isPrivate && m.isFinal && m.parameterTypes.isEmpty() && m.returnType == List::class.java
-            } ?: throw NoSuchMethodError()
+        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it) } ?: throw NoSuchMethodError()
+        val carouselActionItemFactoryClass = genCarouselActionItemMethod.declaringClass
 
         val actionItemViewDataClass = dexHelper.findMethodUsingString(
             "ActionItemViewData(actionType=",
@@ -344,29 +342,28 @@ object DownloadHook : BaseHook() {
             null,
             true,
         ).firstOrNull() ?: throw NoSuchMethodError()
-        val actionItemViewMethod = dexHelper.decodeMethodIndex(actionItemViewMethodIndex) as Method
         val actionItemViewOnClickConstructor = dexHelper.findMethodInvoking(
             actionItemViewMethodIndex,
             dexHelper.encodeClassIndex(Void.TYPE),
-            3,
+            -1,
             null,
             -1,
+            null,
             longArrayOf(
-                dexHelper.encodeClassIndex(actionItemViewMethod.parameterTypes[1]),
-                dexHelper.encodeClassIndex(actionItemViewMethod.parameterTypes[0]),
                 dexHelper.encodeClassIndex(Int::class.java)
             ),
             null,
-            null,
-            true,
-        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it) } ?: throw NoSuchMethodError()
+            false,
+        ).firstOrNull {
+            dexHelper.decodeMethodIndex(it) is Constructor<*>
+        }?.let { dexHelper.decodeMethodIndex(it) } ?: throw NoSuchMethodError()
         val actionItemViewOnClickMethod =
-            actionItemViewOnClickConstructor.declaringClass.declaredMethods.firstOrNull { it.name == "onClick" } as Method
-        val viewDataField =
-            actionItemViewOnClickConstructor.declaringClass.declaredFields.firstOrNull { it.type == viewDataClass }
-                ?: throw NoSuchFieldError()
+            (actionItemViewOnClickConstructor as Constructor<*>).declaringClass.declaredMethods.firstOrNull { it.name == "onClick" } as Method
+        val viewDataField = actionItemViewOnClickConstructor.declaringClass.declaredFields.filter {
+            it.type.equals(Object::class.java)
+        }.sortedBy { it.name }.lastOrNull() ?: throw NoSuchFieldError()
         val actionTypeField =
-            actionItemViewDataClass.declaredFields.firstOrNull { it.type == actionTypeEnumClass }
+            actionItemViewDataClass.declaredFields.lastOrNull { it.type == actionTypeEnumClass }
                 ?: throw NoSuchFieldError()
 
         actionItemViewOnClickClassName = actionItemViewOnClickConstructor.declaringClass.name
@@ -374,38 +371,36 @@ object DownloadHook : BaseHook() {
         viewDataFieldName = viewDataField.name
         actionTypeFieldName = actionTypeField.name
 
-
-        val shareMenuRefMethodIndex = dexHelper.findMethodUsingString(
-            "Unhandled QuoteView Long Click Choice:",
-            false,
-            dexHelper.encodeClassIndex(Void.TYPE),
-            9,
-            null,
-            -1,
-            null,
-            null,
-            null,
-            true,
-        ).firstOrNull() ?: return
-        val shareMenuClass =
-            dexHelper.decodeMethodIndex(shareMenuRefMethodIndex)?.declaringClass ?: return
+        val shareMenuClass = ezXClassLoader.getAllClassesList().filter {
+            val clazz = loadClassOrNull(it) ?: return@filter false
+            try {
+                return@filter (clazz.constructors.any { c ->
+                    c.parameterTypes.size >= 15 && c.parameterTypes[1] == loadClass("androidx.fragment.app.Fragment") && c.parameterTypes[14] == loadClass(
+                        "com.twitter.util.user.UserIdentifier"
+                    )
+                })
+            } catch (_: Throwable) {
+                return@filter false
+            }
+        }.firstOrNull()?.let { loadClassOrNull(it) } ?: throw ClassNotFoundException()
         val shareMenuMethod = shareMenuClass.declaredMethods.firstOrNull { m ->
-            m.returnType == Void.TYPE && m.isPrivate && m.parameterTypes.size == 4 && m.parameterTypes[0] == String::class.java && m.parameterTypes[1] == String::class.java
-        } ?: return
-
+            m.returnType == Void.TYPE && m.parameterTypes.size == 4 && m.parameterTypes[0] == String::class.java && m.parameterTypes[1] == String::class.java
+        } ?: throw NoSuchMethodError()
         val tweetResultField = shareMenuMethod.parameterTypes[2].declaredFields.firstOrNull { f ->
             f.isPublic && f.isFinal && f.type.declaredFields.any { it.type == loadClassOrNull("com.twitter.model.vibe.Vibe") }
-        } ?: return
-        val resultField = tweetResultField.type.declaredFields.lastOrNull { f ->
+        } ?: throw NoSuchFieldError()
+        val resultField = tweetResultField.type.declaredFields.filter { f ->
             f.isPublic && f.isFinal && f.type.declaredFields.size == 3 && f.type.declaredFields.filter { it.isFinal }.size == 3 && f.type.declaredFields.filter { it.isStatic && it.isFinal && it.isPublic }.size == 2
-        } ?: return
+        }[1] ?: throw NoSuchFieldError()
         val legacyField =
-            resultField.type.declaredFields.firstOrNull { it.isPrivate && it.isFinal } ?: return
+            resultField.type.declaredFields.filter { it.isNotStatic }.sortedBy { it.name }
+                .lastOrNull() ?: throw NoSuchFieldError()
         val extendedEntitiesField =
-            legacyField.type.declaredFields.firstOrNull { it.isPrivate && it.isFinal } ?: return
+            legacyField.type.declaredFields.filter { it.isNotStatic }.sortedBy { it.name }
+                .lastOrNull() ?: throw NoSuchFieldError()
         val mediaField =
-            extendedEntitiesField.type.superclass.declaredFields.firstOrNull { it.isPrivate && it.isFinal && it.type == List::class.java }
-                ?: return
+            extendedEntitiesField.type.superclass.declaredFields.firstOrNull { it.type == List::class.java }
+                ?: throw NoSuchFieldError()
 
         val mediaTypeEnumClass = dexHelper.findMethodUsingString(
             "MODEL3D",
@@ -418,18 +413,21 @@ object DownloadHook : BaseHook() {
             null,
             null,
             true,
-        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass } ?: return
+        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
+            ?: throw ClassNotFoundException()
         val perMediaClass = loadClassOrNull(mediaTypeEnumClass.name.split("$")[0])
         val mediaTypeField =
-            perMediaClass?.declaredFields?.firstOrNull { it.type == mediaTypeEnumClass } ?: return
+            perMediaClass?.declaredFields?.firstOrNull { it.type == mediaTypeEnumClass }
+                ?: throw NoSuchFieldError()
         val mediaUrlHttpsField =
-            perMediaClass.declaredFields.lastOrNull { it.type == String::class.java } ?: return
+            perMediaClass.declaredFields.firstOrNull { it.isNotStatic && it.type == String::class.java }
+                ?: throw NoSuchFieldError()
         val mediaInfoField = perMediaClass.declaredFields.firstOrNull { f ->
             f.type.declaredFields.size == 4 && f.type.declaredFields.filter { f2 -> f2.type == Float::class.java }.size == 2 && f.type.declaredFields.filter { f2 -> f2.type == List::class.java }.size == 1
-        } ?: return
+        } ?: throw NoSuchFieldError()
         val variantsField =
             mediaInfoField.type?.declaredFields?.firstOrNull { it.type == List::class.java }
-                ?: return
+                ?: throw NoSuchFieldError()
 
         shareMenuClassName = shareMenuClass.name
         shareMenuMethodName = shareMenuMethod.name
@@ -463,7 +461,8 @@ object DownloadHook : BaseHook() {
             searchHook()
             Log.d("Download Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()
-            modulePrefs.edit().putLong("hook_download_last_update", System.currentTimeMillis()).apply()
+            modulePrefs.edit().putLong("hook_download_last_update", System.currentTimeMillis())
+                .apply()
         }
     }
 }

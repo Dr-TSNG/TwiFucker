@@ -114,9 +114,18 @@ object DownloadHook : BaseHook() {
             ) ?: return@hookAfter
             val newList = mutableListOf<Any>()
             newList.add(item)
-            val newSecondRow = loadClass(carouselViewDataClassName).newInstance(
-                args(newList.toList()), argTypes(List::class.java)
-            ) ?: return@hookAfter
+            val newSecondRow = loadClassOrNull(carouselViewDataClassName)?.let {
+                if (it.constructors[0].parameterTypes.size == 2) {
+                    it.newInstance(
+                        args(newList.toList(), true),
+                        argTypes(List::class.java, Boolean::class.java)
+                    )
+                } else {
+                    it.newInstance(
+                        args(newList.toList()), argTypes(List::class.java)
+                    )
+                }
+            } ?: return@hookAfter
             result.add(1, newSecondRow)
         }
 
@@ -269,7 +278,7 @@ object DownloadHook : BaseHook() {
         val genCarouselActionItemMethod = dexHelper.findMethodUsingString(
             "viewOptions.actionItems",
             false,
-            dexHelper.encodeClassIndex(Object::class.java),
+            -1,
             0,
             null,
             -1,
@@ -338,7 +347,7 @@ object DownloadHook : BaseHook() {
             null,
             -1,
             null,
-            longArrayOf(dexHelper.encodeClassIndex(Int::class.java)),
+            null,
             null,
             true,
         ).firstOrNull() ?: throw NoSuchMethodError()
@@ -359,9 +368,9 @@ object DownloadHook : BaseHook() {
         }?.let { dexHelper.decodeMethodIndex(it) } ?: throw NoSuchMethodError()
         val actionItemViewOnClickMethod =
             (actionItemViewOnClickConstructor as Constructor<*>).declaringClass.declaredMethods.firstOrNull { it.name == "onClick" } as Method
-        val viewDataField = actionItemViewOnClickConstructor.declaringClass.declaredFields.filter {
-            it.type.equals(Object::class.java)
-        }.sortedBy { it.name }.lastOrNull() ?: throw NoSuchFieldError()
+        val viewDataField =
+            actionItemViewOnClickConstructor.declaringClass.declaredFields.filter { it.type != Int::class.java }[1]
+                ?: throw NoSuchFieldError()
         val actionTypeField =
             actionItemViewDataClass.declaredFields.lastOrNull { it.type == actionTypeEnumClass }
                 ?: throw NoSuchFieldError()
@@ -389,9 +398,9 @@ object DownloadHook : BaseHook() {
         val tweetResultField = shareMenuMethod.parameterTypes[2].declaredFields.firstOrNull { f ->
             f.isPublic && f.isFinal && f.type.declaredFields.any { it.type == loadClassOrNull("com.twitter.model.vibe.Vibe") }
         } ?: throw NoSuchFieldError()
-        val resultField = tweetResultField.type.declaredFields.filter { f ->
-            f.isPublic && f.isFinal && f.type.declaredFields.size == 3 && f.type.declaredFields.filter { it.isFinal }.size == 3 && f.type.declaredFields.filter { it.isStatic && it.isFinal && it.isPublic }.size == 2
-        }[1] ?: throw NoSuchFieldError()
+        val resultField = tweetResultField.type.declaredFields.groupBy { it.type }
+            .filter { it.value.size == 2 && it.key.declaredFields.size == 3 }.map { it.value[1] }[0]
+            ?: throw NoSuchFieldError()
         val legacyField =
             resultField.type.declaredFields.filter { it.isNotStatic }.sortedBy { it.name }
                 .lastOrNull() ?: throw NoSuchFieldError()

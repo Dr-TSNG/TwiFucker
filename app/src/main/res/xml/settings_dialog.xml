@@ -36,6 +36,10 @@
             android:key="disable_sensitive_media_warning"
             android:summary="@string/disable_sensitive_media_warning_summary"
             android:title="@string/disable_sensitive_media_warning_title" />
+        <SwitchPreference
+            android:key="disable_recommended_users"
+            android:summary="@string/disable_recommended_users_summary"
+            android:title="@string/disable_recommended_users" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_extra">
@@ -46,7 +50,7 @@
             android:key="disable_topics_to_follow"
             android:title="@string/disable_topics_to_follow_title" />
     </PreferenceCategory>
-    
+
     <PreferenceCategory android:title="@string/settings_experimental">
         <SwitchPreference
             android:key="enable_download_hook"

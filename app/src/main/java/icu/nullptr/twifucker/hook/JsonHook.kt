@@ -44,6 +44,23 @@ object JsonHook : BaseHook() {
 
     private fun JSONObject.jsonGetData(): JSONObject? = optJSONObject("data")
 
+    private fun JSONObject.jsonHasRecommendedUsers(): Boolean = has("recommended_users")
+
+    private fun JSONObject.jsonRemoveRecommendedUsers() {
+        remove("recommended_users")
+    }
+
+    private fun JSONObject.jsonCheckAndRemoveRecommendedUsers() {
+        if (modulePrefs.getBoolean(
+                "disable_recommended_users",
+                false
+            ) && jsonHasRecommendedUsers()
+        ) {
+            Log.d("Handle recommended users: $this}")
+            jsonRemoveRecommendedUsers()
+        }
+    }
+
     // data
     private fun JSONObject.dataGetInstructions(): JSONArray? =
         optJSONObject("user_result")?.optJSONObject("result")?.optJSONObject("timeline_response")
@@ -317,6 +334,8 @@ object JsonHook : BaseHook() {
                 (instruction as JSONObject).instructionCheckAndRemove()
             }
             json.jsonGetData()?.dataCheckAndRemove()
+
+            json.jsonCheckAndRemoveRecommendedUsers()
 
             content = json.toString()
         } catch (_: JSONException) {

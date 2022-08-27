@@ -66,7 +66,8 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         TimelineUserHook,
                         TimelineTrendHook,
                         TimelineTweetHook,
-                        SensitiveMediaWarningHook
+                        SensitiveMediaWarningHook,
+                        ProfileRecommendationModuleHook,
                     )
                 )
             }

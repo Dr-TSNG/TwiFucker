@@ -53,8 +53,6 @@ class DownloadDialog(
     }
 
     private fun download(url: String) {
-        Log.toast(context.getString(R.string.downloading))
-
         val progressDialog = ProgressDialog(context)
         progressDialog.setTitle(R.string.downloading)
         progressDialog.setCancelable(false)

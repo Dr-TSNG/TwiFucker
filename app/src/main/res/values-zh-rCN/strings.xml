@@ -31,7 +31,6 @@
     <string name="download_photo">图片 %1$d</string>
     <string name="download_video">%1$s - 每秒 %2$d 千兆字节</string>
     <string name="download_link_copied">已复制下载链接</string>
-    <string name="download_started">已开始下载</string>
     <string name="downloading">下载中…</string>
     <string name="download_failed">下载失败</string>
     <string name="download_copy_failed">复制文件失败</string>

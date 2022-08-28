@@ -56,6 +56,10 @@
             android:key="enable_download_hook"
             android:summary="@string/enable_download_hook_summary"
             android:title="@string/enable_download_hook" />
+        <SwitchPreference
+            android:key="disable_url_redirect"
+            android:summary="@string/disable_url_redirect_summary"
+            android:title="@string/disable_url_redirect" />
     </PreferenceCategory>
 
 </PreferenceScreen>

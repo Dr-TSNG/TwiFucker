@@ -8,15 +8,14 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.utils.*
 import icu.nullptr.twifucker.R
 import icu.nullptr.twifucker.data.VideoVariant
+import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
 import icu.nullptr.twifucker.ui.DownloadDialog
 import java.io.File
-import java.lang.ref.WeakReference
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 
-lateinit var currentActivity: WeakReference<Activity>
 
 object DownloadHook : BaseHook() {
     private var urlPhotos: List<String> = listOf()
@@ -54,12 +53,6 @@ object DownloadHook : BaseHook() {
         } catch (t: Throwable) {
             Log.e(t)
             return
-        }
-
-        findMethod(Activity::class.java) {
-            name == "onResume"
-        }.hookAfter { param ->
-            currentActivity = WeakReference(param.thisObject as Activity)
         }
 
         findMethod(Activity::class.java) {

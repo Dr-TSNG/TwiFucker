@@ -17,7 +17,7 @@ import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
 import icu.nullptr.twifucker.R
 import icu.nullptr.twifucker.data.VideoVariant
-import icu.nullptr.twifucker.hook.currentActivity
+import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection

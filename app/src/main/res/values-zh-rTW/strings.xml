@@ -7,20 +7,40 @@
     <string name="settings_general">一般</string>
     <string name="settings_main">主頁</string>
     <string name="settings_extra">其他</string>
+    <string name="settings_experimental">實驗性</string>
 
-    <string name="about_title">TwiFucker by Nullptr</string>
+    <string name="about_title">TwiFucker 來自 Nullptr 的用心製作</string>
     <string name="show_toast_title">啟動時顯示快顯通知</string>
-    <string name="disable_promoted_content_title">禁用建議的內容</string>
-    <string name="disable_promoted_user_title">禁用使用者推廣</string>
-    <string name="disable_promoted_trends_title">禁用流行趨勢</string>
-    <string name="disable_sensitive_media_warning_title">禁用敏感內容警告</string>
-    <string name="disable_who_to_follow_title">禁用關注物件</string>
-    <string name="disable_topics_to_follow_title">禁用要關注的主題</string>
+    <string name="use_legacy_hook">使用 legacy hook</string>
+    <string name="disable_promoted_content_title">關閉建議的內容</string>
+    <string name="disable_promoted_user_title">關閉推薦使用者</string>
+    <string name="disable_promoted_trends_title">關閉流行趨勢</string>
+    <string name="disable_sensitive_media_warning_title">關閉敏感內容警告</string>
+    <string name="disable_recommended_users">關閉推薦使用者</string>
+    <string name="disable_who_to_follow_title">關閉推薦跟隨</string>
+    <string name="disable_topics_to_follow_title">關閉推薦的主題</string>
+    <string name="enable_download_hook">開啟下載功能</string>
+    <string name="disable_url_redirect">禁用 URL 重定向</string>
 
-    <string name="about_summary">訪問GitHub頁面以獲得更多支援</string>
-    <string name="show_toast_summary">你可以透過設定和隱私 > 其他資源 > 版本找到 TwiFucker 設定</string>
-    <string name="disable_promoted_content_summary">主頁 > 個人資料 > 搜尋時間線</string>
-    <string name="disable_promoted_user_summary">主頁 > 個人資料 > 搜尋時間線</string>
+    <string name="about_summary">瀏覽 GitHub 頁面以獲得更多資訊</string>
+    <string name="show_toast_summary">你可以透過「設定和隱私 &gt; 其他資源 &gt; 版本」找到 TwiFucker 設定</string>
+    <string name="use_legacy_hook_summary">使用 legacy hook 來處理 JSON 字串</string>
+    <string name="disable_promoted_content_summary">主頁 &gt; 個人資料 &gt; 搜尋 時間線</string>
+    <string name="disable_promoted_user_summary">主頁 &gt; 個人資料 &gt; 搜尋 時間線</string>
     <string name="disable_promoted_trends_summary">搜尋</string>
-    <string name="disable_sensitive_media_warning_summary">主頁 > 個人資料時間線和推特細節</string>
+    <string name="disable_sensitive_media_warning_summary">主頁 &gt; 個人資料 時間線和推特細節</string>
+    <string name="disable_recommended_users_summary">跟隨某人後不顯示推薦使用者</string>
+    <string name="enable_download_hook_summary">[分享 -> 下載與複製] 輕點下載, 長按複製連結</string>
+    <string name="disable_url_redirect_summary">立即啟動自定義標籤並停止使用 t.co 網址重定向</string>
+
+    <string name="download_or_copy">下載與複製</string>
+    <string name="download_photo">圖片 %1$d</string>
+    <string name="download_video">%1$s - %2$d Mbps</string>
+    <string name="download_link_copied">已複製下載連結</string>
+    <string name="downloading">下載中…</string>
+    <string name="download_failed">下載失敗</string>
+    <string name="download_copy_failed">複製檔案失敗</string>
+
+    <string name="deleted_n_promoted_tweet">從資料庫中刪除了 %1$d 個廣告或促銷推文。</string>
+
 </resources>

@@ -2,6 +2,8 @@ package icu.nullptr.twifucker.hook
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
 import com.github.kyuubiran.ezxhelper.init.InitFields
 import com.github.kyuubiran.ezxhelper.utils.*
 import de.robv.android.xposed.XposedBridge
@@ -10,6 +12,7 @@ import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
 import java.io.File
 
 object CustomTabsHook : BaseHook() {
+    private val DOMAIN_WHITELIST_SUFFIX = listOf("pscp.tv", "periscope.tv", "twitter.com", "t.co")
     private lateinit var customTabsClassName: String
     private lateinit var customTabsGetMethodName: String
     private lateinit var customTabsLaunchUrlMethodName: String
@@ -25,22 +28,43 @@ object CustomTabsHook : BaseHook() {
         }
 
         findMethod(Activity::class.java) {
-            name == "startActivity"
+            name == "startActivity" && parameterTypes.size == 2 && parameterTypes[0] == Intent::class.java && parameterTypes[1] == Bundle::class.java
         }.hookReplace { param ->
+            val activity = param.thisObject as Activity
             val intent = param.args[0] as Intent
-            if (intent.action != Intent.ACTION_VIEW || !intent.categories.contains(Intent.CATEGORY_BROWSABLE)) {
+
+            if (intent.categories == null || (intent.action != Intent.ACTION_VIEW && intent.categories != null && !intent.categories.contains(
+                    Intent.CATEGORY_BROWSABLE
+                ))
+            ) {
                 return@hookReplace XposedBridge.invokeOriginalMethod(
                     param.method, param.thisObject, param.args
                 )
             }
+
+            val isInAppBrowserEnabled = hostPrefs.getBoolean("in_app_browser", true)
+            val data = intent.dataString
+            val uri = Uri.parse(data)
+            val host = uri.host
+
+            if (host == null || DOMAIN_WHITELIST_SUFFIX.any { host.endsWith(it) }) {
+                Log.d("TEST4 $intent")
+                return@hookReplace XposedBridge.invokeOriginalMethod(
+                    param.method, param.thisObject, param.args
+                )
+            }
+
             val customTabsClass = loadClass(customTabsClassName)
             val customTabsObj = customTabsClass.invokeStaticMethod(customTabsGetMethodName)
-            customTabsObj?.invokeMethodAuto(
-                customTabsLaunchUrlMethodName,
-                HookEntry.currentActivity.get(),
-                intent.dataString,
-                null
-            )
+
+            if (isInAppBrowserEnabled) {
+                customTabsObj?.invokeMethodAuto(
+                    customTabsLaunchUrlMethodName, activity, data, null
+                )
+            } else {
+                val newIntent = Intent(Intent.ACTION_VIEW, uri)
+                activity.startActivity(newIntent)
+            }
         }
     }
 

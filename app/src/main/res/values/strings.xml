@@ -31,7 +31,7 @@
     <string name="disable_sensitive_media_warning_summary">home/profile timeline and tweet details</string>
     <string name="disable_recommended_users_summary">No recommend users after follow someone</string>
     <string name="enable_download_hook_summary">[Share -> Download Or Copy] Tap to download, long tap to copy link</string>
-    <string name="disable_url_redirect_summary">Stop t.co url redirect, launch custom tabs instantly</string>
+    <string name="disable_url_redirect_summary">Stop t.co url redirect, launch custom tabs or browser instantly</string>
 
     <string name="download_or_copy">Download Or Copy</string>
     <string name="download_photo">Photo %1$d</string>

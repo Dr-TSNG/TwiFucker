@@ -13,6 +13,13 @@ val modulePrefs: SharedPreferences by lazy {
     )
 }
 
+@Suppress("DEPRECATION")
+val hostPrefs: SharedPreferences by lazy {
+    appContext.getSharedPreferences(
+        appContext.packageName + "_preferences", Context.MODE_MULTI_PROCESS
+    )
+}
+
 @SuppressLint("DiscouragedApi")
 fun getId(name: String, defType: String): Int {
     return appContext.resources.getIdentifier(

@@ -11,7 +11,7 @@ plugins {
 val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
 
-val verName = "1.4"
+val verName = "1.6"
 val gitCommitCount = "git rev-list HEAD --count".execute().toInt()
 val gitCommitHash = "git rev-parse --verify --short HEAD".execute()
 

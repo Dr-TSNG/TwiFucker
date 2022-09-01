@@ -324,6 +324,19 @@ object JsonHook : BaseHook() {
             return
         }
 
+        if (modulePrefs.getBoolean("enable_log", false)) {
+            val isRefreshSessionResponse = try {
+                JSONObject(content).let {
+                    return@let it.has("session_token")
+                }
+            } catch (t: Throwable) {
+                false
+            }
+            if (!isRefreshSessionResponse) {
+                Log.d(content)
+            }
+        }
+        
         try {
             val json = JSONObject(content)
 

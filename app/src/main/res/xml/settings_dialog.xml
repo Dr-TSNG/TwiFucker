@@ -62,4 +62,19 @@
             android:title="@string/disable_url_redirect" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/settings_logging">
+        <SwitchPreference
+            android:key="enable_log"
+            android:summary="@string/enable_log_summary"
+            android:title="@string/enable_log" />
+        <Preference
+            android:dependency="enable_log"
+            android:key="export_log"
+            android:title="@string/export_log" />
+        <Preference
+            android:dependency="enable_log"
+            android:key="clear_log"
+            android:title="@string/clear_log" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

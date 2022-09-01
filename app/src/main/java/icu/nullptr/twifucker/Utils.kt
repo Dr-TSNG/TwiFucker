@@ -5,6 +5,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import icu.nullptr.twifucker.ui.SettingsDialog
+import java.io.File
+
+
+val logFileDir by lazy { File(appContext.externalCacheDir?.absolutePath + "/twifucker_log/") }
+
+val logFile by lazy { File(logFileDir, "log.txt") }
 
 @Suppress("DEPRECATION")
 val modulePrefs: SharedPreferences by lazy {

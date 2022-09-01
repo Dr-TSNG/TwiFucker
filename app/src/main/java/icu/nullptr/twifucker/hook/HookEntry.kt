@@ -14,6 +14,8 @@ import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import icu.nullptr.twifucker.hook.activity.MainActivityHook
 import icu.nullptr.twifucker.hook.activity.SettingsHook
+import icu.nullptr.twifucker.logFile
+import icu.nullptr.twifucker.logFileDir
 import icu.nullptr.twifucker.modulePrefs
 import me.iacn.biliroaming.utils.DexHelper
 import java.lang.ref.WeakReference
@@ -25,6 +27,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
     companion object {
         lateinit var dexHelper: DexHelper
         lateinit var currentActivity: WeakReference<Activity>
+        lateinit var logcatProcess: Process
 
         fun loadDexHelper() {
             if (this::dexHelper.isInitialized) return
@@ -35,6 +38,26 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         fun closeDexHelper() {
             if (this::dexHelper.isInitialized) dexHelper.close()
+        }
+
+        fun isLogcatProcessInitialized(): Boolean {
+            return this::logcatProcess.isInitialized
+        }
+        
+        fun startLog() {
+            if (!modulePrefs.getBoolean("enable_log", false)) return
+            if (!logFileDir.exists()) {
+                logFileDir.mkdirs()
+            }
+            try {
+                logcatProcess = Runtime.getRuntime().exec(
+                    arrayOf(
+                        "logcat", "-T", "100", "-f", logFile.absolutePath
+                    )
+                )
+            } catch (t: Throwable) {
+                Log.e(t)
+            }
         }
     }
 
@@ -55,6 +78,11 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
         }.hookAfter { param ->
             EzXHelperInit.initAppContext(param.args[0] as Context)
             EzXHelperInit.setEzClassLoader(appContext.classLoader)
+            
+            if (!lpparam.processName.contains(":")) {
+                startLog()
+            }
+            
             Log.d("AttachContext")
 
             val hooks = arrayListOf(

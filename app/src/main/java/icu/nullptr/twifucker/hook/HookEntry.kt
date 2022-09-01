@@ -3,19 +3,18 @@ package icu.nullptr.twifucker.hook
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
 import com.github.kyuubiran.ezxhelper.init.EzXHelperInit
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.Log.logexIfThrow
+import com.github.kyuubiran.ezxhelper.utils.findMethod
+import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
-import de.robv.android.xposed.XposedBridge
-import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import icu.nullptr.twifucker.hook.activity.MainActivityHook
 import icu.nullptr.twifucker.hook.activity.SettingsHook
+import icu.nullptr.twifucker.modulePrefs
 import me.iacn.biliroaming.utils.DexHelper
 import java.lang.ref.WeakReference
 

@@ -9,6 +9,8 @@ import com.github.kyuubiran.ezxhelper.utils.*
 import de.robv.android.xposed.XposedBridge
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
+import icu.nullptr.twifucker.hostPrefs
+import icu.nullptr.twifucker.modulePrefs
 import java.io.File
 
 object CustomTabsHook : BaseHook() {

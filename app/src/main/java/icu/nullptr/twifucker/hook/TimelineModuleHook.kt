@@ -4,6 +4,7 @@ import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import com.github.kyuubiran.ezxhelper.utils.loadClassOrNull
+import icu.nullptr.twifucker.isEntryNeedsRemove
 
 object TimelineModuleHook : BaseHook() {
     private val jsonTimelineModuleItemClass =

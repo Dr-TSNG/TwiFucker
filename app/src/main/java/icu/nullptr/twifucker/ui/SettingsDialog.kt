@@ -16,7 +16,7 @@ import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
 import com.github.kyuubiran.ezxhelper.utils.restartHostApp
 import icu.nullptr.twifucker.R
-import icu.nullptr.twifucker.hook.modulePrefs
+import icu.nullptr.twifucker.modulePrefs
 
 class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
 
@@ -53,7 +53,11 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             addPreferencesFromResource(R.xml.settings_dialog)
             prefs = preferenceManager.sharedPreferences
             findPreference("about").setOnPreferenceClickListener {
-                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Dr-TSNG/TwiFucker")))
+                activity.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW, Uri.parse("https://github.com/Dr-TSNG/TwiFucker")
+                    )
+                )
                 true
             }
         }

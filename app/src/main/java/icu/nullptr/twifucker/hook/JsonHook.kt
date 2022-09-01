@@ -2,6 +2,7 @@ package icu.nullptr.twifucker.hook
 
 import com.github.kyuubiran.ezxhelper.utils.*
 import de.robv.android.xposed.XC_MethodHook
+import icu.nullptr.twifucker.modulePrefs
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -52,8 +53,7 @@ object JsonHook : BaseHook() {
 
     private fun JSONObject.jsonCheckAndRemoveRecommendedUsers() {
         if (modulePrefs.getBoolean(
-                "disable_recommended_users",
-                false
+                "disable_recommended_users", false
             ) && jsonHasRecommendedUsers()
         ) {
             Log.d("Handle recommended users: $this}")

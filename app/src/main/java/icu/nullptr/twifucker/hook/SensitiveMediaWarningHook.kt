@@ -4,6 +4,7 @@ import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookReplace
 import com.github.kyuubiran.ezxhelper.utils.loadClassOrNull
+import icu.nullptr.twifucker.modulePrefs
 
 object SensitiveMediaWarningHook : BaseHook() {
     private val jsonSensitiveMediaWarningClass =

@@ -3,6 +3,7 @@ package icu.nullptr.twifucker.hook
 import android.widget.TextView
 import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookAfter
+import icu.nullptr.twifucker.getId
 
 object AltTextHook : BaseHook() {
     override fun init() {

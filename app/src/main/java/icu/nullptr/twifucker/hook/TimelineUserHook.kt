@@ -1,6 +1,7 @@
 package icu.nullptr.twifucker.hook
 
 import com.github.kyuubiran.ezxhelper.utils.*
+import icu.nullptr.twifucker.modulePrefs
 
 object TimelineUserHook : BaseHook() {
     private val jsonTimelineUserClass =
@@ -9,7 +10,7 @@ object TimelineUserHook : BaseHook() {
         loadClassOrNull("com.twitter.model.json.timeline.urt.JsonTimelineUser\$\$JsonObjectMapper")
     private val jsonTimelineUserStringFields =
         jsonTimelineUserClass?.declaredFields?.firstOrNull { it.isPublic && it.type != String::class.java && it.type != Boolean::class.java }
-    
+
     override fun init() {
         if (!modulePrefs.getBoolean("disable_promoted_user", true)) return
         jsonTimelineUserMapperClass?.let { c ->

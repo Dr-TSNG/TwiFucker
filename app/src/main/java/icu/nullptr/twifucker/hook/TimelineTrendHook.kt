@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookReplace
 import com.github.kyuubiran.ezxhelper.utils.loadClassOrNull
 import de.robv.android.xposed.XposedBridge
+import icu.nullptr.twifucker.modulePrefs
 
 object TimelineTrendHook : BaseHook() {
     private val jsonTimelineTrendMapperClass =

@@ -3,7 +3,6 @@ package icu.nullptr.twifucker.hook
 import android.app.Activity
 import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookAfter
-import com.github.kyuubiran.ezxhelper.utils.hookBefore
 import java.lang.ref.WeakReference
 
 object ActivityHook : BaseHook() {

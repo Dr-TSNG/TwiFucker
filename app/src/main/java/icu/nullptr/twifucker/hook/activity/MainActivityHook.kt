@@ -7,7 +7,7 @@ import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import de.robv.android.xposed.XC_MethodHook.Unhook
 import icu.nullptr.twifucker.BuildConfig
 import icu.nullptr.twifucker.hook.BaseHook
-import icu.nullptr.twifucker.hook.modulePrefs
+import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog
 
 object MainActivityHook : BaseHook() {

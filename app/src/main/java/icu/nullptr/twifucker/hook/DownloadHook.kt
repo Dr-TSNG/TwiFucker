@@ -8,9 +8,11 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.utils.*
 import icu.nullptr.twifucker.R
 import icu.nullptr.twifucker.data.VideoVariant
+import icu.nullptr.twifucker.getId
 import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
+import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.DownloadDialog
 import java.io.File
 import java.lang.reflect.Constructor

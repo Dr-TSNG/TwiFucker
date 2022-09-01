@@ -1,4 +1,4 @@
-package icu.nullptr.twifucker.hook
+package icu.nullptr.twifucker
 
 import android.annotation.SuppressLint
 import android.content.Context

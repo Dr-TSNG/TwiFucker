@@ -4,6 +4,7 @@ import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import com.github.kyuubiran.ezxhelper.utils.loadClassOrNull
+import icu.nullptr.twifucker.modulePrefs
 
 object TimelineTweetHook : BaseHook() {
     private val jsonTimelineTweetClass =
@@ -12,7 +13,7 @@ object TimelineTweetHook : BaseHook() {
         loadClassOrNull("com.twitter.model.json.timeline.urt.JsonTimelineTweet\$\$JsonObjectMapper")
     private val jsonTimelineTweetEntryIdField =
         jsonTimelineTweetClass?.declaredFields?.firstOrNull { it.type == String::class.java }
-    
+
     override fun init() {
         if (!modulePrefs.getBoolean("disable_promoted_content", true)) return
         jsonTimelineTweetMapperClass?.let { c ->

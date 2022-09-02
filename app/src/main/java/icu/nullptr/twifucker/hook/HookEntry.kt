@@ -43,7 +43,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
         fun isLogcatProcessInitialized(): Boolean {
             return this::logcatProcess.isInitialized
         }
-        
+
         fun startLog() {
             if (!modulePrefs.getBoolean("enable_log", false)) return
             if (!logFileDir.exists()) {
@@ -78,11 +78,11 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
         }.hookAfter { param ->
             EzXHelperInit.initAppContext(param.args[0] as Context)
             EzXHelperInit.setEzClassLoader(appContext.classLoader)
-            
+
             if (!lpparam.processName.contains(":")) {
                 startLog()
             }
-            
+
             Log.d("AttachContext")
 
             val hooks = arrayListOf(

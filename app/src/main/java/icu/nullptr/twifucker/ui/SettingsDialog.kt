@@ -16,13 +16,9 @@ import android.preference.SwitchPreference
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
 import com.github.kyuubiran.ezxhelper.utils.restartHostApp
-import icu.nullptr.twifucker.R
+import icu.nullptr.twifucker.*
 import icu.nullptr.twifucker.hook.HookEntry.Companion.isLogcatProcessInitialized
 import icu.nullptr.twifucker.hook.HookEntry.Companion.logcatProcess
-import icu.nullptr.twifucker.hook.HookEntry.Companion.startLog
-import icu.nullptr.twifucker.logFile
-import icu.nullptr.twifucker.logFileDir
-import icu.nullptr.twifucker.modulePrefs
 
 class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
 
@@ -30,7 +26,8 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
         private lateinit var outDialog: AlertDialog
         private lateinit var prefs: SharedPreferences
         const val PREFS_NAME = "twifucker"
-        const val EXPORT_LOG = 1919810
+        const val EXPORT_LOG = 1001
+        const val EXPORT_JSON_LOG = 1002
     }
 
     private fun deleteFromDatabase() {
@@ -54,6 +51,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
 
     class PrefsFragment : PreferenceFragment(), Preference.OnPreferenceChangeListener,
         Preference.OnPreferenceClickListener {
+        @Deprecated("Deprecated in Java")
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             preferenceManager.sharedPreferencesName = PREFS_NAME
@@ -61,6 +59,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             prefs = preferenceManager.sharedPreferences
             findPreference("enable_log").onPreferenceChangeListener = this
             findPreference("export_log").onPreferenceClickListener = this
+            findPreference("export_json_log").onPreferenceClickListener = this
             findPreference("clear_log").onPreferenceClickListener = this
             findPreference("about").setOnPreferenceClickListener {
                 activity.startActivity(
@@ -72,12 +71,11 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             }
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onPreferenceChange(p0: Preference?, p1: Any?): Boolean {
             if (p0 is SwitchPreference) {
                 if (p0.key == "enable_log") {
-                    if (p1 as Boolean) {
-                        startLog()
-                    } else {
+                    if (!(p1 as Boolean)) {
                         clearLog()
                     }
                 }
@@ -85,10 +83,14 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             return true
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onPreferenceClick(p0: Preference?): Boolean {
             when (p0?.key) {
                 "export_log" -> {
-                    exportLog()
+                    exportLog(EXPORT_LOG, logFile.name)
+                }
+                "export_json_log" -> {
+                    exportLog(EXPORT_JSON_LOG, logJsonFile.name)
                 }
                 "clear_log" -> {
                     clearLog()
@@ -97,12 +99,23 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             return true
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            if (requestCode == EXPORT_LOG && resultCode == Activity.RESULT_OK) {
+            if (resultCode == Activity.RESULT_OK) {
                 data?.data?.let { uri ->
                     context.contentResolver.openOutputStream(uri)?.use { out ->
-                        logFile.inputStream().use { input ->
-                            input.copyTo(out)
+                        when (requestCode) {
+                            EXPORT_LOG -> {
+                                logFile.inputStream().use { input ->
+                                    input.copyTo(out)
+                                }
+                            }
+                            EXPORT_JSON_LOG -> {
+                                logJsonFile.inputStream().use { input ->
+                                    input.copyTo(out)
+                                }
+                            }
+                            else -> {}
                         }
                     }
                 }
@@ -110,15 +123,25 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             super.onActivityResult(requestCode, resultCode, data)
         }
 
-        private fun exportLog() {
-            if (!logFile.exists()) return
+        private fun exportLog(logType: Int, fileName: String) {
+            when (logType) {
+                EXPORT_LOG -> {
+                    if (!logFile.exists()) return
+                }
+                EXPORT_JSON_LOG -> {
+                    if (!logJsonFile.exists()) return
+                }
+                else -> {
+                    return
+                }
+            }
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 type = "text/plain"
                 addCategory(Intent.CATEGORY_OPENABLE)
-                putExtra(Intent.EXTRA_TITLE, "log.txt")
+                putExtra(Intent.EXTRA_TITLE, fileName)
             }
             try {
-                startActivityForResult(intent, EXPORT_LOG)
+                startActivityForResult(intent, logType)
             } catch (t: Throwable) {
                 Log.e(t)
             }
@@ -130,7 +153,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                     logcatProcess.destroy()
                 }
                 logFileDir.deleteRecursively()
-                startLog()
+                logFileDir.delete()
             } catch (t: Throwable) {
                 Log.e(t)
             }

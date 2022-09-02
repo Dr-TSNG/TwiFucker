@@ -73,6 +73,10 @@
             android:title="@string/export_log" />
         <Preference
             android:dependency="enable_log"
+            android:key="export_json_log"
+            android:summary="@string/export_json_log_summary"
+            android:title="@string/export_json_log" />
+        <Preference
             android:key="clear_log"
             android:title="@string/clear_log" />
     </PreferenceCategory>

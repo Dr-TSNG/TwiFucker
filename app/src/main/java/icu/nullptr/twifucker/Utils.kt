@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
+import com.github.kyuubiran.ezxhelper.utils.Log
 import icu.nullptr.twifucker.ui.SettingsDialog
 import java.io.File
 
@@ -11,6 +12,8 @@ import java.io.File
 val logFileDir by lazy { File(appContext.externalCacheDir?.absolutePath + "/twifucker_log/") }
 
 val logFile by lazy { File(logFileDir, "log.txt") }
+
+val logJsonFile by lazy { File(logFileDir, "log_json.txt") }
 
 @Suppress("DEPRECATION")
 val modulePrefs: SharedPreferences by lazy {
@@ -31,6 +34,16 @@ fun getId(name: String, defType: String): Int {
     return appContext.resources.getIdentifier(
         name, defType, appContext.packageName
     )
+}
+
+fun writeJsonLog(content: String) {
+    try {
+        if (!logFileDir.exists()) logFileDir.mkdirs()
+        if (!logJsonFile.exists()) logJsonFile.createNewFile()
+        logJsonFile.appendText(content + "\n")
+    } catch (t: Throwable) {
+        Log.e(t)
+    }
 }
 
 fun isEntryNeedsRemove(entryId: String): Boolean {

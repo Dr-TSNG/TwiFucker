@@ -3,6 +3,7 @@ package icu.nullptr.twifucker.hook
 import com.github.kyuubiran.ezxhelper.utils.*
 import de.robv.android.xposed.XC_MethodHook
 import icu.nullptr.twifucker.modulePrefs
+import icu.nullptr.twifucker.writeJsonLog
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -333,10 +334,10 @@ object JsonHook : BaseHook() {
                 false
             }
             if (!isRefreshSessionResponse) {
-                Log.d(content)
+                writeJsonLog(content)
             }
         }
-        
+
         try {
             val json = JSONObject(content)
 

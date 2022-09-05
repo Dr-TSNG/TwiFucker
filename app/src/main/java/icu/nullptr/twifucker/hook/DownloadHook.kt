@@ -164,7 +164,7 @@ object DownloadHook : BaseHook() {
                     "IMAGE" -> {
                         photoList.add(m?.getObjectOrNull(mediaUrlHttpsFieldName) as String)
                     }
-                    "VIDEO" -> {
+                    "VIDEO", "ANIMATED_GIF" -> {
                         val variants = m?.getObjectOrNull(mediaInfoFieldName)
                             ?.getObjectOrNull(variantsFieldName) as List<*>
                         variants.sortedByDescending { v ->

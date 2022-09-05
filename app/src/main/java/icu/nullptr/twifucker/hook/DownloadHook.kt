@@ -324,8 +324,6 @@ object DownloadHook : BaseHook() {
         ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
             ?: throw ClassNotFoundException()
 
-        val viewDataClass = loadClassOrNull(actionItemViewDataClass.name.split("$")[0]) ?: return
-
         carouselActionItemFactoryClassName = carouselActionItemFactoryClass.name
         genCarouselActionItemMethodName = genCarouselActionItemMethod.name
         actionItemViewDataClassName = actionItemViewDataClass.name

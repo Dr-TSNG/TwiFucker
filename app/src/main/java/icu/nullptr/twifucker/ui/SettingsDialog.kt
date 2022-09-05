@@ -17,6 +17,8 @@ import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
 import com.github.kyuubiran.ezxhelper.utils.restartHostApp
 import icu.nullptr.twifucker.*
+import icu.nullptr.twifucker.hook.DrawerNavbarHook.bottomNavbarItems
+import icu.nullptr.twifucker.hook.DrawerNavbarHook.drawerItems
 import icu.nullptr.twifucker.hook.HookEntry.Companion.isLogcatProcessInitialized
 import icu.nullptr.twifucker.hook.HookEntry.Companion.logcatProcess
 
@@ -25,9 +27,14 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
     companion object {
         private lateinit var outDialog: AlertDialog
         private lateinit var prefs: SharedPreferences
+
         const val PREFS_NAME = "twifucker"
+
         const val EXPORT_LOG = 1001
         const val EXPORT_JSON_LOG = 1002
+        
+        const val HIDDEN_DRAWER_ITEMS = "hidden_drawer_items"
+        const val HIDDEN_BOTTOM_NAVBAR_ITEMS = "hidden_bottom_navbar_items"
     }
 
     private fun deleteFromDatabase() {
@@ -57,6 +64,8 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             preferenceManager.sharedPreferencesName = PREFS_NAME
             addPreferencesFromResource(R.xml.settings_dialog)
             prefs = preferenceManager.sharedPreferences
+            findPreference("hide_drawer_items").onPreferenceClickListener = this
+            findPreference("hide_bottom_navbar_items").onPreferenceClickListener = this
             findPreference("enable_log").onPreferenceChangeListener = this
             findPreference("export_log").onPreferenceClickListener = this
             findPreference("export_json_log").onPreferenceClickListener = this
@@ -86,6 +95,12 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
         @Deprecated("Deprecated in Java")
         override fun onPreferenceClick(p0: Preference?): Boolean {
             when (p0?.key) {
+                "hide_drawer_items" -> {
+                    onCustomizeHiddenDrawerItems()
+                }
+                "hide_bottom_navbar_items" -> {
+                    onCustomizeHiddenBottomNavbarItems()
+                }
                 "export_log" -> {
                     exportLog(EXPORT_LOG, logFile.name)
                 }
@@ -157,6 +172,60 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             } catch (t: Throwable) {
                 Log.e(t)
             }
+        }
+
+        private fun onCustomizeHiddenDrawerItems() {
+            AlertDialog.Builder(activity).apply {
+                val items = drawerItems
+                val ids = items.map { it.key }.toTypedArray()
+                setTitle(R.string.hide_drawer_items)
+                setPositiveButton(R.string.save) { _, _ ->
+                    val hideItems = mutableSetOf<String>()
+                    items.forEach {
+                        if (it.showing.not()) {
+                            hideItems.add(it.key)
+                        }
+                    }
+                    modulePrefs.edit().putStringSet(HIDDEN_DRAWER_ITEMS, hideItems).apply()
+                }
+                setNeutralButton(R.string.reset) { _, _ ->
+                    modulePrefs.edit().remove(HIDDEN_DRAWER_ITEMS).apply()
+                }
+                setNegativeButton(R.string.settings_dismiss, null)
+                val showings = BooleanArray(items.size) { i ->
+                    !items[i].showing
+                }
+                setMultiChoiceItems(ids, showings) { _, which, isChecked ->
+                    items[which].showing = !isChecked
+                }
+            }.show()
+        }
+
+        private fun onCustomizeHiddenBottomNavbarItems() {
+            AlertDialog.Builder(activity).apply {
+                val items = bottomNavbarItems
+                val ids = items.map { it.key }.toTypedArray()
+                setTitle(R.string.hide_bottom_navbar_items)
+                setPositiveButton(R.string.save) { _, _ ->
+                    val hideItems = mutableSetOf<String>()
+                    items.forEach {
+                        if (it.showing.not()) {
+                            hideItems.add(it.key)
+                        }
+                    }
+                    modulePrefs.edit().putStringSet(HIDDEN_BOTTOM_NAVBAR_ITEMS, hideItems).apply()
+                }
+                setNeutralButton(R.string.reset) { _, _ ->
+                    modulePrefs.edit().remove(HIDDEN_BOTTOM_NAVBAR_ITEMS).apply()
+                }
+                setNegativeButton(R.string.settings_dismiss, null)
+                val showings = BooleanArray(items.size) { i ->
+                    !items[i].showing
+                }
+                setMultiChoiceItems(ids, showings) { _, which, isChecked ->
+                    items[which].showing = !isChecked
+                }
+            }.show()
         }
     }
 

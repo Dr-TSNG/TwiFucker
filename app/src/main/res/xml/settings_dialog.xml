@@ -60,6 +60,14 @@
             android:key="disable_url_redirect"
             android:summary="@string/disable_url_redirect_summary"
             android:title="@string/disable_url_redirect" />
+        <Preference
+            android:key="hide_drawer_items"
+            android:summary="@string/hide_drawer_items_summary"
+            android:title="@string/hide_drawer_items" />
+        <Preference
+            android:key="hide_bottom_navbar_items"
+            android:summary="@string/hide_bottom_navbar_items_summary"
+            android:title="@string/hide_bottom_navbar_items" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_logging">

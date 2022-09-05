@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">TwiFucker</string>
     <string name="twifucker_settings">TwiFucker Settings</string>
+    <string name="save">save</string>
+    <string name="reset">reset</string>
     <string name="save_restart">save and restart</string>
 
     <string name="settings_dismiss">dismiss</string>
@@ -22,6 +24,8 @@
     <string name="disable_topics_to_follow_title">Disable Topics to Follow</string>
     <string name="enable_download_hook">Enable Download Hook</string>
     <string name="disable_url_redirect">Disable URL Redirect</string>
+    <string name="hide_drawer_items">Hide drawer items</string>
+    <string name="hide_bottom_navbar_items">Hide bottom navigation bar items</string>
     <string name="enable_log">Enable log</string>
     <string name="export_log">Export log</string>
     <string name="export_json_log">Export JSON log</string>
@@ -36,6 +40,8 @@
     <string name="disable_recommended_users_summary">Don\'t show recommended users after you follow someone</string>
     <string name="enable_download_hook_summary">[Share -> Download or Copy] Tap to download, hold button to copy link</string>
     <string name="disable_url_redirect_summary">Stop t.co url redirection</string>
+    <string name="hide_drawer_items_summary">Select drawer item(s) to be hidden</string>
+    <string name="hide_bottom_navbar_items_summary">Select bottom navigation bar item(s) to be hidden</string>
     <string name="enable_log_summary">Enable legacy hook for more logging. Log is saved to Android/data/com.twitter.android/cache/twifucker_log</string>
     <string name="export_json_log_summary">Legacy hook is required to be enabled</string>
 

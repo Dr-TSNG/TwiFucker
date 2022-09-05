@@ -92,7 +92,8 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 AltTextHook,
                 DownloadHook,
                 ActivityHook,
-                CustomTabsHook
+                CustomTabsHook,
+                DrawerNavbarHook,
             )
 
             if (modulePrefs.getBoolean("use_legacy_hook", false)) {

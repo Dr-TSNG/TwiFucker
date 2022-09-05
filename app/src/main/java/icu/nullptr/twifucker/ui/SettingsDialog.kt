@@ -30,15 +30,24 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
 
         const val PREFS_NAME = "twifucker"
 
-        const val EXPORT_LOG = 1001
-        const val EXPORT_JSON_LOG = 1002
-        
-        const val HIDDEN_DRAWER_ITEMS = "hidden_drawer_items"
-        const val HIDDEN_BOTTOM_NAVBAR_ITEMS = "hidden_bottom_navbar_items"
+        const val REQUEST_EXPORT_LOG = 1001
+        const val REQUEST_EXPORT_JSON_LOG = 1002
+
+        const val PREF_DISABLE_PROMOTED_CONTENT = "disable_promoted_content"
+        const val PREF_HIDE_DRAWER_ITEMS = "hide_drawer_items"
+        const val PREF_HIDE_BOTTOM_NAVBAR_ITEMS = "hide_bottom_navbar_items"
+        const val PREF_ENABLE_LOG = "enable_log"
+        const val PREF_EXPORT_LOG = "export_log"
+        const val PREF_EXPORT_JSON_LOG = "export_json_log"
+        const val PREF_CLEAR_LOG = "clear_log"
+        const val PREF_ABOUT = "about"
+
+        const val PREF_HIDDEN_DRAWER_ITEMS = "hidden_drawer_items"
+        const val PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS = "hidden_bottom_navbar_items"
     }
 
     private fun deleteFromDatabase() {
-        val disablePromotedContent = modulePrefs.getBoolean("disable_promoted_content", true)
+        val disablePromotedContent = modulePrefs.getBoolean(PREF_DISABLE_PROMOTED_CONTENT, true)
         if (!disablePromotedContent) return
         val re = Regex("^\\d+-\\d+\\.db$")
         var count = 0
@@ -64,26 +73,19 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             preferenceManager.sharedPreferencesName = PREFS_NAME
             addPreferencesFromResource(R.xml.settings_dialog)
             prefs = preferenceManager.sharedPreferences
-            findPreference("hide_drawer_items").onPreferenceClickListener = this
-            findPreference("hide_bottom_navbar_items").onPreferenceClickListener = this
-            findPreference("enable_log").onPreferenceChangeListener = this
-            findPreference("export_log").onPreferenceClickListener = this
-            findPreference("export_json_log").onPreferenceClickListener = this
-            findPreference("clear_log").onPreferenceClickListener = this
-            findPreference("about").setOnPreferenceClickListener {
-                activity.startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW, Uri.parse("https://github.com/Dr-TSNG/TwiFucker")
-                    )
-                )
-                true
-            }
+            findPreference(PREF_HIDE_DRAWER_ITEMS).onPreferenceClickListener = this
+            findPreference(PREF_HIDE_BOTTOM_NAVBAR_ITEMS).onPreferenceClickListener = this
+            findPreference(PREF_ENABLE_LOG).onPreferenceChangeListener = this
+            findPreference(PREF_EXPORT_LOG).onPreferenceClickListener = this
+            findPreference(PREF_EXPORT_JSON_LOG).onPreferenceClickListener = this
+            findPreference(PREF_CLEAR_LOG).onPreferenceClickListener = this
+            findPreference(PREF_ABOUT).onPreferenceClickListener = this
         }
 
         @Deprecated("Deprecated in Java")
         override fun onPreferenceChange(p0: Preference?, p1: Any?): Boolean {
             if (p0 is SwitchPreference) {
-                if (p0.key == "enable_log") {
+                if (p0.key == PREF_ENABLE_LOG) {
                     if (!(p1 as Boolean)) {
                         clearLog()
                     }
@@ -95,20 +97,27 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
         @Deprecated("Deprecated in Java")
         override fun onPreferenceClick(p0: Preference?): Boolean {
             when (p0?.key) {
-                "hide_drawer_items" -> {
+                PREF_HIDE_DRAWER_ITEMS -> {
                     onCustomizeHiddenDrawerItems()
                 }
-                "hide_bottom_navbar_items" -> {
+                PREF_HIDE_BOTTOM_NAVBAR_ITEMS -> {
                     onCustomizeHiddenBottomNavbarItems()
                 }
-                "export_log" -> {
-                    exportLog(EXPORT_LOG, logFile.name)
+                PREF_EXPORT_LOG -> {
+                    exportLog(REQUEST_EXPORT_LOG, logFile.name)
                 }
-                "export_json_log" -> {
-                    exportLog(EXPORT_JSON_LOG, logJsonFile.name)
+                PREF_EXPORT_JSON_LOG -> {
+                    exportLog(REQUEST_EXPORT_JSON_LOG, logJsonFile.name)
                 }
-                "clear_log" -> {
+                PREF_CLEAR_LOG -> {
                     clearLog()
+                }
+                PREF_ABOUT -> {
+                    activity.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW, Uri.parse("https://github.com/Dr-TSNG/TwiFucker")
+                        )
+                    )
                 }
             }
             return true
@@ -120,12 +129,12 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                 data?.data?.let { uri ->
                     context.contentResolver.openOutputStream(uri)?.use { out ->
                         when (requestCode) {
-                            EXPORT_LOG -> {
+                            REQUEST_EXPORT_LOG -> {
                                 logFile.inputStream().use { input ->
                                     input.copyTo(out)
                                 }
                             }
-                            EXPORT_JSON_LOG -> {
+                            REQUEST_EXPORT_JSON_LOG -> {
                                 logJsonFile.inputStream().use { input ->
                                     input.copyTo(out)
                                 }
@@ -140,10 +149,10 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
 
         private fun exportLog(logType: Int, fileName: String) {
             when (logType) {
-                EXPORT_LOG -> {
+                REQUEST_EXPORT_LOG -> {
                     if (!logFile.exists()) return
                 }
-                EXPORT_JSON_LOG -> {
+                REQUEST_EXPORT_JSON_LOG -> {
                     if (!logJsonFile.exists()) return
                 }
                 else -> {
@@ -186,10 +195,10 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                             hideItems.add(it.key)
                         }
                     }
-                    modulePrefs.edit().putStringSet(HIDDEN_DRAWER_ITEMS, hideItems).apply()
+                    modulePrefs.edit().putStringSet(PREF_HIDDEN_DRAWER_ITEMS, hideItems).apply()
                 }
                 setNeutralButton(R.string.reset) { _, _ ->
-                    modulePrefs.edit().remove(HIDDEN_DRAWER_ITEMS).apply()
+                    modulePrefs.edit().remove(PREF_HIDDEN_DRAWER_ITEMS).apply()
                 }
                 setNegativeButton(R.string.settings_dismiss, null)
                 val showings = BooleanArray(items.size) { i ->
@@ -213,10 +222,11 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                             hideItems.add(it.key)
                         }
                     }
-                    modulePrefs.edit().putStringSet(HIDDEN_BOTTOM_NAVBAR_ITEMS, hideItems).apply()
+                    modulePrefs.edit().putStringSet(PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS, hideItems)
+                        .apply()
                 }
                 setNeutralButton(R.string.reset) { _, _ ->
-                    modulePrefs.edit().remove(HIDDEN_BOTTOM_NAVBAR_ITEMS).apply()
+                    modulePrefs.edit().remove(PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS).apply()
                 }
                 setNegativeButton(R.string.settings_dismiss, null)
                 val showings = BooleanArray(items.size) { i ->

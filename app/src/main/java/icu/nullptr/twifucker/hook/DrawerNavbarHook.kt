@@ -7,8 +7,8 @@ import icu.nullptr.twifucker.data.TwitterItem
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
 import icu.nullptr.twifucker.modulePrefs
-import icu.nullptr.twifucker.ui.SettingsDialog.Companion.HIDDEN_BOTTOM_NAVBAR_ITEMS
-import icu.nullptr.twifucker.ui.SettingsDialog.Companion.HIDDEN_DRAWER_ITEMS
+import icu.nullptr.twifucker.ui.SettingsDialog.Companion.PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS
+import icu.nullptr.twifucker.ui.SettingsDialog.Companion.PREF_HIDDEN_DRAWER_ITEMS
 import java.io.File
 
 object DrawerNavbarHook : BaseHook() {
@@ -44,7 +44,7 @@ object DrawerNavbarHook : BaseHook() {
         findConstructor(bottomNavbarClassName) {
             true
         }.hookBefore {
-            val hiddenItems = modulePrefs.getStringSet(HIDDEN_BOTTOM_NAVBAR_ITEMS, mutableSetOf())
+            val hiddenItems = modulePrefs.getStringSet(PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS, mutableSetOf())
             val map = it.args[2] as Map<*, *>
             val newMap = loadClass(customMapClassName).invokeStaticMethod(
                 customMapInitMethodName, args(map.size), argTypes(Int::class.java)
@@ -67,7 +67,7 @@ object DrawerNavbarHook : BaseHook() {
         findConstructor(drawerItemsClassName) {
             true
         }.hookBefore { param ->
-            val hiddenItems = modulePrefs.getStringSet(HIDDEN_DRAWER_ITEMS, mutableSetOf())
+            val hiddenItems = modulePrefs.getStringSet(PREF_HIDDEN_DRAWER_ITEMS, mutableSetOf())
             val drawerItemMap = param.args[0].invokeMethod("get") as Map<*, *>
             drawerItems.clear()
             drawerItemMap.forEach { item ->

@@ -49,12 +49,30 @@ body:
       required: true
   - type: input
     attributes:
-      label: Android version/Android 版本
+      label: Twitter version/Twitter 版本
     validations:
       required: true
   - type: input
     attributes:
-      label: Magisk version/Magisk 版本
+      label: Android version/Android 版本
+    validations:
+      required: true
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Xposed Framework/Xposed 框架
+      description: Select the version being used for feedback./选择反馈时正使用的版本。
+      multiple: true
+      options:
+        - LSPosed
+        - LSPatch
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: framework_ver
+    attributes:
+      label: Framework Version/框架版本
     validations:
       required: true
   - type: dropdown

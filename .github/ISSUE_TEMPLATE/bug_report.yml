@@ -62,7 +62,7 @@ body:
     attributes:
       label: Xposed Framework/Xposed 框架
       description: Select the version being used for feedback./选择反馈时正使用的版本。
-      multiple: true
+      multiple: false
       options:
         - LSPosed
         - LSPatch

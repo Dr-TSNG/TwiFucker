@@ -54,7 +54,7 @@ object UrlHook : BaseHook() {
     }
 
     private fun String.hasExtraParam(): Boolean {
-        return this.startsWith("t") || this.startsWith("s")
+        return this == "t" || this == "s"
     }
 
     private fun clearExtraParams(url: String): String {

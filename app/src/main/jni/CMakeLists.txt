@@ -1,22 +1,23 @@
 cmake_minimum_required(VERSION 3.22.1)
 project(twifucker)
 
-enable_language(CXX C)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_C_STANDARD 11)
-
-find_library(ANDROID_LIBS log)
-
-option(DEX_BUILDER_BUILD_SHARED "" OFF)
-option(ABSL_PROPAGATE_CXX_STD "" ON)
+find_package(cxx REQUIRED CONFIG)
+link_libraries(cxx::cxx)
 
 add_subdirectory(dex_builder)
 
-add_library(twifucker SHARED twifucker.cc)
-
-set_target_properties(twifucker PROPERTIES
-        CXX_EXTENSIONS OFF
-        POSITION_INDEPENDENT_CODE ON
+add_library(${PROJECT_NAME} SHARED
+        twifucker.cc
         )
 
-target_link_libraries(twifucker ${ANDROID_LIBS} dex_builder_static)
+target_link_libraries(${PROJECT_NAME} PUBLIC log dex_builder_static)
+
+if (NOT DEFINED DEBUG_SYMBOLS_PATH)
+    set(DEBUG_SYMBOLS_PATH ${CMAKE_BINARY_DIR}/symbols)
+endif()
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${DEBUG_SYMBOLS_PATH}/${ANDROID_ABI}
+        COMMAND ${CMAKE_OBJCOPY} --only-keep-debug $<TARGET_FILE:${PROJECT_NAME}>
+        ${DEBUG_SYMBOLS_PATH}/${ANDROID_ABI}/${PROJECT_NAME}
+        COMMAND ${CMAKE_STRIP} --strip-all $<TARGET_FILE:${PROJECT_NAME}>)

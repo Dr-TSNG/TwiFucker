@@ -50,8 +50,9 @@ android {
 
         externalNativeBuild {
             cmake {
+                targets("twifucker")
                 abiFilters("arm64-v8a", "armeabi-v7a")
-//                arguments("-DANDROID_STL=none")
+                arguments("-DANDROID_STL=none")
                 val flags = arrayOf(
                     "-Wall",
                     "-Werror",
@@ -193,6 +194,7 @@ afterEvaluate {
 dependencies {
     implementation("androidx.annotation:annotation:1.4.0")
     implementation("com.github.kyuubiran:EzXHelper:1.0.1")
+    implementation("dev.rikka.ndk.thirdparty:cxx:1.2.0")
 
     compileOnly("de.robv.android.xposed:api:82")
 }

@@ -192,9 +192,8 @@ afterEvaluate {
 }
 
 dependencies {
-    implementation("androidx.annotation:annotation:1.4.0")
-    implementation("com.github.kyuubiran:EzXHelper:1.0.1")
+    implementation("androidx.annotation:annotation:1.5.0")
+    implementation("com.github.kyuubiran:EzXHelper:1.0.3")
     implementation("dev.rikka.ndk.thirdparty:cxx:1.2.0")
-
     compileOnly("de.robv.android.xposed:api:82")
 }

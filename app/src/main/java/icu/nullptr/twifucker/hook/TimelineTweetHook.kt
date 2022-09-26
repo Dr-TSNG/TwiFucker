@@ -22,10 +22,10 @@ object TimelineTweetHook : BaseHook() {
             }.hookAfter { param ->
                 val fieldName = param.args[1] as String
                 // promoted tweet in search
-                if (fieldName == "promotedMetadata") {
+                if (fieldName == "promotedMetadata" || fieldName == "tweetPromotedData") {
                     val entryId =
                         jsonTimelineTweetEntryIdField?.get(param.args[0]) ?: return@hookAfter
-                    Log.d("Hooking timeline search $fieldName $entryId")
+                    Log.d("Hooking timeline ads $fieldName $entryId")
                     jsonTimelineTweetEntryIdField.set(param.args[0], "")
                 }
             }

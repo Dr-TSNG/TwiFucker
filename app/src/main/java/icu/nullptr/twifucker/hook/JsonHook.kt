@@ -218,6 +218,23 @@ object JsonHook : BaseHook() {
                 Log.d("Handle timeline ads $entryIndex $entry")
                 removeIndex.add(entryIndex)
             }
+
+            val innerRemoveIndex = mutableListOf<Int>()
+            val contentItems = entry.entryGetContentItems()
+            contentItems?.forEachIndexed inner@{ itemIndex, item ->
+                if ((item as JSONObject).entryHasPromotedMetadata()) {
+                    Log.d("Handle timeline replies ads $entryIndex $entry")
+                    if (contentItems.length() == 1) {
+                        removeIndex.add(entryIndex)
+                    } else {
+                        innerRemoveIndex.add(itemIndex)
+                    }
+                    return@inner
+                }
+            }
+            for (i in innerRemoveIndex.asReversed()) {
+                contentItems?.remove(i)
+            }
         }
         for (i in removeIndex.reversed()) {
             remove(i)

@@ -8,8 +8,8 @@ object TimelineTweetHook : BaseHook() {
         loadClassOrNull("com.twitter.model.json.timeline.urt.JsonTimelineTweet")
     private val jsonTimelineTweetMapperClass =
         loadClassOrNull("com.twitter.model.json.timeline.urt.JsonTimelineTweet\$\$JsonObjectMapper")
-//    private val jsonTimelineTweetEntryIdField =
-//        jsonTimelineTweetClass?.declaredFields?.firstOrNull { it.type == String::class.java }
+    private val jsonTimelineTweetEntryIdField =
+        jsonTimelineTweetClass?.declaredFields?.firstOrNull { it.type == String::class.java }
     private val jsonTimelineTweetTweetResultField =
         jsonTimelineTweetClass?.declaredFields?.firstOrNull { it.isNotStatic }
 
@@ -24,14 +24,8 @@ object TimelineTweetHook : BaseHook() {
                 if (fieldName == "promotedMetadata" || fieldName == "tweetPromotedMetadata") {
                     Log.d("Hooking timeline ads $fieldName")
                     jsonTimelineTweetTweetResultField?.set(param.args[0], null)
+                    jsonTimelineTweetEntryIdField?.set(param.args[0], null)
                 }
-                // timeline ads
-//                if (fieldName == "promotedMetadata") {
-//                    val entryId =
-//                        jsonTimelineTweetEntryIdField?.get(param.args[0]) ?: return@hookAfter
-//                    Log.d("Hooking timeline ads $fieldName $entryId")
-//                    jsonTimelineTweetEntryIdField.set(param.args[0], "")
-//                }
             }
         }
     }

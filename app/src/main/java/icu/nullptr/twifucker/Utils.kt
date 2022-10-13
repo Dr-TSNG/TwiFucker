@@ -7,6 +7,7 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.Log
 import icu.nullptr.twifucker.ui.SettingsDialog
 import java.io.File
+import java.net.URL
 
 
 val logFileDir by lazy { File(appContext.externalCacheDir?.absolutePath + "/twifucker_log/") }
@@ -69,4 +70,20 @@ fun isEntryNeedsRemove(entryId: String): Boolean {
         return true
     }
     return false
+}
+
+fun clearUrlQueries(url: String): String {
+    return url.split("?")[0]
+}
+
+fun getUrlExtension(url: String): String {
+    val urlWithoutQueries = clearUrlQueries(url)
+    return urlWithoutQueries.substring(urlWithoutQueries.lastIndexOf(".") + 1)
+}
+
+fun genOrigUrl(url: String): String {
+    val urlWithoutQueries = clearUrlQueries(url)
+    val urlWithoutExt = urlWithoutQueries.substring(0, urlWithoutQueries.lastIndexOf("."))
+    val ext = getUrlExtension(urlWithoutQueries)
+    return "$urlWithoutExt?format=$ext&name=orig"
 }

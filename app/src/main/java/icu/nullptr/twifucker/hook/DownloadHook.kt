@@ -6,12 +6,10 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.utils.*
-import icu.nullptr.twifucker.R
-import icu.nullptr.twifucker.getId
+import icu.nullptr.twifucker.*
 import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
-import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.DownloadDialog
 import java.io.File
 import java.lang.reflect.Constructor
@@ -158,7 +156,8 @@ object DownloadHook : BaseHook() {
             media.forEach { m ->
                 when (m?.getObjectOrNull(mediaTypeFieldName).toString()) {
                     "IMAGE" -> {
-                        urls.add(m?.getObjectOrNull(mediaUrlHttpsFieldName) as String)
+                        val mediaUrlHttps = m?.getObjectOrNull(mediaUrlHttpsFieldName) as String
+                        urls.add(genOrigUrl(mediaUrlHttps))
                     }
                     "VIDEO", "ANIMATED_GIF" -> {
                         val variants = m?.getObjectOrNull(mediaInfoFieldName)
@@ -169,7 +168,8 @@ object DownloadHook : BaseHook() {
                         variants.sortedByDescending { v ->
                             v?.getObjectOrNull("a") as Int
                         }[0]?.let {
-                            urls.add(it.getObjectOrNull("b") as String)
+                            val url = it.getObjectOrNull("b") as String
+                            urls.add(clearUrlQueries(url))
                         }
                     }
                 }

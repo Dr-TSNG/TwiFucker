@@ -34,13 +34,12 @@
     <string name="disable_url_redirect_summary">立即啟動自定義標籤並停止使用 t.co 網址重定向</string>
 
     <string name="download_or_copy">下載與複製</string>
-    <string name="download_photo">圖片 %1$d</string>
-    <string name="download_video">%1$s - %2$d Mbps</string>
     <string name="download_link_copied">已複製下載連結</string>
     <string name="downloading">下載中…</string>
     <string name="download_failed">下載失敗</string>
     <string name="download_copy_failed">複製檔案失敗</string>
 
     <string name="deleted_n_promoted_tweet">從資料庫中刪除了 %1$d 個廣告或促銷推文。</string>
+    <string name="download_media">媒體 %1$d</string>
 
 </resources>

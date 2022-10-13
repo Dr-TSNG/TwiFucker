@@ -16,7 +16,6 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
 import icu.nullptr.twifucker.R
-import icu.nullptr.twifucker.data.VideoVariant
 import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import java.io.File
 import java.io.FileOutputStream
@@ -24,7 +23,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class DownloadDialog(
-    context: Context, private val urlPhotos: List<String>, private val urlVideos: List<VideoVariant>
+    context: Context, private val downloadUrls: List<String>
 ) : AlertDialog(context) {
     companion object {
         const val CREATE_FILE = 114514
@@ -107,7 +106,7 @@ class DownloadDialog(
             LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
-        urlPhotos.forEachIndexed { i, url ->
+        downloadUrls.forEachIndexed { i, url ->
             val textView = TextView(context)
             textView.setOnClickListener {
                 download(url)
@@ -118,23 +117,7 @@ class DownloadDialog(
             }
             textView.setPadding(0, 16, 0, 16)
             textView.textSize = 18f
-            textView.text = context.getString(R.string.download_photo, i)
-            linearLayout.addView(textView)
-        }
-        urlVideos.forEach { variant ->
-            val textView = TextView(context)
-            textView.setOnClickListener {
-                download(variant.url)
-            }
-            textView.setOnLongClickListener {
-                toClipboard(variant.url)
-                true
-            }
-            textView.setPadding(0, 16, 0, 16)
-            textView.textSize = 18f
-            textView.text = context.getString(
-                R.string.download_video, variant.contentType, variant.bitrate / 1000
-            )
+            textView.text = context.getString(R.string.download_media, i)
             linearLayout.addView(textView)
         }
         setView(linearLayout)

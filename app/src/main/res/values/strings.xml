@@ -46,8 +46,7 @@
     <string name="export_json_log_summary">Legacy hook is required to be enabled</string>
 
     <string name="download_or_copy">Download or Copy</string>
-    <string name="download_photo">Photo %1$d</string>
-    <string name="download_video">%1$s - %2$d Mbps</string>
+    <string name="download_media">Media %1$d</string>
     <string name="download_link_copied">Download link copied!</string>
     <string name="downloading">Downloading…</string>
     <string name="download_failed">Download failed</string>

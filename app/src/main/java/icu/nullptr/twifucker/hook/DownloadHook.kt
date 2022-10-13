@@ -7,7 +7,6 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.utils.*
 import icu.nullptr.twifucker.R
-import icu.nullptr.twifucker.data.VideoVariant
 import icu.nullptr.twifucker.getId
 import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
@@ -20,8 +19,7 @@ import java.lang.reflect.Method
 
 
 object DownloadHook : BaseHook() {
-    private var urlPhotos: List<String> = listOf()
-    private var urlVideos: List<VideoVariant> = listOf()
+    private var downloadUrls: List<String> = listOf()
 
     private lateinit var carouselActionItemFactoryClassName: String
     private lateinit var genCarouselActionItemMethodName: String
@@ -93,7 +91,7 @@ object DownloadHook : BaseHook() {
         findMethod(carouselActionItemFactoryClassName) {
             name == genCarouselActionItemMethodName
         }.hookAfter { param ->
-            if (urlPhotos.isEmpty() && urlVideos.isEmpty()) return@hookAfter
+            if (downloadUrls.isEmpty()) return@hookAfter
             @Suppress("UNCHECKED_CAST") val result = param.result as MutableList<Any>
             val testEnumNone = loadClass(actionTypeEnumClassName).newInstance(
                 args("None", 0), argTypes(String::class.java, Int::class.java)
@@ -132,7 +130,7 @@ object DownloadHook : BaseHook() {
             if (actionType.toString() != "None") return@hookAfter
             try {
                 currentActivity.get()?.let {
-                    DownloadDialog(it, urlPhotos, urlVideos).show()
+                    DownloadDialog(it, downloadUrls).show()
                 }
             } catch (t: Throwable) {
                 Log.e(t)
@@ -147,8 +145,7 @@ object DownloadHook : BaseHook() {
             // share_menu_click
             // share_menu_cancel
             if (event == "share_menu_cancel") {
-                urlPhotos = listOf()
-                urlVideos = listOf()
+                downloadUrls = listOf()
                 return@hookBefore
             }
             if (event != "share_menu_click") return@hookBefore
@@ -157,32 +154,27 @@ object DownloadHook : BaseHook() {
                 tweetResult?.getObjectOrNull(tweetResultFieldName)?.getObjectOrNull(resultFieldName)
                     ?.getObjectOrNull(legacyFieldName)?.getObjectOrNull(extendedEntitiesFieldName)
                     ?.getObjectOrNull(mediaFieldName) as List<*>
-            val photoList = arrayListOf<String>()
-            val videoList = arrayListOf<VideoVariant>()
+            val urls = arrayListOf<String>()
             media.forEach { m ->
                 when (m?.getObjectOrNull(mediaTypeFieldName).toString()) {
                     "IMAGE" -> {
-                        photoList.add(m?.getObjectOrNull(mediaUrlHttpsFieldName) as String)
+                        urls.add(m?.getObjectOrNull(mediaUrlHttpsFieldName) as String)
                     }
                     "VIDEO", "ANIMATED_GIF" -> {
                         val variants = m?.getObjectOrNull(mediaInfoFieldName)
                             ?.getObjectOrNull(variantsFieldName) as List<*>
+                        // a - bitrate
+                        // b - url
+                        // c - contentType
                         variants.sortedByDescending { v ->
                             v?.getObjectOrNull("a") as Int
-                        }.forEach { v ->
-                            videoList.add(
-                                VideoVariant(
-                                    v?.getObjectOrNull("a") as Int,
-                                    v.getObjectOrNull("b") as String,
-                                    v.getObjectOrNull("c") as String,
-                                )
-                            )
+                        }[0]?.let {
+                            urls.add(it.getObjectOrNull("b") as String)
                         }
                     }
                 }
             }
-            urlPhotos = photoList
-            urlVideos = videoList
+            downloadUrls = urls
         }
     }
 

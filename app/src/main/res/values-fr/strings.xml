@@ -46,8 +46,6 @@
     <string name="export_json_log_summary">La méthode traditionnelle est requise pour être activée.</string>
 
     <string name="download_or_copy">Télécharger ou Copier</string>
-    <string name="download_photo">Photo %1$d</string>
-    <string name="download_video">%1$s - %2$d Mbps</string>
     <string name="download_link_copied">Lien de téléchargement copié!</string>
     <string name="downloading">Téléchargement…</string>
     <string name="download_failed">Échec du téléchargement</string>

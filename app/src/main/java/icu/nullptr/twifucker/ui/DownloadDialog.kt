@@ -8,7 +8,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
-import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.widget.LinearLayout
@@ -17,7 +16,6 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
 import icu.nullptr.twifucker.R
-import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
@@ -39,8 +37,10 @@ class DownloadDialog(
         }
 
         private fun copyFile(fileName: String) {
-            val downloadPath =
-                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "TwiFucker")
+            val downloadPath = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                "TwiFucker"
+            )
             if (!downloadPath.exists()) {
                 downloadPath.mkdirs()
             }

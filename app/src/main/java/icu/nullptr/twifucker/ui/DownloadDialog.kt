@@ -8,7 +8,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
-import android.os.Bundle
 import android.os.Environment
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -23,7 +22,7 @@ import java.net.URL
 
 class DownloadDialog(
     context: Context, private val downloadUrls: List<String>
-) : AlertDialog(context) {
+) : AlertDialog.Builder(context) {
     companion object {
         private fun contentTypeToExt(contentType: String): String {
             return when {
@@ -98,7 +97,7 @@ class DownloadDialog(
         Log.toast(context.getString(R.string.download_link_copied))
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    init {
         context.addModuleAssetPath()
         val linearLayout = LinearLayout(context)
         linearLayout.orientation = LinearLayout.VERTICAL
@@ -122,8 +121,12 @@ class DownloadDialog(
             linearLayout.addView(textView)
         }
 
+        setNeutralButton(R.string.download_all) { _, _ ->
+            downloadUrls.forEach { download(it) }
+        }
+
         setView(linearLayout)
         setTitle(R.string.download_or_copy)
-        super.onCreate(savedInstanceState)
+        show()
     }
 }

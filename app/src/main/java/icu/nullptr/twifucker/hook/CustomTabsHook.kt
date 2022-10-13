@@ -31,7 +31,7 @@ object CustomTabsHook : BaseHook() {
 
         findMethod(Activity::class.java) {
             name == "startActivity" && parameterTypes.size == 2 && parameterTypes[0] == Intent::class.java && parameterTypes[1] == Bundle::class.java
-        }.hookReplace { param ->
+        }.hookBefore { param ->
             val activity = param.thisObject as Activity
             val intent = param.args[0] as Intent
 
@@ -39,9 +39,10 @@ object CustomTabsHook : BaseHook() {
                     Intent.CATEGORY_BROWSABLE
                 ))
             ) {
-                return@hookReplace XposedBridge.invokeOriginalMethod(
+                param.result = XposedBridge.invokeOriginalMethod(
                     param.method, param.thisObject, param.args
                 )
+                return@hookBefore
             }
 
             val isInAppBrowserEnabled = hostPrefs.getBoolean("in_app_browser", true)
@@ -51,9 +52,10 @@ object CustomTabsHook : BaseHook() {
 
             if (host == null || DOMAIN_WHITELIST_SUFFIX.any { host.endsWith(it) }) {
                 Log.d("TEST4 $intent")
-                return@hookReplace XposedBridge.invokeOriginalMethod(
+                param.result = XposedBridge.invokeOriginalMethod(
                     param.method, param.thisObject, param.args
                 )
+                return@hookBefore
             }
 
             val customTabsClass = loadClass(customTabsClassName)

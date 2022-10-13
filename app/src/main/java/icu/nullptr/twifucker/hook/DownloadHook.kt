@@ -53,39 +53,6 @@ object DownloadHook : BaseHook() {
             return
         }
 
-        findMethod(Activity::class.java) {
-            name == "onActivityResult"
-        }.hookAfter { param ->
-            val requestCode = param.args[0] as Int
-            val resultCode = param.args[1] as Int
-            val resultData = param.args[2] as Intent?
-
-            if (requestCode != DownloadDialog.CREATE_FILE) return@hookAfter
-            if (DownloadDialog.lastSelectedFile == "") return@hookAfter
-
-            val inputFile = File(appContext.cacheDir, DownloadDialog.lastSelectedFile)
-            if (resultCode == Activity.RESULT_OK) {
-                resultData?.data?.also { uri ->
-                    val contentResolver = (param.thisObject as Activity).contentResolver
-                    try {
-                        contentResolver.openFileDescriptor(uri, "w")?.use {
-                            val inputStream = inputFile.inputStream()
-                            val outputStream = contentResolver.openOutputStream(uri) ?: return@use
-                            inputStream.copyTo(outputStream)
-                        }
-                    } catch (t: Throwable) {
-                        Log.e(t)
-                        currentActivity.get()?.let {
-                            it.addModuleAssetPath()
-                            Log.toast(it.getString(R.string.download_copy_failed))
-                        }
-                    }
-                }
-            }
-            inputFile.delete()
-            DownloadDialog.lastSelectedFile = ""
-        }
-
         findMethod(carouselActionItemFactoryClassName) {
             name == genCarouselActionItemMethodName
         }.hookAfter { param ->

@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.os.Bundle
+import android.os.Environment
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
@@ -27,7 +28,6 @@ class DownloadDialog(
 ) : AlertDialog(context) {
     companion object {
         const val CREATE_FILE = 114514
-        var lastSelectedFile = ""
 
         private fun contentTypeToExt(contentType: String): String {
             return when {
@@ -40,14 +40,16 @@ class DownloadDialog(
             }
         }
 
-        private fun copyFile(fileName: String, contentType: String) {
-            lastSelectedFile = fileName
-            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type = contentType
-                putExtra(Intent.EXTRA_TITLE, fileName)
+        private fun copyFile(fileName: String) {
+            val downloadPath =
+                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "TwiFucker")
+            if (!downloadPath.exists()) {
+                downloadPath.mkdirs()
             }
-            currentActivity.get()?.startActivityForResult(intent, CREATE_FILE)
+            val outputFile = File(downloadPath, fileName)
+            val inputStream = File(appContext.cacheDir, fileName).inputStream()
+            val outputStream = outputFile.outputStream()
+            inputStream.copyTo(outputStream)
         }
     }
 
@@ -81,7 +83,8 @@ class DownloadDialog(
                 inputStream.close()
                 httpConnection.disconnect()
 
-                copyFile(file.name, httpConnection.contentType)
+                copyFile(file.name)
+                file.delete()
             } catch (t: Throwable) {
                 Log.e(t)
                 Log.toast(context.getString(R.string.download_failed))

@@ -46,10 +46,12 @@
     <string name="export_json_log_summary">La méthode traditionnelle est requise pour être activée.</string>
 
     <string name="download_or_copy">Télécharger ou Copier</string>
+    <string name="download_media">Media %1$d</string>
     <string name="download_link_copied">Lien de téléchargement copié!</string>
     <string name="downloading">Téléchargement…</string>
     <string name="download_failed">Échec du téléchargement</string>
     <string name="download_copy_failed">Échec de la copie du fichier</string>
+    <string name="download_all">Tout Télécharger</string>
 
     <string name="deleted_n_promoted_tweet">Suppression de %1$d tweet(s) promotionnel(s) de la base de donnée de l\’application</string>
     <string name="use_legacy_hook_summary">La méthode traditionnelle traite directement la chaine JSON</string>

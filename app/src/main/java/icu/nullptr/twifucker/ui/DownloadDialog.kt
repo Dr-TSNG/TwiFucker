@@ -27,8 +27,6 @@ class DownloadDialog(
     context: Context, private val downloadUrls: List<String>
 ) : AlertDialog(context) {
     companion object {
-        const val CREATE_FILE = 114514
-
         private fun contentTypeToExt(contentType: String): String {
             return when {
                 contentType.contains("image/jpeg") -> ".jpg"
@@ -123,6 +121,7 @@ class DownloadDialog(
             textView.text = context.getString(R.string.download_media, i)
             linearLayout.addView(textView)
         }
+
         setView(linearLayout)
         setTitle(R.string.download_or_copy)
         super.onCreate(savedInstanceState)

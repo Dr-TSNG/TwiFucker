@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import com.github.kyuubiran.ezxhelper.init.InitFields
 import com.github.kyuubiran.ezxhelper.utils.*
-import de.robv.android.xposed.XposedBridge
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
 import icu.nullptr.twifucker.hostPrefs
@@ -39,9 +38,6 @@ object CustomTabsHook : BaseHook() {
                     Intent.CATEGORY_BROWSABLE
                 ))
             ) {
-                param.result = XposedBridge.invokeOriginalMethod(
-                    param.method, param.thisObject, param.args
-                )
                 return@hookBefore
             }
 
@@ -50,16 +46,15 @@ object CustomTabsHook : BaseHook() {
             val uri = Uri.parse(data)
             val host = uri.host
 
-            if (host == null || DOMAIN_WHITELIST_SUFFIX.any { host.endsWith(it) }) {
-                Log.d("TEST4 $intent")
-                param.result = XposedBridge.invokeOriginalMethod(
-                    param.method, param.thisObject, param.args
-                )
+            if ((host == null) || DOMAIN_WHITELIST_SUFFIX.any { host.endsWith(it) }) {
                 return@hookBefore
             }
 
             val customTabsClass = loadClass(customTabsClassName)
             val customTabsObj = customTabsClass.invokeStaticMethod(customTabsGetMethodName)
+
+            // skip original method
+            param.result = null
 
             if (isInAppBrowserEnabled) {
                 customTabsObj?.invokeMethodAuto(

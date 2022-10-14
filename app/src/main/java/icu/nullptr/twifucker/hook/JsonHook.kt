@@ -18,7 +18,7 @@ object JsonHook : BaseHook() {
             Log.d("Located json class ${jsonClass.simpleName}")
             // com.fasterxml.jackson.core.JsonFactory
             val jsonMethod = findMethod(jsonClass) {
-                isFinal && parameterTypes.size >= 1 && parameterTypes[0] == InputStream::class.java
+                isFinal && parameterTypes.isNotEmpty() && parameterTypes[0] == InputStream::class.java
             }
             Log.d("Located json method ${jsonMethod.name}")
             jsonMethod.hookBefore { param ->

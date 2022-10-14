@@ -1,7 +1,5 @@
 package icu.nullptr.twifucker.hook
 
-import android.app.Activity
-import android.content.Intent
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
@@ -354,11 +352,9 @@ object DownloadHook : BaseHook() {
             .filter { it.value.size == 2 && it.key.declaredFields.size == 3 }.map { it.value[1] }[0]
             ?: throw NoSuchFieldError()
         val legacyField =
-            resultField.type.declaredFields.filter { it.isNotStatic }.sortedBy { it.name }
-                .lastOrNull() ?: throw NoSuchFieldError()
+            resultField.type.declaredFields.filter { it.isNotStatic }.maxByOrNull { it.name } ?: throw NoSuchFieldError()
         val extendedEntitiesField =
-            legacyField.type.declaredFields.filter { it.isNotStatic }.sortedBy { it.name }
-                .lastOrNull() ?: throw NoSuchFieldError()
+            legacyField.type.declaredFields.filter { it.isNotStatic }.maxByOrNull { it.name } ?: throw NoSuchFieldError()
         val mediaField =
             extendedEntitiesField.type.superclass.declaredFields.firstOrNull { it.type == List::class.java }
                 ?: throw NoSuchFieldError()

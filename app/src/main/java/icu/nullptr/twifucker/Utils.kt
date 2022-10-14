@@ -7,7 +7,6 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.Log
 import icu.nullptr.twifucker.ui.SettingsDialog
 import java.io.File
-import java.net.URL
 
 
 val logFileDir by lazy { File(appContext.externalCacheDir?.absolutePath + "/twifucker_log/") }

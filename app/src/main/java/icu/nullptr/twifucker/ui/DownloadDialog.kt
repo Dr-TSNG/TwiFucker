@@ -50,7 +50,9 @@ class DownloadDialog(
         }
     }
 
-    private fun download(url: String) {
+    private fun download(
+        url: String, onDownloadCompleted: (() -> Unit)? = null
+    ) {
         val progressDialog = ProgressDialog(context)
         progressDialog.setTitle(R.string.downloading)
         progressDialog.setCancelable(false)
@@ -82,6 +84,8 @@ class DownloadDialog(
 
                 copyFile(file.name)
                 file.delete()
+
+                onDownloadCompleted?.invoke()
             } catch (t: Throwable) {
                 Log.e(t)
                 Log.toast(context.getString(R.string.download_failed))
@@ -109,7 +113,9 @@ class DownloadDialog(
         downloadUrls.forEachIndexed { i, url ->
             val textView = TextView(context)
             textView.setOnClickListener {
-                download(url)
+                download(url) {
+                    Log.toast(context.getString(R.string.download_completed))
+                }
             }
             textView.setOnLongClickListener {
                 toClipboard(url)
@@ -122,7 +128,13 @@ class DownloadDialog(
         }
 
         setNeutralButton(R.string.download_all) { _, _ ->
-            downloadUrls.forEach { download(it) }
+            downloadUrls.forEachIndexed { i, j ->
+                download(j) {
+                    if (i == downloadUrls.size - 1) {
+                        Log.toast(context.getString(R.string.download_completed))
+                    }
+                }
+            }
         }
 
         setView(linearLayout)

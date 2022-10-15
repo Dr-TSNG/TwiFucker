@@ -50,6 +50,7 @@
     <string name="download_link_copied">Download link copied!</string>
     <string name="downloading">Downloading…</string>
     <string name="download_failed">Download failed</string>
+    <string name="download_completed">Download completed</string>
     <string name="download_copy_failed">Failed to copy file</string>
     <string name="download_all">Download All</string>
 

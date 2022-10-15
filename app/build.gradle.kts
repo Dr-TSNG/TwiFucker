@@ -161,7 +161,7 @@ android {
         }
     }
     buildToolsVersion = "33.0.0"
-    ndkVersion = "25.0.8775105"
+    ndkVersion = "25.1.8937393"
     namespace = "icu.nullptr.twifucker"
 }
 

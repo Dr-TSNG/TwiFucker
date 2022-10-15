@@ -9,7 +9,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Environment
-import android.widget.LinearLayout
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.ImageButton
 import android.widget.TextView
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.Log
@@ -21,7 +25,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class DownloadDialog(
-    context: Context, private val downloadUrls: List<String>
+    context: Context, downloadUrls: List<String>
 ) : AlertDialog.Builder(context) {
     companion object {
         private fun contentTypeToExt(contentType: String): String {
@@ -48,96 +52,109 @@ class DownloadDialog(
             val outputStream = outputFile.outputStream()
             inputStream.copyTo(outputStream)
         }
-    }
 
-    private fun download(
-        url: String, onDownloadCompleted: (() -> Unit)? = null
-    ) {
-        val progressDialog = ProgressDialog(context)
-        progressDialog.setTitle(R.string.downloading)
-        progressDialog.setCancelable(false)
-        progressDialog.show()
+        private fun download(
+            context: Context, url: String, onDownloadCompleted: (() -> Unit)? = null
+        ) {
+            val progressDialog = ProgressDialog(context)
+            progressDialog.setTitle(R.string.downloading)
+            progressDialog.setCancelable(false)
+            progressDialog.show()
 
-        Thread {
-            try {
-                val downloadUrl = URL(url)
-                val httpConnection = downloadUrl.openConnection() as HttpURLConnection
-                httpConnection.connect()
-                val inputStream = httpConnection.inputStream
-                val buffer = ByteArray(1024)
-                var len = inputStream.read(buffer)
+            Thread {
+                try {
+                    val downloadUrl = URL(url)
+                    val httpConnection = downloadUrl.openConnection() as HttpURLConnection
+                    httpConnection.connect()
+                    val inputStream = httpConnection.inputStream
+                    val buffer = ByteArray(1024)
+                    var len = inputStream.read(buffer)
 
-                val file = File(
-                    appContext.cacheDir,
-                    "" + System.currentTimeMillis() + contentTypeToExt(httpConnection.contentType)
-                )
+                    val file = File(
+                        appContext.cacheDir,
+                        "" + System.currentTimeMillis() + contentTypeToExt(httpConnection.contentType)
+                    )
 
-                val outputStream = FileOutputStream(file)
-                while (len != -1) {
-                    outputStream.write(buffer, 0, len)
-                    len = inputStream.read(buffer)
+                    val outputStream = FileOutputStream(file)
+                    while (len != -1) {
+                        outputStream.write(buffer, 0, len)
+                        len = inputStream.read(buffer)
+                    }
+
+                    outputStream.close()
+                    inputStream.close()
+                    httpConnection.disconnect()
+
+                    copyFile(file.name)
+                    file.delete()
+
+                    onDownloadCompleted?.invoke()
+                } catch (t: Throwable) {
+                    Log.e(t)
+                    Log.toast(appContext.getString(R.string.download_failed))
                 }
+                progressDialog.cancel()
+            }.start()
+        }
 
-                outputStream.close()
-                inputStream.close()
-                httpConnection.disconnect()
-
-                copyFile(file.name)
-                file.delete()
-
-                onDownloadCompleted?.invoke()
-            } catch (t: Throwable) {
-                Log.e(t)
-                Log.toast(context.getString(R.string.download_failed))
-            }
-            progressDialog.cancel()
-        }.start()
+        private fun toClipboard(text: String) {
+            val clipboardManager =
+                appContext.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("label", text)
+            clipboardManager.setPrimaryClip(clip)
+            Log.toast(appContext.getString(R.string.download_link_copied))
+        }
     }
 
-    private fun toClipboard(text: String) {
-        val clipboardManager = appContext.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("label", text)
-        clipboardManager.setPrimaryClip(clip)
-        Log.toast(context.getString(R.string.download_link_copied))
+    private class DownloadMediaAdapter(val context: Context, val urls: List<String>) :
+        BaseAdapter() {
+
+        override fun getCount(): Int {
+            return urls.size
+        }
+
+        override fun getItem(position: Int): Any {
+            return urls[position]
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val view = convertView ?: LayoutInflater.from(context)
+                .inflate(R.layout.download_item, parent, false).apply {
+                    findViewById<TextView>(R.id.download_item_text).text =
+                        context.getString(R.string.download_media, position + 1)
+                    findViewById<ImageButton>(R.id.download_item_copy).setOnClickListener {
+                        toClipboard(urls[position])
+                    }
+                    findViewById<ImageButton>(R.id.download_item_download).setOnClickListener {
+                        download(context, urls[position])
+                    }
+                }
+            return view
+        }
+
     }
 
     init {
         context.addModuleAssetPath()
-        val linearLayout = LinearLayout(context)
-        linearLayout.orientation = LinearLayout.VERTICAL
-        linearLayout.setPadding(32, 32, 32, 32)
-        linearLayout.layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
-        )
 
-        downloadUrls.forEachIndexed { i, url ->
-            val textView = TextView(context)
-            textView.setOnClickListener {
-                download(url) {
-                    Log.toast(context.getString(R.string.download_completed))
-                }
-            }
-            textView.setOnLongClickListener {
-                toClipboard(url)
-                true
-            }
-            textView.setPadding(0, 16, 0, 16)
-            textView.textSize = 18f
-            textView.text = context.getString(R.string.download_media, i)
-            linearLayout.addView(textView)
-        }
+        val adapter = DownloadMediaAdapter(context, downloadUrls)
+        setAdapter(adapter, null)
 
         setNeutralButton(R.string.download_all) { _, _ ->
             downloadUrls.forEachIndexed { i, j ->
-                download(j) {
+                download(context, j) {
                     if (i == downloadUrls.size - 1) {
                         Log.toast(context.getString(R.string.download_completed))
                     }
                 }
             }
         }
+        setNegativeButton(R.string.settings_dismiss, null)
 
-        setView(linearLayout)
         setTitle(R.string.download_or_copy)
         show()
     }

@@ -13,7 +13,7 @@
     <string name="settings_logging">Logging</string>
 
     <string name="about_title">TwiFucker by Nullptr</string>
-    <string name="show_toast_title">Tost'u Başlangıçta Göster</string>
+    <string name="show_toast_title">Tost\'u Başlangıçta Göster</string>
     <string name="use_legacy_hook">Eski kancayı kullan</string>
     <string name="disable_promoted_content_title">Tanıtılan İçeriği Devre Dışı Bırak</string>
     <string name="disable_promoted_user_title">Tanıtılan Kullanıcıları Devre Dışı Bırak</string>
@@ -27,7 +27,7 @@
     <string name="hide_drawer_items">Çekmece öğelerini gizle</string>
     <string name="hide_bottom_navbar_items">Alt gezinme çubuğu öğelerini gizle</string>
     <string name="enable_log">Log Kayıtlarını Etkinleştir</string>
-    <string name="export_log">Log Kayıtlarını Dışa Aktar/string>
+    <string name="export_log">Log Kayıtlarını Dışa Aktar</string>
     <string name="export_json_log">JSON Log Kayıtlarını Dışa Aktar</string>
     <string name="clear_log">Log Kayıtlarını Temizle</string>
 

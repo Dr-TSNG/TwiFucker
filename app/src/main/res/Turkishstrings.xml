@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">TwiFucker</string>
+    <string name="twifucker_settings">TwiFucker Ayarları</string>
+    <string name="save">Kaydet</string>
+    <string name="reset">Sıfırla</string>
+    <string name="save_restart">Kaydet ve Yeniden Başlat</string>
+
+    <string name="settings_dismiss">Reddet</string>
+    <string name="settings_general">Genel</string>
+    <string name="settings_main">Main</string>
+    <string name="settings_extra">Ekstra</string>
+    <string name="settings_experimental">Deneysel</string>
+    <string name="settings_logging">Logging</string>
+
+    <string name="about_title">TwiFucker by Nullptr</string>
+    <string name="show_toast_title">Tost'u Başlangıçta Göster</string>
+    <string name="use_legacy_hook">Eski kancayı kullan</string>
+    <string name="disable_promoted_content_title">Tanıtılan İçeriği Devre Dışı Bırak</string>
+    <string name="disable_promoted_user_title">Tanıtılan Kullanıcıları Devre Dışı Bırak</string>
+    <string name="disable_promoted_trends_title">Tanıtılan Trendleri Devre Dışı Bırak</string>
+    <string name="disable_sensitive_media_warning_title">Hassas Medya Uyarısını Devre Dışı Bırak</string>
+    <string name="disable_recommended_users">Önerilen Kullanıcıları Devre Dışı Bırak</string>
+    <string name="disable_who_to_follow_title">Kimin Takip Edileceğini Devre Dışı Bırak</string>
+    <string name="disable_topics_to_follow_title">Takip Edilecek Konuları Devre Dışı Bırakw</string>
+    <string name="enable_download_hook">İndirme Kancasını Etkinleştir</string>
+    <string name="disable_url_redirect">URL Yönlendirmeyi Devre Dışı Bırak</string>
+    <string name="hide_drawer_items">Çekmece öğelerini gizle</string>
+    <string name="hide_bottom_navbar_items">Alt gezinme çubuğu öğelerini gizle</string>
+    <string name="enable_log">Log Kayıtlarını Etkinleştir</string>
+    <string name="export_log">Log Kayıtlarını Dışa Aktar/string>
+    <string name="export_json_log">JSON Log Kayıtlarını Dışa Aktar</string>
+    <string name="clear_log">Log Kayıtlarını Temizle</string>
+
+    <string name="about_summary">Daha fazla destek için GitHub sayfasını ziyaret edin</string>
+    <string name="show_toast_summary">Bu sayfayı ayarlar/ek/sürüm aracılığıyla bulabilirsiniz.</string>
+    <string name="disable_promoted_content_summary">ana sayfa/profil/arama zaman çizelgesi</string>
+    <string name="disable_promoted_user_summary">ana sayfa/profil/arama zaman çizelgesi</string>
+    <string name="disable_promoted_trends_summary">ara</string>
+    <string name="disable_sensitive_media_warning_summary">ana sayfa/profil zaman çizelgesi ve tweet ayrıntıları</string>
+    <string name="disable_recommended_users_summary">Birini takip ettikten sonra önerilen kullanıcıları gösterme</string>
+    <string name="enable_download_hook_summary">[Share -> İndir veya Kopyala] İndirmek için dokunun, bağlantıyı kopyalamak için düğmeyi basılı tutun</string>
+    <string name="disable_url_redirect_summary">t.co url yönlendirmesini durdur</string>
+    <string name="hide_drawer_items_summary">Gizlenecek çekmece öğelerini seçin</string>
+    <string name="hide_bottom_navbar_items_summary">Gizlenecek alt gezinme çubuğu öğelerini seçin</string>
+    <string name="enable_log_summary">Daha fazla günlük kaydı için eski kancayı etkinleştirin.  Günlük, Android/data/com.twitter.android/cache/twifucker_log'a kaydedilir</string>
+    <string name="export_json_log_summary">Etkinleştirilmesi için eski kanca gerekli</string>
+
+    <string name="download_or_copy">İndir veya Kopyala</string>
+    <string name="download_media">Medya %1$d</string>
+    <string name="download_link_copied">İndirme linki kopyalandı!</string>
+    <string name="downloading">İndiriliyor…</string>
+    <string name="download_failed">İndirme işlemi başarısız</string>
+    <string name="download_completed">İndirme işlemi tamamlandı</string>
+    <string name="download_copy_failed">Dosya kopyalanamadı</string>
+    <string name="download_all">Tümünü İndir</string>
+
+    <string name="deleted_n_promoted_tweet">Uygulama veritabanından %1$d tanıtılan tweet silindi</string>
+    <string name="use_legacy_hook_summary">Legacy hook processes JSON string directly</string>
+
+</resources>

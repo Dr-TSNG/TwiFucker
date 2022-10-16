@@ -42,7 +42,7 @@
     <string name="disable_url_redirect_summary">t.co url yönlendirmesini durdur</string>
     <string name="hide_drawer_items_summary">Gizlenecek çekmece öğelerini seçin</string>
     <string name="hide_bottom_navbar_items_summary">Gizlenecek alt gezinme çubuğu öğelerini seçin</string>
-    <string name="enable_log_summary">Daha fazla günlük kaydı için eski kancayı etkinleştirin.  Günlük, Android/data/com.twitter.android/cache/twifucker_log'a kaydedilir</string>
+    <string name="enable_log_summary">Daha fazla günlük kaydı için eski kancayı etkinleştirin.  Günlük, Android/data/com.twitter.android/cache/twifucker_log\'a kaydedilir</string>
     <string name="export_json_log_summary">Etkinleştirilmesi için eski kanca gerekli</string>
 
     <string name="download_or_copy">İndir veya Kopyala</string>

@@ -130,7 +130,9 @@ class DownloadDialog(
                         toClipboard(urls[position])
                     }
                     findViewById<ImageButton>(R.id.download_item_download).setOnClickListener {
-                        download(context, urls[position])
+                        download(context, urls[position]) {
+                            Log.toast(context.getString(R.string.download_completed))
+                        }
                     }
                 }
             return view

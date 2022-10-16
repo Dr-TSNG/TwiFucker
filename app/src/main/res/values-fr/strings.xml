@@ -50,6 +50,7 @@
     <string name="download_link_copied">Lien de téléchargement copié!</string>
     <string name="downloading">Téléchargement…</string>
     <string name="download_failed">Échec du téléchargement</string>
+    <string name="download_completed">Téléchargement terminé</string>
     <string name="download_copy_failed">Échec de la copie du fichier</string>
     <string name="download_all">Tout Télécharger</string>
 

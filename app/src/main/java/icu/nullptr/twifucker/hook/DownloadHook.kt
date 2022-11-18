@@ -1,5 +1,8 @@
 package icu.nullptr.twifucker.hook
 
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
@@ -10,27 +13,37 @@ import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
 import icu.nullptr.twifucker.ui.DownloadDialog
 import java.io.File
-import java.lang.reflect.Constructor
-import java.lang.reflect.Method
 
 
 object DownloadHook : BaseHook() {
     private var downloadUrls: List<String> = listOf()
 
-    private lateinit var carouselActionItemFactoryClassName: String
-    private lateinit var genCarouselActionItemMethodName: String
-    private lateinit var actionItemViewDataClassName: String
+    // tweet share download button
+    private lateinit var tweetShareClassName: String
+    private lateinit var tweetShareShowMethodName: String
+    private lateinit var tweetShareShareListFieldName: String
 
-    private lateinit var actionTypeEnumClassName: String
-    private lateinit var carouselViewDataClassName: String
+    private lateinit var actionEnumWrappedClassName: String
+    private lateinit var actionEnumWrappedInnerClassName: String
+    private lateinit var actionEnumClassName: String
 
-    private lateinit var actionItemViewOnClickClassName: String
-    private lateinit var actionItemViewOnClickMethodName: String
-    private lateinit var viewDataFieldName: String
-    private lateinit var actionTypeFieldName: String
+    private lateinit var actionSheetItemClassName: String
+    private lateinit var actionSheetItemFieldName: String
 
+    // tweet share onClick
+    private lateinit var shareTweetOnClickListenerClassName: String
+    private lateinit var shareTweetItemAdapterFieldName: String
+    private lateinit var actionItemViewDataFieldName: String
+
+    // protected tweet share onClick
+    private lateinit var protectedShareTweetItemAdapterClassName: String
+    private lateinit var protectedShareTweetItemAdapterClassTitleFieldName: String
+
+    // share menu
     private lateinit var shareMenuClassName: String
     private lateinit var shareMenuMethodName: String
+
+    // tweet object
     private lateinit var tweetResultFieldName: String
     private lateinit var resultFieldName: String
     private lateinit var legacyFieldName: String
@@ -51,46 +64,17 @@ object DownloadHook : BaseHook() {
             return
         }
 
-        findMethod(carouselActionItemFactoryClassName) {
-            name == genCarouselActionItemMethodName
-        }.hookAfter { param ->
-            if (downloadUrls.isEmpty()) return@hookAfter
-            @Suppress("UNCHECKED_CAST") val result = param.result as MutableList<Any>
-            val testEnumNone = loadClass(actionTypeEnumClassName).newInstance(
-                args("None", 0), argTypes(String::class.java, Int::class.java)
-            )
-            // ic_vector_incoming.xml
-            appContext.addModuleAssetPath()
-            val item = loadClass(actionItemViewDataClassName).newInstance(
-                args(
-                    testEnumNone, appContext.getString(R.string.download_or_copy), getId(
-                        "ic_vector_incoming", "drawable"
-                    )
-                ), argTypes(loadClass(actionTypeEnumClassName), String::class.java, Int::class.java)
-            ) ?: return@hookAfter
-            val newList = mutableListOf<Any>()
-            newList.add(item)
-            val newSecondRow = loadClassOrNull(carouselViewDataClassName)?.let {
-                if (it.constructors[0].parameterTypes.size == 2) {
-                    it.newInstance(
-                        args(newList.toList(), true),
-                        argTypes(List::class.java, Boolean::class.java)
-                    )
-                } else {
-                    it.newInstance(
-                        args(newList.toList()), argTypes(List::class.java)
-                    )
-                }
-            } ?: return@hookAfter
-            result.add(1, newSecondRow)
-        }
+        appContext.addModuleAssetPath()
 
-        findMethod(actionItemViewOnClickClassName) {
-            name == actionItemViewOnClickMethodName
-        }.hookAfter { param ->
-            val viewData = param.thisObject.getObjectOrNull(viewDataFieldName)
-            val actionType = viewData?.getObjectOrNull(actionTypeFieldName)
-            if (actionType.toString() != "None") return@hookAfter
+        // normal tweet
+        findAllMethods(shareTweetOnClickListenerClassName) { name == "onClick" }.hookBefore {
+            val actionItemViewData = it.thisObject.getObjectOrNull(shareTweetItemAdapterFieldName)
+                ?.getObjectOrNull(actionItemViewDataFieldName)
+            // a - actionType
+            // b - title
+            // c - iconRes
+            if (actionItemViewData?.getObjectOrNull("b") != appContext.getString(R.string.download_or_copy)) return@hookBefore
+
             try {
                 currentActivity.get()?.let {
                     DownloadDialog(it, downloadUrls).show()
@@ -100,7 +84,57 @@ object DownloadHook : BaseHook() {
             }
         }
 
+        // protected tweet
+        findAllMethods(protectedShareTweetItemAdapterClassName) { name == "onClick" }.hookBefore {
+            val protectedShareTweetItemAdapterTitleTextView =
+                it.thisObject.getObjectOrNull(protectedShareTweetItemAdapterClassTitleFieldName) as TextView
+            if (protectedShareTweetItemAdapterTitleTextView.text != appContext.getString(R.string.download_or_copy)) return@hookBefore
 
+            try {
+                currentActivity.get()?.let {
+                    DownloadDialog(it, downloadUrls).show()
+                }
+            } catch (t: Throwable) {
+                Log.e(t)
+            }
+        }
+
+        findAllMethods(tweetShareClassName) { name == tweetShareShowMethodName }.hookBefore {
+            val shareList = it.thisObject.getObjectAs<List<*>>(tweetShareShareListFieldName)
+
+            val mutList = shareList.toMutableList()
+
+            val actionEnumWrappedClass = loadClass(actionEnumWrappedInnerClassName)
+            val actionEnumClass = loadClass(actionEnumClassName)
+            val actionSheetItemClass = loadClass(actionSheetItemClassName)
+            val actionEnumWrapped = actionEnumWrappedClass.newInstance(
+                args(
+                    actionEnumClass.invokeStaticMethod(
+                        "valueOf", args("None"), argTypes(String::class.java)
+                    ), ""
+                ), argTypes(actionEnumClass, String::class.java)
+            )
+            // drawableRes, actionId, title
+            actionEnumWrapped?.putObject(
+                actionSheetItemFieldName, actionSheetItemClass.newInstance(
+                    args(
+                        getId("ic_vector_incoming", "drawable"),
+                        0,
+                        appContext.getString(R.string.download_or_copy)
+                    ), argTypes(Int::class.java, Int::class.java, String::class.java)
+                )
+            )
+
+            mutList.add(
+                loadClass(actionEnumWrappedClassName).newInstance(
+                    args(actionEnumWrapped), argTypes(actionEnumWrappedClass)
+                )
+            )
+
+            it.thisObject.putObject(tweetShareShareListFieldName, mutList.toList())
+        }
+
+        // share menu
         findMethod(shareMenuClassName) {
             name == shareMenuMethodName
         }.hookBefore { param ->
@@ -144,37 +178,53 @@ object DownloadHook : BaseHook() {
     }
 
     private fun loadCachedHookInfo() {
-        carouselActionItemFactoryClassName =
-            modulePrefs.getString("hook_carousel_action_item_factory_class", null)
-                ?: throw Throwable("cached hook not found")
-        genCarouselActionItemMethodName =
-            modulePrefs.getString("hook_gen_carousel_action_item_method", null)
-                ?: throw Throwable("cached hook not found")
-        actionItemViewDataClassName =
-            modulePrefs.getString("hook_action_item_view_data_class", null)
-                ?: throw Throwable("cached hook not found")
-
-        actionTypeEnumClassName = modulePrefs.getString("hook_action_type_enum_class", null)
+        // tweet share download button
+        tweetShareClassName = modulePrefs.getString("hook_tweet_share_class", null)
             ?: throw Throwable("cached hook not found")
-        carouselViewDataClassName = modulePrefs.getString("hook_carousel_view_data_class", null)
+        tweetShareShowMethodName = modulePrefs.getString("hook_tweet_share_show_method", null)
+            ?: throw Throwable("cached hook not found")
+        tweetShareShareListFieldName = modulePrefs.getString("hook_tweet_share_list_field", null)
             ?: throw Throwable("cached hook not found")
 
-        actionItemViewOnClickClassName =
-            modulePrefs.getString("hook_action_item_view_on_click_class", null)
-                ?: throw Throwable("cached hook not found")
-        actionItemViewOnClickMethodName =
-            modulePrefs.getString("hook_action_item_view_on_click_method", null) ?: throw Throwable(
-                "cached hook not found"
-            )
-        viewDataFieldName = modulePrefs.getString("hook_view_data_field", null)
+        actionEnumWrappedClassName = modulePrefs.getString("hook_action_enum_wrapped_class", null)
             ?: throw Throwable("cached hook not found")
-        actionTypeFieldName = modulePrefs.getString("hook_action_type_field", null)
+        actionEnumWrappedInnerClassName =
+            modulePrefs.getString("hook_action_enum_wrapped_inner_class", null)
+                ?: throw Throwable("cached hook not found")
+        actionEnumClassName = modulePrefs.getString("hook_action_enum_class", null)
             ?: throw Throwable("cached hook not found")
 
+        actionSheetItemClassName = modulePrefs.getString("hook_action_sheet_item_class", null)
+            ?: throw Throwable("cached hook not found")
+        actionSheetItemFieldName = modulePrefs.getString("hook_action_sheet_item_field", null)
+            ?: throw Throwable("cached hook not found")
+
+        // tweet share onClick
+        shareTweetOnClickListenerClassName =
+            modulePrefs.getString("hook_share_tweet_on_click_listener_class", null)
+                ?: throw Throwable("cached hook not found")
+        shareTweetItemAdapterFieldName =
+            modulePrefs.getString("hook_share_tweet_item_adapter_field", null)
+                ?: throw Throwable("cached hook not found")
+        actionItemViewDataFieldName =
+            modulePrefs.getString("hook_action_item_view_data_field", null)
+                ?: throw Throwable("cached hook not found")
+
+        // protected tweet share onClick
+        protectedShareTweetItemAdapterClassName =
+            modulePrefs.getString("hook_protected_share_item_adapter_class", null)
+                ?: throw Throwable("cached hook not found")
+        protectedShareTweetItemAdapterClassTitleFieldName =
+            modulePrefs.getString("hook_protected_share_tweet_item_adapter_class_title_field", null)
+                ?: throw Throwable("cached hook not found")
+
+        // share menu
         shareMenuClassName = modulePrefs.getString("hook_share_menu_class", null)
             ?: throw Throwable("cached hook not found")
         shareMenuMethodName = modulePrefs.getString("hook_share_menu_method", null)
             ?: throw Throwable("cached hook not found")
+
+        // tweet object
         tweetResultFieldName = modulePrefs.getString("hook_tweet_result_field", null)
             ?: throw Throwable("cached hook not found")
         resultFieldName = modulePrefs.getString("hook_result_field", null)
@@ -197,22 +247,39 @@ object DownloadHook : BaseHook() {
 
     private fun saveHookInfo() {
         modulePrefs.edit().let {
+            // tweet share download button
+            it.putString("hook_tweet_share_class", tweetShareClassName)
+            it.putString("hook_tweet_share_show_method", tweetShareShowMethodName)
+            it.putString("hook_tweet_share_list_field", tweetShareShareListFieldName)
+
+            it.putString("hook_action_enum_wrapped_class", actionEnumWrappedClassName)
+            it.putString("hook_action_enum_wrapped_inner_class", actionEnumWrappedInnerClassName)
+            it.putString("hook_action_enum_class", actionEnumClassName)
+
+            it.putString("hook_action_sheet_item_class", actionSheetItemClassName)
+            it.putString("hook_action_sheet_item_field", actionSheetItemFieldName)
+
+            // tweet share onClick
             it.putString(
-                "hook_carousel_action_item_factory_class", carouselActionItemFactoryClassName
+                "hook_share_tweet_on_click_listener_class", shareTweetOnClickListenerClassName
             )
-            it.putString("hook_gen_carousel_action_item_method", genCarouselActionItemMethodName)
-            it.putString("hook_action_item_view_data_class", actionItemViewDataClassName)
+            it.putString("hook_share_tweet_item_adapter_field", shareTweetItemAdapterFieldName)
+            it.putString("hook_action_item_view_data_field", actionItemViewDataFieldName)
 
-            it.putString("hook_action_type_enum_class", actionTypeEnumClassName)
-            it.putString("hook_carousel_view_data_class", carouselViewDataClassName)
+            // protected tweet share onClick
+            it.putString(
+                "hook_protected_share_item_adapter_class", protectedShareTweetItemAdapterClassName
+            )
+            it.putString(
+                "hook_protected_share_tweet_item_adapter_class_title_field",
+                protectedShareTweetItemAdapterClassTitleFieldName
+            )
 
-            it.putString("hook_action_item_view_on_click_class", actionItemViewOnClickClassName)
-            it.putString("hook_action_item_view_on_click_method", actionItemViewOnClickMethodName)
-            it.putString("hook_view_data_field", viewDataFieldName)
-            it.putString("hook_action_type_field", actionTypeFieldName)
-
+            // share menu
             it.putString("hook_share_menu_class", shareMenuClassName)
             it.putString("hook_share_menu_method", shareMenuMethodName)
+
+            // tweet object
             it.putString("hook_tweet_result_field", tweetResultFieldName)
             it.putString("hook_result_field", resultFieldName)
             it.putString("hook_legacy_field", legacyFieldName)
@@ -227,22 +294,36 @@ object DownloadHook : BaseHook() {
 
 
     private fun searchHook() {
-        val genCarouselActionItemMethod = dexHelper.findMethodUsingString(
-            "viewOptions.actionItems",
+        // tweet share download button
+        val tweetShareClass = dexHelper.findMethodUsingString(
+            "timeline_selected_caret_position",
             false,
             -1,
-            0,
+            2,
             null,
             -1,
             null,
             null,
             null,
             true,
-        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it) } ?: throw NoSuchMethodError()
-        val carouselActionItemFactoryClass = genCarouselActionItemMethod.declaringClass
+        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
+            ?: throw NoSuchMethodError()
+        val tweetShareShowMethod =
+            tweetShareClass.declaredMethods.firstOrNull { m -> m.isPublic && m.isFinal && m.parameterTypes.size == 1 && m.returnType == Void.TYPE }
+                ?: throw NoSuchMethodError()
+        val tweetShareShareListField =
+            tweetShareClass.declaredFields.firstOrNull { f -> f.isPublic && f.isFinal && f.type == List::class.java }
+                ?: throw NoSuchFieldError()
 
-        val actionItemViewDataClass = dexHelper.findMethodUsingString(
-            "ActionItemViewData(actionType=",
+        val actionEnumWrappedClassRefMethod =
+            tweetShareClass.declaredMethods.firstOrNull { m -> m.isPublic && m.isFinal && m.parameterTypes.size == 4 && m.parameterTypes[1] == String::class.java && m.parameterTypes[2] == Boolean::class.java && m.parameterTypes[3] == String::class.java }
+                ?: throw NoSuchMethodError()
+        val actionEnumWrappedClass = actionEnumWrappedClassRefMethod.returnType
+        val actionEnumWrappedInnerClass = actionEnumWrappedClass.constructors[0].parameterTypes[0]
+        val actionEnumClass = actionEnumWrappedClassRefMethod.parameterTypes[0]
+
+        val actionSheetItemClass = dexHelper.findMethodUsingString(
+            "ActionSheetItem(drawableRes=",
             false,
             dexHelper.encodeClassIndex(String::class.java),
             0,
@@ -254,82 +335,100 @@ object DownloadHook : BaseHook() {
             true,
         ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
             ?: throw ClassNotFoundException()
-        val carouselViewDataClass = dexHelper.findMethodUsingString(
-            "CarouselViewData(items=",
+        val actionSheetItemField =
+            actionEnumWrappedInnerClass.declaredFields.firstOrNull { f -> f.type == actionSheetItemClass }
+                ?: throw NoSuchFieldError()
+
+        tweetShareClassName = tweetShareClass.name
+        tweetShareShowMethodName = tweetShareShowMethod.name
+        tweetShareShareListFieldName = tweetShareShareListField.name
+
+        actionEnumWrappedClassName = actionEnumWrappedClass.name
+        actionEnumWrappedInnerClassName = actionEnumWrappedInnerClass.name
+        actionEnumClassName = actionEnumClass.name
+
+        actionSheetItemClassName = actionSheetItemClass.name
+        actionSheetItemFieldName = actionSheetItemField.name
+
+        // tweet share onClick
+        val shareTweetOnClickListenerClass = dexHelper.findMethodUsingString(
+            "profile_modal",
             false,
-            dexHelper.encodeClassIndex(String::class.java),
-            0,
+            dexHelper.encodeClassIndex(Void.TYPE),
+            1,
             null,
             -1,
-            null,
+            longArrayOf(dexHelper.encodeClassIndex(View::class.java)),
             null,
             null,
             true,
         ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
             ?: throw ClassNotFoundException()
-        val actionTypeEnumClass = dexHelper.findMethodUsingString(
-            "AddRemoveFromList",
+        val shareTweetItemAdapterField =
+            shareTweetOnClickListenerClass.declaredFields.lastOrNull() ?: throw NoSuchFieldError()
+        val shareTweetItemAdapterClass = dexHelper.findMethodUsingString(
+            "itemView.findViewById(R.id.action_sheet_item_icon)",
             false,
             dexHelper.encodeClassIndex(Void.TYPE),
-            0,
+            2,
+            null,
+            -1,
+            null,
+            longArrayOf(dexHelper.encodeClassIndex(ViewGroup::class.java)),
+            null,
+            true,
+        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
+            ?: throw ClassNotFoundException()
+        val actionItemViewDataField =
+            shareTweetItemAdapterClass.declaredFields.firstOrNull { f -> f.isPublic && f.isNotStatic && f.isNotFinal }
+                ?: throw ClassNotFoundException()
+
+        shareTweetOnClickListenerClassName = shareTweetOnClickListenerClass.name
+        shareTweetItemAdapterFieldName = shareTweetItemAdapterField.name
+        actionItemViewDataFieldName = actionItemViewDataField.name
+
+        // protected tweet share onClick
+        val refMethodIndex = dexHelper.findMethodUsingString(
+            "bceHierarchyContext",
+            false,
+            dexHelper.encodeClassIndex(Void.TYPE),
+            2,
             null,
             -1,
             null,
             null,
             null,
-            true,
-        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
-            ?: throw ClassNotFoundException()
-
-        carouselActionItemFactoryClassName = carouselActionItemFactoryClass.name
-        genCarouselActionItemMethodName = genCarouselActionItemMethod.name
-        actionItemViewDataClassName = actionItemViewDataClass.name
-
-        actionTypeEnumClassName = actionTypeEnumClass.name
-        carouselViewDataClassName = carouselViewDataClass.name
-
-
-        val actionItemViewMethodIndex = dexHelper.findMethodUsingString(
-            "Type not supported in share carousel: ",
             false,
-            dexHelper.encodeClassIndex(Void.TYPE),
+        ).firstOrNull { index ->
+            val clazz = dexHelper.decodeMethodIndex(index)?.declaringClass
+            clazz?.declaredFields?.any { f -> f.type == View::class.java } ?: false
+        } ?: throw NoSuchMethodError()
+
+        val refClass = dexHelper.findMethodInvoking(
+            refMethodIndex,
+            -1,
             3,
             null,
             -1,
             null,
-            null,
+            longArrayOf(dexHelper.encodeClassIndex(List::class.java)),
             null,
             true,
-        ).firstOrNull() ?: throw NoSuchMethodError()
-        val actionItemViewOnClickConstructor = dexHelper.findMethodInvoking(
-            actionItemViewMethodIndex,
-            dexHelper.encodeClassIndex(Void.TYPE),
-            -1,
-            null,
-            -1,
-            null,
-            longArrayOf(
-                dexHelper.encodeClassIndex(Int::class.java)
-            ),
-            null,
-            false,
-        ).firstOrNull {
-            dexHelper.decodeMethodIndex(it) is Constructor<*>
-        }?.let { dexHelper.decodeMethodIndex(it) } ?: throw NoSuchMethodError()
-        val actionItemViewOnClickMethod =
-            (actionItemViewOnClickConstructor as Constructor<*>).declaringClass.declaredMethods.firstOrNull { it.name == "onClick" } as Method
-        val viewDataField =
-            actionItemViewOnClickConstructor.declaringClass.declaredFields.filter { it.type != Int::class.java }[1]
-                ?: throw NoSuchFieldError()
-        val actionTypeField =
-            actionItemViewDataClass.declaredFields.lastOrNull { it.type == actionTypeEnumClass }
+        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
+            ?: throw ClassNotFoundException()
+        val protectedShareTweetItemAdapterClass =
+            refClass.declaredMethods.firstOrNull { m -> m.isPublic && m.parameterTypes.size == 2 && m.parameterTypes[0] == ViewGroup::class.java && m.parameterTypes[1] == Int::class.java }?.returnType
+                ?: throw ClassNotFoundException()
+        val protectedShareTweetItemAdapterClassTitleField =
+            protectedShareTweetItemAdapterClass.declaredFields.firstOrNull { f -> f.type == TextView::class.java }
                 ?: throw NoSuchFieldError()
 
-        actionItemViewOnClickClassName = actionItemViewOnClickConstructor.declaringClass.name
-        actionItemViewOnClickMethodName = actionItemViewOnClickMethod.name
-        viewDataFieldName = viewDataField.name
-        actionTypeFieldName = actionTypeField.name
+        // protected tweet share onClick
+        protectedShareTweetItemAdapterClassName = protectedShareTweetItemAdapterClass.name
+        protectedShareTweetItemAdapterClassTitleFieldName =
+            protectedShareTweetItemAdapterClassTitleField.name
 
+        // share menu
         val shareMenuClass = ezXClassLoader.getAllClassesList().filter {
             val clazz = loadClassOrNull(it) ?: return@filter false
             try {
@@ -352,9 +451,11 @@ object DownloadHook : BaseHook() {
             .filter { it.value.size == 2 && it.key.declaredFields.size == 3 }.map { it.value[1] }[0]
             ?: throw NoSuchFieldError()
         val legacyField =
-            resultField.type.declaredFields.filter { it.isNotStatic }.maxByOrNull { it.name } ?: throw NoSuchFieldError()
+            resultField.type.declaredFields.filter { it.isNotStatic }.maxByOrNull { it.name }
+                ?: throw NoSuchFieldError()
         val extendedEntitiesField =
-            legacyField.type.declaredFields.filter { it.isNotStatic }.maxByOrNull { it.name } ?: throw NoSuchFieldError()
+            legacyField.type.declaredFields.filter { it.isNotStatic }.maxByOrNull { it.name }
+                ?: throw NoSuchFieldError()
         val mediaField =
             extendedEntitiesField.type.superclass.declaredFields.firstOrNull { it.type == List::class.java }
                 ?: throw NoSuchFieldError()

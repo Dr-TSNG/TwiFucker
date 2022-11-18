@@ -49,7 +49,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
     private fun deleteFromDatabase() {
         val disablePromotedContent = modulePrefs.getBoolean(PREF_DISABLE_PROMOTED_CONTENT, true)
         if (!disablePromotedContent) return
-        val re = Regex("^\\d+-\\d+\\.db$")
+        val re = Regex("""^\d+-\d+(-versioncode-\d+)?.db$""")
         var count = 0
         context.databaseList().forEach { db ->
             if (re.matches(db)) {

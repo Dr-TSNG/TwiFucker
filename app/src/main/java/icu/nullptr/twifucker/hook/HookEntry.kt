@@ -8,7 +8,7 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.Log.logexIfThrow
 import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookAfter
+import com.github.kyuubiran.ezxhelper.utils.hookBefore
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -75,7 +75,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         findMethod(Application::class.java) {
             name == "attach" && parameterTypes.contentEquals(arrayOf(Context::class.java))
-        }.hookAfter { param ->
+        }.hookBefore { param ->
             EzXHelperInit.initAppContext(param.args[0] as Context)
             EzXHelperInit.setEzClassLoader(appContext.classLoader)
 

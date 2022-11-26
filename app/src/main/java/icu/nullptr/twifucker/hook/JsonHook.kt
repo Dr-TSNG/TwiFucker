@@ -108,7 +108,9 @@ object JsonHook : BaseHook() {
             ?.has("tweetPromotedMetadata") == true
 
     private fun JSONObject.entryIsWhoToFollow(): Boolean =
-        optString("entryId").startsWith("whoToFollow-")
+        optString("entryId").let {
+            it.startsWith("whoToFollow-") || it.startsWith("who-to-follow-")
+        }
 
     private fun JSONObject.entryIsTopicsModule(): Boolean =
         optString("entryId").startsWith("TopicsModule-")

@@ -376,12 +376,15 @@ object DownloadHook : BaseHook() {
             null,
             longArrayOf(dexHelper.encodeClassIndex(ViewGroup::class.java)),
             null,
-            true,
-        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
-            ?: throw ClassNotFoundException()
+            false,
+        ).map { dexHelper.decodeMethodIndex(it)?.declaringClass }.firstOrNull {
+            it?.declaredFields?.any { f ->
+                f.isPublic && f.isNotStatic && f.isNotFinal
+            } == true
+        } ?: throw ClassNotFoundException()
         val actionItemViewDataField =
             shareTweetItemAdapterClass.declaredFields.firstOrNull { f -> f.isPublic && f.isNotStatic && f.isNotFinal }
-                ?: throw ClassNotFoundException()
+                ?: throw NoSuchFieldError()
 
         shareTweetOnClickListenerClassName = shareTweetOnClickListenerClass.name
         shareTweetItemAdapterFieldName = shareTweetItemAdapterField.name

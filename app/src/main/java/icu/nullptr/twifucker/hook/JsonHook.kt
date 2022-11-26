@@ -63,11 +63,14 @@ object JsonHook : BaseHook() {
     }
 
     // data
-    private fun JSONObject.dataGetInstructions(): JSONArray? =
-        optJSONObject("user_result")?.optJSONObject("result")?.optJSONObject("timeline_response")
-            ?.optJSONObject("timeline")?.optJSONArray("instructions") ?: optJSONObject(
-            "timeline_response"
-        )?.optJSONArray("instructions")
+    private fun JSONObject.dataGetInstructions(): JSONArray? {
+        val timeline = optJSONObject("user_result")?.optJSONObject("result")
+            ?.optJSONObject("timeline_response")
+            ?.optJSONObject("timeline")
+            ?: optJSONObject("timeline_response")?.optJSONObject("timeline")
+            ?: optJSONObject("timeline_response")
+        return timeline?.optJSONArray("instructions")
+    }
 
     private fun JSONObject.dataCheckAndRemove() {
         dataGetInstructions()?.forEach { instruction ->

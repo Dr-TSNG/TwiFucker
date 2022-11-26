@@ -80,7 +80,13 @@ object JsonHook : BaseHook() {
     }
 
     private fun JSONObject.dataGetLegacy(): JSONObject? =
-        optJSONObject("tweet_result")?.optJSONObject("result")?.optJSONObject("legacy")
+        optJSONObject("tweet_result")?.optJSONObject("result")?.let {
+            if (it.has("tweet")) {
+                it.optJSONObject("tweet")
+            } else {
+                it
+            }
+        }?.optJSONObject("legacy")
 
     // tweets
     private fun JSONObject.tweetsForEach(action: (JSONObject) -> Unit) {
@@ -134,7 +140,13 @@ object JsonHook : BaseHook() {
             else -> return null
         }
         return temp?.optJSONObject("content")?.optJSONObject("tweetResult")?.optJSONObject("result")
-            ?.optJSONObject("legacy")
+            ?.let {
+                if (it.has("tweet")) {
+                    it.optJSONObject("tweet")
+                } else {
+                    it
+                }
+            }?.optJSONObject("legacy")
     }
 
     private fun JSONObject.entryGetTrends(): JSONArray? =

@@ -55,7 +55,9 @@ fun isEntryNeedsRemove(entryId: String): Boolean {
         return true
     }
     // who to follow module
-    if (entryId.startsWith("whoToFollow-") && modulePrefs.getBoolean(
+    if ((entryId.startsWith("whoToFollow-") || entryId.startsWith("who-to-follow-") || entryId.startsWith(
+            "connect-module-"
+        )) && modulePrefs.getBoolean(
             "disable_who_to_follow", false
         )
     ) {

@@ -115,7 +115,7 @@ object JsonHook : BaseHook() {
 
     private fun JSONObject.entryIsWhoToFollow(): Boolean =
         optString("entryId").let {
-            it.startsWith("whoToFollow-") || it.startsWith("who-to-follow-")
+            it.startsWith("whoToFollow-") || it.startsWith("who-to-follow-") || it.startsWith("connect-module-")
         }
 
     private fun JSONObject.entryIsTopicsModule(): Boolean =

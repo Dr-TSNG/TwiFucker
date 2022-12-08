@@ -26,7 +26,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class DownloadDialog(
-    context: Context, downloadUrls: List<String>
+    context: Context, downloadUrls: List<String>, onDismiss: () -> Unit,
 ) : AlertDialog.Builder(context) {
     companion object {
         private fun contentTypeToExt(contentType: String): String {
@@ -162,7 +162,10 @@ class DownloadDialog(
                 }
             }
         }
-        setNegativeButton(R.string.settings_dismiss, null)
+        setNegativeButton(R.string.settings_dismiss) { _, _ ->
+            onDismiss()
+        }
+        setOnDismissListener { onDismiss() }
 
         setTitle(R.string.download_or_copy)
         show()

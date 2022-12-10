@@ -35,6 +35,8 @@ object DownloadHook : BaseHook() {
     private lateinit var shareTweetItemAdapterFieldName: String
     private lateinit var shareTweetOnClickListener2ClassName: String
     private lateinit var shareTweetItemAdapter2FieldName: String
+    private lateinit var shareTweetOnClickListener3ClassName: String
+    private lateinit var shareTweetItemAdapter3FieldName: String
     private lateinit var actionItemViewDataFieldName: String
 
     // protected tweet share onClick
@@ -98,6 +100,29 @@ object DownloadHook : BaseHook() {
                 if (downloadUrls.isEmpty()) return@hookBefore
                 val actionItemViewData =
                     it.thisObject.getObjectOrNull(shareTweetItemAdapter2FieldName)
+                        ?.getObjectOrNull(actionItemViewDataFieldName)
+                // a - actionType
+                // b - title
+                // c - iconRes
+                if (actionItemViewData?.getObjectOrNull("b") != appContext.getString(R.string.download_or_copy)) return@hookBefore
+
+                try {
+                    currentActivity.get()?.let { act ->
+                        DownloadDialog(act, downloadUrls) {
+                            downloadUrls = listOf()
+                        }.show()
+                    }
+                } catch (t: Throwable) {
+                    Log.e(t)
+                }
+            }
+        }
+        shareTweetOnClickListener3ClassName.let { className ->
+            if (className.isEmpty()) return@let
+            findMethod(className) { name == "onClick" }.hookBefore {
+                if (downloadUrls.isEmpty()) return@hookBefore
+                val actionItemViewData =
+                    it.thisObject.getObjectOrNull(shareTweetItemAdapter3FieldName)
                         ?.getObjectOrNull(actionItemViewDataFieldName)
                 // a - actionType
                 // b - title
@@ -309,6 +334,10 @@ object DownloadHook : BaseHook() {
                 "hook_share_tweet_on_click_listener_2_class", shareTweetOnClickListener2ClassName
             )
             it.putString("hook_share_tweet_item_adapter_2_field", shareTweetItemAdapter2FieldName)
+            it.putString(
+                "hook_share_tweet_on_click_listener_3_class", shareTweetOnClickListener2ClassName
+            )
+            it.putString("hook_share_tweet_item_adapter_3_field", shareTweetItemAdapter2FieldName)
             it.putString("hook_action_item_view_data_field", actionItemViewDataFieldName)
 
             // protected tweet share onClick
@@ -410,7 +439,7 @@ object DownloadHook : BaseHook() {
         ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
         val shareTweetItemAdapterField =
             shareTweetOnClickListenerClass?.declaredFields?.lastOrNull()
-        // twitter alpha >= 9.68
+        // twitter alpha 9.69 alpha 4
         val shareTweetOnClickListener2Class = dexHelper.findMethodUsingString(
             "fabContainerView.findViewById(R.id.tweet_label)",
             false,
@@ -426,6 +455,23 @@ object DownloadHook : BaseHook() {
             dexHelper.decodeMethodIndex(it)?.declaringClass
         }
         val shareTweetItemAdapter2Field =
+            shareTweetOnClickListener2Class?.declaredFields?.lastOrNull()
+        // twitter alpha 9.69 alpha 9
+        val shareTweetOnClickListener3Class = dexHelper.findMethodUsingString(
+            "\$onSwitchToggled",
+            false,
+            dexHelper.encodeClassIndex(Void.TYPE),
+            1,
+            null,
+            -1,
+            longArrayOf(dexHelper.encodeClassIndex(View::class.java)),
+            null,
+            null,
+            true,
+        ).firstOrNull()?.let {
+            dexHelper.decodeMethodIndex(it)?.declaringClass
+        }
+        val shareTweetItemAdapter3Field =
             shareTweetOnClickListener2Class?.declaredFields?.lastOrNull()
 
         val shareTweetItemAdapterClass = dexHelper.findMethodUsingString(
@@ -448,10 +494,10 @@ object DownloadHook : BaseHook() {
             shareTweetItemAdapterClass.declaredFields.firstOrNull { f -> f.isPublic && f.isNotStatic && f.isNotFinal }
                 ?: throw NoSuchFieldError()
 
-        if (shareTweetOnClickListenerClass == null && shareTweetOnClickListener2Class == null) {
+        if (shareTweetOnClickListenerClass == null && shareTweetOnClickListener2Class == null && shareTweetOnClickListener3Class == null) {
             throw ClassNotFoundException()
         }
-        if (shareTweetItemAdapterField == null && shareTweetItemAdapter2Field == null) {
+        if (shareTweetItemAdapterField == null && shareTweetItemAdapter2Field == null && shareTweetItemAdapter3Field == null) {
             throw NoSuchFieldError()
         }
 
@@ -459,6 +505,8 @@ object DownloadHook : BaseHook() {
         shareTweetItemAdapterFieldName = shareTweetItemAdapterField?.name ?: ""
         shareTweetOnClickListener2ClassName = shareTweetOnClickListener2Class?.name ?: ""
         shareTweetItemAdapter2FieldName = shareTweetItemAdapter2Field?.name ?: ""
+        shareTweetOnClickListener3ClassName = shareTweetOnClickListener3Class?.name ?: ""
+        shareTweetItemAdapter3FieldName = shareTweetItemAdapter3Field?.name ?: ""
         actionItemViewDataFieldName = actionItemViewDataField.name
 
         // protected tweet share onClick

@@ -5,14 +5,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
-import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.utils.*
 import icu.nullptr.twifucker.*
 import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
 import icu.nullptr.twifucker.ui.DownloadDialog
-import java.io.File
 
 
 object DownloadHook : BaseHook() {
@@ -631,15 +629,11 @@ object DownloadHook : BaseHook() {
     private fun loadHookInfo() {
         val hookDownloadLastUpdate = modulePrefs.getLong("hook_download_last_update", 0)
 
-        @Suppress("DEPRECATION") val appLastUpdateTime =
-            appContext.packageManager.getPackageInfo(appContext.packageName, 0).lastUpdateTime
-        val moduleLastUpdate = File(modulePath).lastModified()
-
-        Log.d("hookDownloadLastUpdate: $hookDownloadLastUpdate, appLastUpdateTime: $appLastUpdateTime, moduleLastUpdate: $moduleLastUpdate")
+        Log.d("hookDownloadLastUpdate: $hookDownloadLastUpdate, hostAppLastUpdate: $hostAppLastUpdate, moduleLastModify: $moduleLastModify")
 
         val timeStart = System.currentTimeMillis()
 
-        if (hookDownloadLastUpdate > appLastUpdateTime && hookDownloadLastUpdate > moduleLastUpdate) {
+        if (hookDownloadLastUpdate > hostAppLastUpdate && hookDownloadLastUpdate > moduleLastModify) {
             loadCachedHookInfo()
             Log.d("Download Hook load time: ${System.currentTimeMillis() - timeStart} ms")
         } else {

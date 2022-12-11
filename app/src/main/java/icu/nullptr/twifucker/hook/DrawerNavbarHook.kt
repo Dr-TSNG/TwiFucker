@@ -1,15 +1,15 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.init.InitFields
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.utils.*
 import icu.nullptr.twifucker.data.TwitterItem
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
+import icu.nullptr.twifucker.hostAppLastUpdate
+import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog.Companion.PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS
 import icu.nullptr.twifucker.ui.SettingsDialog.Companion.PREF_HIDDEN_DRAWER_ITEMS
-import java.io.File
 
 object DrawerNavbarHook : BaseHook() {
     private const val HOOK_DRAWER_ITEMS_CLASS = "hook_drawer_items_class"
@@ -44,7 +44,8 @@ object DrawerNavbarHook : BaseHook() {
         findConstructor(bottomNavbarClassName) {
             true
         }.hookBefore {
-            val hiddenItems = modulePrefs.getStringSet(PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS, mutableSetOf())
+            val hiddenItems =
+                modulePrefs.getStringSet(PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS, mutableSetOf())
             val map = it.args[2] as Map<*, *>
             val newMap = loadClass(customMapClassName).invokeStaticMethod(
                 customMapInitMethodName, args(map.size), argTypes(Int::class.java)
@@ -52,7 +53,12 @@ object DrawerNavbarHook : BaseHook() {
             bottomNavbarItems.clear()
             map.forEach { item ->
                 val keyString = item.key.toString()
-                bottomNavbarItems.add(TwitterItem(keyString, hiddenItems?.contains(keyString) == false))
+                bottomNavbarItems.add(
+                    TwitterItem(
+                        keyString,
+                        hiddenItems?.contains(keyString) == false
+                    )
+                )
                 if (hiddenItems?.contains(keyString) == false || keyString.lowercase() == "home") {
                     newMap?.invokeMethod(
                         customMapInnerAddMethodName,
@@ -269,17 +275,11 @@ object DrawerNavbarHook : BaseHook() {
     private fun loadHookInfo() {
         val hookDrawerLastUpdate = modulePrefs.getLong("hook_drawer_last_update", 0)
 
-        @Suppress("DEPRECATION") val appLastUpdateTime =
-            InitFields.appContext.packageManager.getPackageInfo(
-                InitFields.appContext.packageName, 0
-            ).lastUpdateTime
-        val moduleLastUpdate = File(InitFields.modulePath).lastModified()
-
-        Log.d("hookDrawerLastUpdate: $hookDrawerLastUpdate, appLastUpdateTime: $appLastUpdateTime, moduleLastUpdate: $moduleLastUpdate")
+        Log.d("hookDrawerLastUpdate: $hookDrawerLastUpdate, hostAppLastUpdate: $hostAppLastUpdate, moduleLastModify: $moduleLastModify")
 
         val timeStart = System.currentTimeMillis()
 
-        if (hookDrawerLastUpdate > appLastUpdateTime && hookDrawerLastUpdate > moduleLastUpdate) {
+        if (hookDrawerLastUpdate > hostAppLastUpdate && hookDrawerLastUpdate > moduleLastModify) {
             loadCachedHookInfo()
             Log.d("Drawer Hook load time: ${System.currentTimeMillis() - timeStart} ms")
         } else {

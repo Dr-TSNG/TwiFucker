@@ -1,17 +1,16 @@
 package icu.nullptr.twifucker.hook.activity
 
 import android.app.Activity
-import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.hookReplace
 import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.hook.BaseHook
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
+import icu.nullptr.twifucker.hostAppLastUpdate
+import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog
-import java.io.File
 
 object SettingsHook : BaseHook() {
 
@@ -90,16 +89,11 @@ object SettingsHook : BaseHook() {
     private fun loadHookInfo() {
         val hookSettingsLastUpdate = modulePrefs.getLong("hook_settings_last_update", 0)
 
-        @Suppress("DEPRECATION") val appLastUpdateTime = appContext.packageManager.getPackageInfo(
-            appContext.packageName, 0
-        ).lastUpdateTime
-        val moduleLastUpdate = File(modulePath).lastModified()
-
-        Log.d("hookSettingsLastUpdate: $hookSettingsLastUpdate, appLastUpdateTime: $appLastUpdateTime, moduleLastUpdate: $moduleLastUpdate")
+        Log.d("hookSettingsLastUpdate: $hookSettingsLastUpdate, hostAppLastUpdate: $hostAppLastUpdate, moduleLastModify: $moduleLastModify")
 
         val timeStart = System.currentTimeMillis()
 
-        if (hookSettingsLastUpdate > appLastUpdateTime && hookSettingsLastUpdate > moduleLastUpdate) {
+        if (hookSettingsLastUpdate > hostAppLastUpdate && hookSettingsLastUpdate > moduleLastModify) {
             loadCachedHookInfo()
             Log.d("Settings Hook load time: ${System.currentTimeMillis() - timeStart} ms")
         } else {

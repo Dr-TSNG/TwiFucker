@@ -4,13 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.github.kyuubiran.ezxhelper.init.InitFields
 import com.github.kyuubiran.ezxhelper.utils.*
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
+import icu.nullptr.twifucker.hostAppLastUpdate
 import icu.nullptr.twifucker.hostPrefs
+import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
-import java.io.File
 
 object CustomTabsHook : BaseHook() {
     private val DOMAIN_WHITELIST_SUFFIX = listOf("pscp.tv", "periscope.tv", "twitter.com", "t.co")
@@ -114,17 +114,11 @@ object CustomTabsHook : BaseHook() {
     private fun loadHookInfo() {
         val hookCustomTabsLastUpdate = modulePrefs.getLong("hook_custom_tabs_last_update", 0)
 
-        @Suppress("DEPRECATION") val appLastUpdateTime =
-            InitFields.appContext.packageManager.getPackageInfo(
-                InitFields.appContext.packageName, 0
-            ).lastUpdateTime
-        val moduleLastUpdate = File(InitFields.modulePath).lastModified()
-
-        Log.d("hookCustomTabsLastUpdate: $hookCustomTabsLastUpdate, appLastUpdateTime: $appLastUpdateTime, moduleLastUpdate: $moduleLastUpdate")
+        Log.d("hookCustomTabsLastUpdate: $hookCustomTabsLastUpdate, hostAppLastUpdate: $hostAppLastUpdate, moduleLastModify: $moduleLastModify")
 
         val timeStart = System.currentTimeMillis()
 
-        if (hookCustomTabsLastUpdate > appLastUpdateTime && hookCustomTabsLastUpdate > moduleLastUpdate) {
+        if (hookCustomTabsLastUpdate > hostAppLastUpdate && hookCustomTabsLastUpdate > moduleLastModify) {
             loadCachedHookInfo()
             Log.d("Custom Tabs Hook load time: ${System.currentTimeMillis() - timeStart} ms")
         } else {

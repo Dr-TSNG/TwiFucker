@@ -3,6 +3,7 @@ package icu.nullptr.twifucker
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import com.github.kyuubiran.ezxhelper.init.InitFields
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.Log
 import icu.nullptr.twifucker.ui.SettingsDialog
@@ -14,6 +15,16 @@ val logFileDir by lazy { File(appContext.externalCacheDir?.absolutePath + "/twif
 val logFile by lazy { File(logFileDir, "log.txt") }
 
 val logJsonFile by lazy { File(logFileDir, "log_json.txt") }
+
+@Suppress("DEPRECATION")
+val hostAppLastUpdate by lazy {
+    appContext.packageManager.getPackageInfo(
+        appContext.packageName, 0
+    ).lastUpdateTime
+}
+val moduleLastModify by lazy {
+    File(InitFields.modulePath).lastModified()
+}
 
 @Suppress("DEPRECATION")
 val modulePrefs: SharedPreferences by lazy {

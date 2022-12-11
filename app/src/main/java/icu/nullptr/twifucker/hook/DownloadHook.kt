@@ -18,6 +18,53 @@ object DownloadHook : BaseHook() {
     private var downloadUrls: List<String> = listOf()
 
     // tweet share download button
+    private const val HOOK_TWEET_SHARE_CLASS = "hook_tweet_share_class"
+    private const val HOOK_TWEET_SHARE_SHOW_METHOD = "hook_tweet_share_show_method"
+    private const val HOOK_TWEET_SHARE_LIST_FIELD = "hook_tweet_share_list_field"
+
+    private const val HOOK_ACTION_ENUM_WRAPPED_CLASS = "hook_action_enum_wrapped_class"
+    private const val HOOK_ACTION_ENUM_WRAPPED_INNER_CLASS = "hook_action_enum_wrapped_inner_class"
+    private const val HOOK_ACTION_ENUM_CLASS = "hook_action_enum_class"
+
+    private const val HOOK_ACTION_SHEET_ITEM_CLASS = "hook_action_sheet_item_class"
+    private const val HOOK_ACTION_SHEET_ITEM_FIELD = "hook_action_sheet_item_field"
+
+    // tweet share onClick
+    private const val HOOK_SHARE_TWEET_ON_CLICK_LISTENER_CLASS =
+        "hook_share_tweet_on_click_listener_class"
+    private const val HOOK_SHARE_TWEET_ITEM_ADAPTER_FIELD = "hook_share_tweet_item_adapter_field"
+    private const val HOOK_SHARE_TWEET_ON_CLICK_LISTENER_2_CLASS =
+        "hook_share_tweet_on_click_listener_2_class"
+    private const val HOOK_SHARE_TWEET_ITEM_ADAPTER_2_FIELD =
+        "hook_share_tweet_item_adapter_2_field"
+    private const val HOOK_SHARE_TWEET_ON_CLICK_LISTENER_3_CLASS =
+        "hook_share_tweet_on_click_listener_3_class"
+    private const val HOOK_SHARE_TWEET_ITEM_ADAPTER_3_FIELD =
+        "hook_share_tweet_item_adapter_3_field"
+    private const val HOOK_ACTION_ITEM_VIEW_DATA_FIELD = "hook_action_item_view_data_field"
+
+    // protected tweet share onClick
+    private const val HOOK_PROTECTED_SHARE_ITEM_ADAPTER_CLASS =
+        "hook_protected_share_item_adapter_class"
+    private const val HOOK_PROTECTED_SHARE_TWEET_ITEM_ADAPTER_CLASS_TITLE_FIELD =
+        "hook_protected_share_tweet_item_adapter_class_title_field"
+
+    // share menu
+    private const val HOOK_SHARE_MENU_CLASS = "hook_share_menu_class"
+    private const val HOOK_SHARE_MENU_METHOD = "hook_share_menu_method"
+
+    // tweet object
+    private const val HOOK_TWEET_RESULT_FIELD = "hook_tweet_result_field"
+    private const val HOOK_RESULT_FIELD = "hook_result_field"
+    private const val HOOK_LEGACY_FIELD = "hook_legacy_field"
+    private const val HOOK_EXTENDED_ENTITIES_FIELD = "hook_extended_entities_field"
+    private const val HOOK_MEDIA_FIELD = "hook_media_field"
+    private const val HOOK_MEDIA_TYPE_FIELD = "hook_media_type_field"
+    private const val HOOK_MEDIA_URL_HTTPS_FIELD = "hook_media_url_https_field"
+    private const val HOOK_MEDIA_INFO_FIELD = "hook_media_info_field"
+    private const val HOOK_VARIANTS_FIELD = "hook_variants_field"
+
+    // tweet share download button
     private lateinit var tweetShareClassName: String
     private lateinit var tweetShareShowMethodName: String
     private lateinit var tweetShareShareListFieldName: String
@@ -238,136 +285,136 @@ object DownloadHook : BaseHook() {
 
     private fun loadCachedHookInfo() {
         // tweet share download button
-        tweetShareClassName = modulePrefs.getString("hook_tweet_share_class", null)
+        tweetShareClassName = modulePrefs.getString(HOOK_TWEET_SHARE_CLASS, null)
             ?: throw Throwable("cached hook not found")
-        tweetShareShowMethodName = modulePrefs.getString("hook_tweet_share_show_method", null)
+        tweetShareShowMethodName = modulePrefs.getString(HOOK_TWEET_SHARE_SHOW_METHOD, null)
             ?: throw Throwable("cached hook not found")
-        tweetShareShareListFieldName = modulePrefs.getString("hook_tweet_share_list_field", null)
+        tweetShareShareListFieldName = modulePrefs.getString(HOOK_TWEET_SHARE_LIST_FIELD, null)
             ?: throw Throwable("cached hook not found")
 
-        actionEnumWrappedClassName = modulePrefs.getString("hook_action_enum_wrapped_class", null)
+        actionEnumWrappedClassName = modulePrefs.getString(HOOK_ACTION_ENUM_WRAPPED_CLASS, null)
             ?: throw Throwable("cached hook not found")
         actionEnumWrappedInnerClassName =
-            modulePrefs.getString("hook_action_enum_wrapped_inner_class", null)
+            modulePrefs.getString(HOOK_ACTION_ENUM_WRAPPED_INNER_CLASS, null)
                 ?: throw Throwable("cached hook not found")
-        actionEnumClassName = modulePrefs.getString("hook_action_enum_class", null)
+        actionEnumClassName = modulePrefs.getString(HOOK_ACTION_ENUM_CLASS, null)
             ?: throw Throwable("cached hook not found")
 
-        actionSheetItemClassName = modulePrefs.getString("hook_action_sheet_item_class", null)
+        actionSheetItemClassName = modulePrefs.getString(HOOK_ACTION_SHEET_ITEM_CLASS, null)
             ?: throw Throwable("cached hook not found")
-        actionSheetItemFieldName = modulePrefs.getString("hook_action_sheet_item_field", null)
+        actionSheetItemFieldName = modulePrefs.getString(HOOK_ACTION_SHEET_ITEM_FIELD, null)
             ?: throw Throwable("cached hook not found")
 
         // tweet share onClick
         shareTweetOnClickListenerClassName =
-            modulePrefs.getString("hook_share_tweet_on_click_listener_class", null)
+            modulePrefs.getString(HOOK_SHARE_TWEET_ON_CLICK_LISTENER_CLASS, null)
                 ?: throw Throwable("cached hook not found")
         shareTweetItemAdapterFieldName =
-            modulePrefs.getString("hook_share_tweet_item_adapter_field", null)
+            modulePrefs.getString(HOOK_SHARE_TWEET_ITEM_ADAPTER_FIELD, null)
                 ?: throw Throwable("cached hook not found")
         shareTweetOnClickListener2ClassName =
-            modulePrefs.getString("hook_share_tweet_on_click_listener_2_class", null)
+            modulePrefs.getString(HOOK_SHARE_TWEET_ON_CLICK_LISTENER_2_CLASS, null)
                 ?: throw Throwable("cached hook not found")
         shareTweetItemAdapter2FieldName =
-            modulePrefs.getString("hook_share_tweet_item_adapter_2_field", null)
+            modulePrefs.getString(HOOK_SHARE_TWEET_ITEM_ADAPTER_2_FIELD, null)
                 ?: throw Throwable("cached hook not found")
         shareTweetOnClickListener3ClassName =
-            modulePrefs.getString("hook_share_tweet_on_click_listener_3_class", null)
+            modulePrefs.getString(HOOK_SHARE_TWEET_ON_CLICK_LISTENER_3_CLASS, null)
                 ?: throw Throwable("cached hook not found")
         shareTweetItemAdapter3FieldName =
-            modulePrefs.getString("hook_share_tweet_item_adapter_3_field", null)
+            modulePrefs.getString(HOOK_SHARE_TWEET_ITEM_ADAPTER_3_FIELD, null)
                 ?: throw Throwable("cached hook not found")
         actionItemViewDataFieldName =
-            modulePrefs.getString("hook_action_item_view_data_field", null)
+            modulePrefs.getString(HOOK_ACTION_ITEM_VIEW_DATA_FIELD, null)
                 ?: throw Throwable("cached hook not found")
 
         // protected tweet share onClick
         protectedShareTweetItemAdapterClassName =
-            modulePrefs.getString("hook_protected_share_item_adapter_class", null)
+            modulePrefs.getString(HOOK_PROTECTED_SHARE_ITEM_ADAPTER_CLASS, null)
                 ?: throw Throwable("cached hook not found")
         protectedShareTweetItemAdapterClassTitleFieldName =
-            modulePrefs.getString("hook_protected_share_tweet_item_adapter_class_title_field", null)
+            modulePrefs.getString(HOOK_PROTECTED_SHARE_TWEET_ITEM_ADAPTER_CLASS_TITLE_FIELD, null)
                 ?: throw Throwable("cached hook not found")
 
         // share menu
-        shareMenuClassName = modulePrefs.getString("hook_share_menu_class", null)
+        shareMenuClassName = modulePrefs.getString(HOOK_SHARE_MENU_CLASS, null)
             ?: throw Throwable("cached hook not found")
-        shareMenuMethodName = modulePrefs.getString("hook_share_menu_method", null)
+        shareMenuMethodName = modulePrefs.getString(HOOK_SHARE_MENU_METHOD, null)
             ?: throw Throwable("cached hook not found")
 
         // tweet object
-        tweetResultFieldName = modulePrefs.getString("hook_tweet_result_field", null)
+        tweetResultFieldName = modulePrefs.getString(HOOK_TWEET_RESULT_FIELD, null)
             ?: throw Throwable("cached hook not found")
-        resultFieldName = modulePrefs.getString("hook_result_field", null)
+        resultFieldName = modulePrefs.getString(HOOK_RESULT_FIELD, null)
             ?: throw Throwable("cached hook not found")
-        legacyFieldName = modulePrefs.getString("hook_legacy_field", null)
+        legacyFieldName = modulePrefs.getString(HOOK_LEGACY_FIELD, null)
             ?: throw Throwable("cached hook not found")
-        extendedEntitiesFieldName = modulePrefs.getString("hook_extended_entities_field", null)
+        extendedEntitiesFieldName = modulePrefs.getString(HOOK_EXTENDED_ENTITIES_FIELD, null)
             ?: throw Throwable("cached hook not found")
-        mediaFieldName = modulePrefs.getString("hook_media_field", null)
+        mediaFieldName = modulePrefs.getString(HOOK_MEDIA_FIELD, null)
             ?: throw Throwable("cached hook not found")
-        mediaTypeFieldName = modulePrefs.getString("hook_media_type_field", null)
+        mediaTypeFieldName = modulePrefs.getString(HOOK_MEDIA_TYPE_FIELD, null)
             ?: throw Throwable("cached hook not found")
-        mediaUrlHttpsFieldName = modulePrefs.getString("hook_media_url_https_field", null)
+        mediaUrlHttpsFieldName = modulePrefs.getString(HOOK_MEDIA_URL_HTTPS_FIELD, null)
             ?: throw Throwable("cached hook not found")
-        mediaInfoFieldName = modulePrefs.getString("hook_media_info_field", null)
+        mediaInfoFieldName = modulePrefs.getString(HOOK_MEDIA_INFO_FIELD, null)
             ?: throw Throwable("cached hook not found")
-        variantsFieldName = modulePrefs.getString("hook_variants_field", null)
+        variantsFieldName = modulePrefs.getString(HOOK_VARIANTS_FIELD, null)
             ?: throw Throwable("cached hook not found")
     }
 
     private fun saveHookInfo() {
         modulePrefs.edit().let {
             // tweet share download button
-            it.putString("hook_tweet_share_class", tweetShareClassName)
-            it.putString("hook_tweet_share_show_method", tweetShareShowMethodName)
-            it.putString("hook_tweet_share_list_field", tweetShareShareListFieldName)
+            it.putString(HOOK_TWEET_SHARE_CLASS, tweetShareClassName)
+            it.putString(HOOK_TWEET_SHARE_SHOW_METHOD, tweetShareShowMethodName)
+            it.putString(HOOK_TWEET_SHARE_LIST_FIELD, tweetShareShareListFieldName)
 
-            it.putString("hook_action_enum_wrapped_class", actionEnumWrappedClassName)
-            it.putString("hook_action_enum_wrapped_inner_class", actionEnumWrappedInnerClassName)
-            it.putString("hook_action_enum_class", actionEnumClassName)
+            it.putString(HOOK_ACTION_ENUM_WRAPPED_CLASS, actionEnumWrappedClassName)
+            it.putString(HOOK_ACTION_ENUM_WRAPPED_INNER_CLASS, actionEnumWrappedInnerClassName)
+            it.putString(HOOK_ACTION_ENUM_CLASS, actionEnumClassName)
 
-            it.putString("hook_action_sheet_item_class", actionSheetItemClassName)
-            it.putString("hook_action_sheet_item_field", actionSheetItemFieldName)
+            it.putString(HOOK_ACTION_SHEET_ITEM_CLASS, actionSheetItemClassName)
+            it.putString(HOOK_ACTION_SHEET_ITEM_FIELD, actionSheetItemFieldName)
 
             // tweet share onClick
             it.putString(
-                "hook_share_tweet_on_click_listener_class", shareTweetOnClickListenerClassName
+                HOOK_SHARE_TWEET_ON_CLICK_LISTENER_CLASS, shareTweetOnClickListenerClassName
             )
-            it.putString("hook_share_tweet_item_adapter_field", shareTweetItemAdapterFieldName)
+            it.putString(HOOK_SHARE_TWEET_ITEM_ADAPTER_FIELD, shareTweetItemAdapterFieldName)
             it.putString(
-                "hook_share_tweet_on_click_listener_2_class", shareTweetOnClickListener2ClassName
+                HOOK_SHARE_TWEET_ON_CLICK_LISTENER_2_CLASS, shareTweetOnClickListener2ClassName
             )
-            it.putString("hook_share_tweet_item_adapter_2_field", shareTweetItemAdapter2FieldName)
+            it.putString(HOOK_SHARE_TWEET_ITEM_ADAPTER_2_FIELD, shareTweetItemAdapter2FieldName)
             it.putString(
-                "hook_share_tweet_on_click_listener_3_class", shareTweetOnClickListener3ClassName
+                HOOK_SHARE_TWEET_ON_CLICK_LISTENER_3_CLASS, shareTweetOnClickListener3ClassName
             )
-            it.putString("hook_share_tweet_item_adapter_3_field", shareTweetItemAdapter3FieldName)
-            it.putString("hook_action_item_view_data_field", actionItemViewDataFieldName)
+            it.putString(HOOK_SHARE_TWEET_ITEM_ADAPTER_3_FIELD, shareTweetItemAdapter3FieldName)
+            it.putString(HOOK_ACTION_ITEM_VIEW_DATA_FIELD, actionItemViewDataFieldName)
 
             // protected tweet share onClick
             it.putString(
-                "hook_protected_share_item_adapter_class", protectedShareTweetItemAdapterClassName
+                HOOK_PROTECTED_SHARE_ITEM_ADAPTER_CLASS, protectedShareTweetItemAdapterClassName
             )
             it.putString(
-                "hook_protected_share_tweet_item_adapter_class_title_field",
+                HOOK_PROTECTED_SHARE_TWEET_ITEM_ADAPTER_CLASS_TITLE_FIELD,
                 protectedShareTweetItemAdapterClassTitleFieldName
             )
 
             // share menu
-            it.putString("hook_share_menu_class", shareMenuClassName)
-            it.putString("hook_share_menu_method", shareMenuMethodName)
+            it.putString(HOOK_SHARE_MENU_CLASS, shareMenuClassName)
+            it.putString(HOOK_SHARE_MENU_METHOD, shareMenuMethodName)
 
             // tweet object
-            it.putString("hook_tweet_result_field", tweetResultFieldName)
-            it.putString("hook_result_field", resultFieldName)
-            it.putString("hook_legacy_field", legacyFieldName)
-            it.putString("hook_extended_entities_field", extendedEntitiesFieldName)
-            it.putString("hook_media_field", mediaFieldName)
-            it.putString("hook_media_type_field", mediaTypeFieldName)
-            it.putString("hook_media_url_https_field", mediaUrlHttpsFieldName)
-            it.putString("hook_media_info_field", mediaInfoFieldName)
-            it.putString("hook_variants_field", variantsFieldName)
+            it.putString(HOOK_TWEET_RESULT_FIELD, tweetResultFieldName)
+            it.putString(HOOK_RESULT_FIELD, resultFieldName)
+            it.putString(HOOK_LEGACY_FIELD, legacyFieldName)
+            it.putString(HOOK_EXTENDED_ENTITIES_FIELD, extendedEntitiesFieldName)
+            it.putString(HOOK_MEDIA_FIELD, mediaFieldName)
+            it.putString(HOOK_MEDIA_TYPE_FIELD, mediaTypeFieldName)
+            it.putString(HOOK_MEDIA_URL_HTTPS_FIELD, mediaUrlHttpsFieldName)
+            it.putString(HOOK_MEDIA_INFO_FIELD, mediaInfoFieldName)
+            it.putString(HOOK_VARIANTS_FIELD, variantsFieldName)
         }.apply()
     }
 

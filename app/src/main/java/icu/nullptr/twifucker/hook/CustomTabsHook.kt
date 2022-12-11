@@ -14,6 +14,10 @@ import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
 
 object CustomTabsHook : BaseHook() {
+    private const val HOOK_CUSTOM_TABS_CLASS = "hook_custom_tabs_class"
+    private const val HOOK_CUSTOM_TABS_GET_METHOD = "hook_custom_tabs_get_method"
+    private const val HOOK_CUSTOM_TABS_LAUNCH_URL_METHOD = "hook_custom_tabs_launch_url_method"
+
     private val DOMAIN_WHITELIST_SUFFIX = listOf("pscp.tv", "periscope.tv", "twitter.com", "t.co")
     private lateinit var customTabsClassName: String
     private lateinit var customTabsGetMethodName: String
@@ -69,20 +73,20 @@ object CustomTabsHook : BaseHook() {
     }
 
     private fun loadCachedHookInfo() {
-        customTabsClassName = modulePrefs.getString("hook_custom_tabs_class", null)
+        customTabsClassName = modulePrefs.getString(HOOK_CUSTOM_TABS_CLASS, null)
             ?: throw Throwable("cached hook not found")
-        customTabsGetMethodName = modulePrefs.getString("hook_custom_tabs_get_method", null)
+        customTabsGetMethodName = modulePrefs.getString(HOOK_CUSTOM_TABS_GET_METHOD, null)
             ?: throw Throwable("cached hook not found")
         customTabsLaunchUrlMethodName =
-            modulePrefs.getString("hook_custom_tabs_launch_url_method", null)
+            modulePrefs.getString(HOOK_CUSTOM_TABS_LAUNCH_URL_METHOD, null)
                 ?: throw Throwable("cached hook not found")
     }
 
     private fun saveHookInfo() {
         modulePrefs.edit().let {
-            it.putString("hook_custom_tabs_class", customTabsClassName)
-            it.putString("hook_custom_tabs_get_method", customTabsGetMethodName)
-            it.putString("hook_custom_tabs_launch_url_method", customTabsLaunchUrlMethodName)
+            it.putString(HOOK_CUSTOM_TABS_CLASS, customTabsClassName)
+            it.putString(HOOK_CUSTOM_TABS_GET_METHOD, customTabsGetMethodName)
+            it.putString(HOOK_CUSTOM_TABS_LAUNCH_URL_METHOD, customTabsLaunchUrlMethodName)
         }.apply()
     }
 

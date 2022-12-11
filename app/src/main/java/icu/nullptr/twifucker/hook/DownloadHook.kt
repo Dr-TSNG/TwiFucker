@@ -272,6 +272,12 @@ object DownloadHook : BaseHook() {
         shareTweetItemAdapter2FieldName =
             modulePrefs.getString("hook_share_tweet_item_adapter_2_field", null)
                 ?: throw Throwable("cached hook not found")
+        shareTweetOnClickListener3ClassName =
+            modulePrefs.getString("hook_share_tweet_on_click_listener_3_class", null)
+                ?: throw Throwable("cached hook not found")
+        shareTweetItemAdapter3FieldName =
+            modulePrefs.getString("hook_share_tweet_item_adapter_3_field", null)
+                ?: throw Throwable("cached hook not found")
         actionItemViewDataFieldName =
             modulePrefs.getString("hook_action_item_view_data_field", null)
                 ?: throw Throwable("cached hook not found")
@@ -335,9 +341,9 @@ object DownloadHook : BaseHook() {
             )
             it.putString("hook_share_tweet_item_adapter_2_field", shareTweetItemAdapter2FieldName)
             it.putString(
-                "hook_share_tweet_on_click_listener_3_class", shareTweetOnClickListener2ClassName
+                "hook_share_tweet_on_click_listener_3_class", shareTweetOnClickListener3ClassName
             )
-            it.putString("hook_share_tweet_item_adapter_3_field", shareTweetItemAdapter2FieldName)
+            it.putString("hook_share_tweet_item_adapter_3_field", shareTweetItemAdapter3FieldName)
             it.putString("hook_action_item_view_data_field", actionItemViewDataFieldName)
 
             // protected tweet share onClick

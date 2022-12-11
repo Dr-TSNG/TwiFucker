@@ -3,13 +3,14 @@ package icu.nullptr.twifucker.hook
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.utils.*
 import icu.nullptr.twifucker.data.TwitterItem
-import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
-import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
+import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
+import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
 import icu.nullptr.twifucker.hostAppLastUpdate
 import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog.Companion.PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS
 import icu.nullptr.twifucker.ui.SettingsDialog.Companion.PREF_HIDDEN_DRAWER_ITEMS
+import io.luckypray.dexkit.DexKitBridge
 
 object DrawerNavbarHook : BaseHook() {
     private const val HOOK_DRAWER_ITEMS_CLASS = "hook_drawer_items_class"
@@ -135,22 +136,18 @@ object DrawerNavbarHook : BaseHook() {
     }
 
     private fun searchHook() {
-        val boolSuperClass = dexHelper.findMethodUsingString(
-            "renderLambdaToString(this)",
-            false,
-            dexHelper.encodeClassIndex(String::class.java),
-            0,
-            null,
-            -1,
-            null,
-            null,
-            null,
-            false,
+        val boolSuperClassName = dexKit.findMethodUsingString(
+            usingString = "^renderLambdaToString(this)$",
+            advancedMatch = true,
+            methodDeclareClass = "",
+            methodName = "",
+            methodReturnType = String::class.java.name,
+            methodParamTypes = null,
+            uniqueResult = true,
+            dexPriority = null,
         ).firstOrNull {
-            val method = dexHelper.decodeMethodIndex(it)
-            method?.declaringClass?.superclass == Object::class.java
-        }?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
-
+            loadClassOrNull(it.declaringClassName)?.superclass == Object::class.java
+        }?.declaringClassName ?: throw ClassNotFoundException()
 
         val booleanClass = loadClass("java.lang.Boolean")
 //        val trueField = booleanClass.getField("TRUE")
@@ -178,79 +175,62 @@ object DrawerNavbarHook : BaseHook() {
 //            dexHelper.decodeMethodIndex(it)
 //        }
 
-        val falseFieldIndexes = dexHelper.findMethodGettingField(
-            dexHelper.encodeFieldIndex(falseField),
-            dexHelper.encodeClassIndex(Object::class.java),
-            0,
-            null,
-            -1,
-            null,
-            null,
-            null,
-            false,
+        val falseFieldMap = dexKit.findMethodUsingField(
+            fieldDescriptor = "",
+            fieldDeclareClass = booleanClass.name,
+            fieldName = falseField.name,
+            fieldType = falseField.type.name,
+            usedFlags = DexKitBridge.FLAG_GETTING,
+            callerMethodDeclareClass = "",
+            callerMethodName = "invoke",
+            callerMethodReturnType = Object::class.java.name,
+            callerMethodParamTypes = emptyArray(),
+            uniqueResult = true,
+            dexPriority = null,
         )
-        val boolFalseClass = falseFieldIndexes.firstOrNull { index ->
-            val method = dexHelper.decodeMethodIndex(index)
-            val declaringClass = method?.declaringClass
+        val boolFalseClass = falseFieldMap.keys.firstOrNull {
+            val declaringClass = loadClassOrNull(it.declaringClassName)
             val declaredMethodsSize = declaringClass?.declaredMethods?.size
             val declaredFieldsSize = declaringClass?.declaredFields?.size
-            method?.name == "invoke" && declaringClass?.superclass == boolSuperClass && declaredMethodsSize == 1 && declaredFieldsSize == 1 && declaringClass.declaredFields[0].isStatic && !declaringClass.name.contains(
+            declaringClass?.superclass?.name == boolSuperClassName && declaredMethodsSize == 1 && declaredFieldsSize == 1 && declaringClass.declaredFields[0].isStatic && !declaringClass.name.contains(
                 "$"
             )
-        }?.let { index ->
-            dexHelper.decodeMethodIndex(index)?.declaringClass
-        } ?: throw ClassNotFoundException()
+        }?.declaringClassName ?: throw ClassNotFoundException()
 
-        val drawerItemsClass = dexHelper.findMethodUsingString(
-            "drawerItemGroupMap",
-            false,
-            dexHelper.encodeClassIndex(Void.TYPE),
-            3,
-            null,
-            -1,
-            null,
-            null,
-            null,
-            true,
-        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
+        val drawerItemsClass = dexKit.findMethodUsingString(
+            usingString = "^drawerItemGroupMap$",
+            advancedMatch = true,
+            methodDeclareClass = "",
+            methodName = "",
+            methodReturnType = Void.TYPE.name,
+            methodParamTypes = null,
+            uniqueResult = true,
+            dexPriority = null,
+        ).firstNotNullOfOrNull { it.declaringClassName } ?: throw ClassNotFoundException()
+
+        val customMapInitMethodDescriptor = dexKit.findMethodUsingString(
+            usingString = "^expectedSize$",
+            advancedMatch = true,
+            methodDeclareClass = "",
+            methodName = "",
+            methodReturnType = "",
+            methodParamTypes = arrayOf(Int::class.java.name),
+            uniqueResult = true,
+            dexPriority = null,
+        )
+            .firstOrNull { loadClassOrNull(it.declaringClassName)?.interfaces?.contains(Map::class.java) == true }
             ?: throw ClassNotFoundException()
 
-        val customMapInitMethod = dexHelper.findMethodUsingString(
-            "expectedSize",
-            false,
-            -1,
-            1,
-            null,
-            -1,
-            longArrayOf(dexHelper.encodeClassIndex(Int::class.java)),
-            null,
-            null,
-            false,
-        ).map { dexHelper.decodeMethodIndex(it) }.firstOrNull {
-            val superClass = it?.declaringClass
-            superClass?.interfaces?.contains(Map::class.java) == true
-        } ?: throw NoSuchMethodError()
+        val customMapInitMethod = customMapInitMethodDescriptor.getMethodInstance(ezXClassLoader)
+
         val customMapClass = customMapInitMethod.declaringClass
-
-        val customMapInnerClass = dexHelper.findMethodInvoking(
-            dexHelper.encodeMethodIndex(customMapInitMethod),
-            dexHelper.encodeClassIndex(Void.TYPE),
-            1,
-            null,
-            -1,
-            longArrayOf(dexHelper.encodeClassIndex(Int::class.java)),
-            null,
-            null,
-            false,
-        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
-            ?: throw ClassNotFoundException()
-
+        val customMapInnerClass = customMapInitMethod.returnType
         val customMapInnerGetMethod =
-            customMapInnerClass.declaredMethods.firstOrNull { it.returnType == customMapClass }
+            customMapInnerClass.declaredMethods.firstOrNull { it.returnType.name == customMapInitMethodDescriptor.declaringClassName }
                 ?: throw NoSuchMethodError()
-        val customMapInnerAddMethod =
-            customMapInnerClass.declaredMethods.firstOrNull { it.returnType == customMapInnerClass }
-                ?: throw NoSuchMethodError()
+        val customMapInnerAddMethod = customMapInnerClass.declaredMethods.firstOrNull {
+            it.returnType.name == customMapInitMethodDescriptor.getMethodInstance(ezXClassLoader).returnType.name
+        } ?: throw NoSuchMethodError()
 
         val bottomTabClass = ezXClassLoader.getAllClassesList().firstOrNull {
             try {
@@ -261,8 +241,8 @@ object DrawerNavbarHook : BaseHook() {
             }
         }?.let { loadClassOrNull(it) } ?: throw ClassNotFoundException()
 
-        drawerItemsClassName = drawerItemsClass.name
-        boolFalseClassName = boolFalseClass.name
+        drawerItemsClassName = drawerItemsClass
+        boolFalseClassName = boolFalseClass
 
         customMapClassName = customMapClass.name
         customMapInitMethodName = customMapInitMethod.name
@@ -283,7 +263,7 @@ object DrawerNavbarHook : BaseHook() {
             loadCachedHookInfo()
             Log.d("Drawer Hook load time: ${System.currentTimeMillis() - timeStart} ms")
         } else {
-            loadDexHelper()
+            loadDexKit()
             searchHook()
             Log.d("Drawer Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()

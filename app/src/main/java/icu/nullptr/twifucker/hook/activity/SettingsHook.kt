@@ -1,16 +1,18 @@
 package icu.nullptr.twifucker.hook.activity
 
 import android.app.Activity
+import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.hookReplace
 import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.hook.BaseHook
-import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
-import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
+import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
+import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
 import icu.nullptr.twifucker.hostAppLastUpdate
 import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog
+import io.luckypray.dexkit.descriptor.member.DexMethodDescriptor
 
 object SettingsHook : BaseHook() {
 
@@ -65,23 +67,27 @@ object SettingsHook : BaseHook() {
         val onCreateMethod = aboutActivityClass.declaredMethods.firstOrNull {
             it.name == "onCreate"
         } ?: throw NoSuchMethodError()
-        val initMethodIndex = dexHelper.findMethodInvoking(
-            dexHelper.encodeMethodIndex(onCreateMethod),
-            dexHelper.encodeClassIndex(Void.TYPE),
-            1,
-            null,
-            -1,
-            longArrayOf(dexHelper.encodeClassIndex(aboutActivityClass)),
-            null,
-            null,
-            true,
-        ).first()
-        val onPreferenceClickListenerClass =
-            dexHelper.decodeMethodIndex(initMethodIndex)?.declaringClass
-                ?: throw ClassNotFoundException()
+
+        val onPreferenceClickListenerClass = dexKit.findMethodInvoking(
+            methodDescriptor = DexMethodDescriptor(onCreateMethod).descriptor,
+            methodDeclareClass = "",
+            methodName = "",
+            methodReturnType = "",
+            methodParameterTypes = null,
+            beCalledMethodDeclareClass = "",
+            beCalledMethodName = "<init>",
+            beCalledMethodReturnType = Void.TYPE.name,
+            beCalledMethodParamTypes = arrayOf(aboutActivityClass.name),
+            uniqueResult = true,
+            dexPriority = null,
+        ).firstNotNullOfOrNull {
+            it.value
+        }?.firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass
+            ?: throw ClassNotFoundException()
         val onVersionClickMethod = onPreferenceClickListenerClass.declaredMethods.firstOrNull {
             it.parameterTypes.size == 1 && it.parameterTypes[0] == preferenceClass
         } ?: throw NoSuchMethodError()
+
         onVersionClickListenerClassName = onPreferenceClickListenerClass.name
         onVersionClickMethodName = onVersionClickMethod.name
     }
@@ -97,7 +103,7 @@ object SettingsHook : BaseHook() {
             loadCachedHookInfo()
             Log.d("Settings Hook load time: ${System.currentTimeMillis() - timeStart} ms")
         } else {
-            loadDexHelper()
+            loadDexKit()
             searchHook()
             Log.d("Settings Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()

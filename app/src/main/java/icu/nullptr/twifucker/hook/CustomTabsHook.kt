@@ -4,9 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.utils.*
-import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
-import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
+import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
+import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
 import icu.nullptr.twifucker.hostAppLastUpdate
 import icu.nullptr.twifucker.hostPrefs
 import icu.nullptr.twifucker.moduleLastModify
@@ -86,19 +87,18 @@ object CustomTabsHook : BaseHook() {
     }
 
     private fun searchHook() {
-        val customTabsClass = dexHelper.findMethodUsingString(
-            "android.support.customtabs.action.CustomTabsService",
-            false,
-            dexHelper.encodeClassIndex(Void.TYPE),
-            0,
-            null,
-            -1,
-            null,
-            null,
-            null,
-            true,
-        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
+        val customTabsClass = dexKit.findMethodUsingString(
+            usingString = "^android.support.customtabs.action.CustomTabsService$",
+            advancedMatch = true,
+            methodDeclareClass = "",
+            methodName = "",
+            methodReturnType = Void.TYPE.name,
+            methodParamTypes = null,
+            uniqueResult = true,
+            dexPriority = null
+        ).firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass
             ?: throw ClassNotFoundException()
+
         val customTabsGetMethod = customTabsClass.declaredMethods.firstOrNull {
             it.isStatic && it.parameterTypes.isEmpty() && it.returnType == customTabsClass
         } ?: throw NoSuchMethodException()
@@ -122,7 +122,7 @@ object CustomTabsHook : BaseHook() {
             loadCachedHookInfo()
             Log.d("Custom Tabs Hook load time: ${System.currentTimeMillis() - timeStart} ms")
         } else {
-            loadDexHelper()
+            loadDexKit()
             searchHook()
             Log.d("Custom Tabs Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()

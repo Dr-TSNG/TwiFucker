@@ -47,40 +47,6 @@ android {
 
         if (properties.getProperty("buildWithGitSuffix").toBoolean()) versionNameSuffix =
             ".r${gitCommitCount}.${gitCommitHash}"
-
-        externalNativeBuild {
-            cmake {
-                targets("twifucker")
-                abiFilters("arm64-v8a", "armeabi-v7a")
-                arguments("-DANDROID_STL=none")
-                val flags = arrayOf(
-                    "-Wall",
-                    "-Werror",
-                    "-Qunused-arguments",
-                    "-Wno-gnu-string-literal-operator-template",
-                    "-fno-rtti",
-                    "-fvisibility=hidden",
-                    "-fvisibility-inlines-hidden",
-                    "-fno-exceptions",
-                    "-fno-stack-protector",
-                    "-fomit-frame-pointer",
-                    "-Wno-builtin-macro-redefined",
-                    "-Wno-unused-value",
-                    "-D__FILE__=__FILE_NAME__",
-                )
-                cppFlags("-std=c++20", *flags)
-                cFlags("-std=c18", *flags)
-                findInPath("ccache")?.let {
-                    println("Using ccache $it")
-                    arguments += listOf(
-                        "-DANDROID_CCACHE=$it",
-                        "-DCMAKE_C_COMPILER_LAUNCHER=$it",
-                        "-DCMAKE_CXX_COMPILER_LAUNCHER=$it",
-                        "-DNDK_CCACHE=$it"
-                    )
-                }
-            }
-        }
     }
 
     val config = properties.getProperty("fileDir")?.let {
@@ -103,40 +69,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            externalNativeBuild {
-                cmake {
-                    val flags = arrayOf(
-                        "-flto",
-                        "-ffunction-sections",
-                        "-fdata-sections",
-                        "-Wl,--gc-sections",
-                        "-fno-unwind-tables",
-                        "-fno-asynchronous-unwind-tables",
-                        "-Wl,--exclude-libs,ALL",
-                    )
-                    cppFlags.addAll(flags)
-                    cFlags.addAll(flags)
-                    val configFlags = arrayOf(
-                        "-Oz",
-                        "-DNDEBUG"
-                    ).joinToString(" ")
-                    arguments(
-                        "-DCMAKE_BUILD_TYPE=Release",
-                        "-DCMAKE_CXX_FLAGS_RELEASE=$configFlags",
-                        "-DCMAKE_C_FLAGS_RELEASE=$configFlags",
-                        "-DDEBUG_SYMBOLS_PATH=${project.buildDir.absolutePath}/symbols/$name",
-                    )
-                }
-            }
         }
-    }
-
-    buildFeatures {
-        prefab = true
-    }
-
-    androidResources {
-        noCompress("libtwifucker.so")
     }
 
     androidResources.additionalParameters("--allow-reserved-package-id", "--package-id", "0x64")
@@ -154,14 +87,7 @@ android {
         includeInApk = false
     }
 
-    externalNativeBuild {
-        cmake {
-            path("src/main/jni/CMakeLists.txt")
-            version = "3.22.1+"
-        }
-    }
     buildToolsVersion = "33.0.0"
-    ndkVersion = "25.1.8937393"
     namespace = "icu.nullptr.twifucker"
 }
 
@@ -193,8 +119,8 @@ afterEvaluate {
 }
 
 dependencies {
-    implementation("androidx.annotation:annotation:1.5.0")
     implementation("com.github.kyuubiran:EzXHelper:1.0.3")
-    implementation("dev.rikka.ndk.thirdparty:cxx:1.2.0")
     compileOnly("de.robv.android.xposed:api:82")
+
+    implementation("com.github.LuckyPray:DexKit:b289b3e069")
 }

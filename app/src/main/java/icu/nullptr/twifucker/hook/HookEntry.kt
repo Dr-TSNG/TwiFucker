@@ -17,7 +17,7 @@ import icu.nullptr.twifucker.hook.activity.SettingsHook
 import icu.nullptr.twifucker.logFile
 import icu.nullptr.twifucker.logFileDir
 import icu.nullptr.twifucker.modulePrefs
-import me.iacn.biliroaming.utils.DexHelper
+import io.luckypray.dexkit.DexKitBridge
 import java.lang.ref.WeakReference
 
 private const val TAG = "TwiFucker"
@@ -25,19 +25,22 @@ private const val TAG = "TwiFucker"
 class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     companion object {
-        lateinit var dexHelper: DexHelper
+        lateinit var dexKit: DexKitBridge
         lateinit var currentActivity: WeakReference<Activity>
         lateinit var logcatProcess: Process
 
-        fun loadDexHelper() {
-            if (this::dexHelper.isInitialized) return
+        fun loadDexKit() {
+            if (this::dexKit.isInitialized) return
             val ts = System.currentTimeMillis()
-            dexHelper = DexHelper(appContext.classLoader)
-            Log.i("DexHelper load in ${System.currentTimeMillis() - ts} ms")
+            System.loadLibrary("dexkit")
+            DexKitBridge.create(appContext.applicationInfo.sourceDir)?.let {
+                dexKit = it
+                Log.i("DexKit loaded in ${System.currentTimeMillis() - ts} ms")
+            }
         }
 
-        fun closeDexHelper() {
-            if (this::dexHelper.isInitialized) dexHelper.close()
+        fun closeDexKit() {
+            if (this::dexKit.isInitialized) dexKit.close()
         }
 
         fun isLogcatProcessInitialized(): Boolean {
@@ -112,7 +115,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 )
             }
             initHooks(hooks)
-            closeDexHelper()
+            closeDexKit()
         }
     }
 

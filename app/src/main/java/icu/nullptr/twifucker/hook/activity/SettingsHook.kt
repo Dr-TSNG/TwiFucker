@@ -70,16 +70,9 @@ object SettingsHook : BaseHook() {
 
         val onPreferenceClickListenerClass = dexKit.findMethodInvoking(
             methodDescriptor = DexMethodDescriptor(onCreateMethod).descriptor,
-            methodDeclareClass = "",
-            methodName = "",
-            methodReturnType = "",
-            methodParameterTypes = null,
-            beCalledMethodDeclareClass = "",
             beCalledMethodName = "<init>",
             beCalledMethodReturnType = Void.TYPE.name,
             beCalledMethodParamTypes = arrayOf(aboutActivityClass.name),
-            uniqueResult = true,
-            dexPriority = null,
         ).firstNotNullOfOrNull {
             it.value
         }?.firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass

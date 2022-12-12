@@ -138,13 +138,7 @@ object DrawerNavbarHook : BaseHook() {
     private fun searchHook() {
         val boolSuperClassName = dexKit.findMethodUsingString(
             usingString = "^renderLambdaToString(this)$",
-            advancedMatch = true,
-            methodDeclareClass = "",
-            methodName = "",
             methodReturnType = String::class.java.name,
-            methodParamTypes = null,
-            uniqueResult = true,
-            dexPriority = null,
         ).firstOrNull {
             loadClassOrNull(it.declaringClassName)?.superclass == Object::class.java
         }?.declaringClassName ?: throw ClassNotFoundException()
@@ -174,19 +168,15 @@ object DrawerNavbarHook : BaseHook() {
 //        }?.let { it ->
 //            dexHelper.decodeMethodIndex(it)
 //        }
-
         val falseFieldMap = dexKit.findMethodUsingField(
             fieldDescriptor = "",
             fieldDeclareClass = booleanClass.name,
             fieldName = falseField.name,
             fieldType = falseField.type.name,
             usedFlags = DexKitBridge.FLAG_GETTING,
-            callerMethodDeclareClass = "",
             callerMethodName = "invoke",
             callerMethodReturnType = Object::class.java.name,
             callerMethodParamTypes = emptyArray(),
-            uniqueResult = true,
-            dexPriority = null,
         )
         val boolFalseClass = falseFieldMap.keys.firstOrNull {
             val declaringClass = loadClassOrNull(it.declaringClassName)
@@ -199,24 +189,12 @@ object DrawerNavbarHook : BaseHook() {
 
         val drawerItemsClass = dexKit.findMethodUsingString(
             usingString = "^drawerItemGroupMap$",
-            advancedMatch = true,
-            methodDeclareClass = "",
-            methodName = "",
             methodReturnType = Void.TYPE.name,
-            methodParamTypes = null,
-            uniqueResult = true,
-            dexPriority = null,
         ).firstNotNullOfOrNull { it.declaringClassName } ?: throw ClassNotFoundException()
 
         val customMapInitMethodDescriptor = dexKit.findMethodUsingString(
             usingString = "^expectedSize$",
-            advancedMatch = true,
-            methodDeclareClass = "",
-            methodName = "",
-            methodReturnType = "",
             methodParamTypes = arrayOf(Int::class.java.name),
-            uniqueResult = true,
-            dexPriority = null,
         )
             .firstOrNull { loadClassOrNull(it.declaringClassName)?.interfaces?.contains(Map::class.java) == true }
             ?: throw ClassNotFoundException()

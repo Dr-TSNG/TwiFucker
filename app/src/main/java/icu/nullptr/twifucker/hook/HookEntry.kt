@@ -105,7 +105,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 hooks.addAll(
                     listOf(
                         TimelineEntryHook,
-                        TimelineModuleHook,
+                        JsonTimelineModuleItemHook,
                         TimelineUserHook,
                         TimelineTrendHook,
                         TimelineTweetHook,

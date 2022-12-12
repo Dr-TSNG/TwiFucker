@@ -22,11 +22,12 @@ object ProfileRecommendationModuleHook : BaseHook() {
                 ?: throw NoSuchFieldException()
 
         findMethod(jsonProfileRecommendationModuleResponseMapperClass) {
-            name == "parse" && returnType == jsonProfileRecommendationModuleResponseClass
-        }.hookAfter {
-            recommendedUsersField.get(it.result).let { users ->
+            name == "_parse" && returnType == jsonProfileRecommendationModuleResponseClass
+        }.hookAfter { param ->
+            if (param.result == null) return@hookAfter
+            recommendedUsersField.get(param.result).let { users ->
                 if (users is ArrayList<*> && users.isNotEmpty()) {
-                    recommendedUsersField.set(it.result, null)
+                    recommendedUsersField.set(param.result, null)
                     Log.d("Removed recommended users")
                 }
             }

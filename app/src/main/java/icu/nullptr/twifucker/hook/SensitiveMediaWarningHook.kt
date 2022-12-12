@@ -2,7 +2,7 @@ package icu.nullptr.twifucker.hook
 
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookReplace
+import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import com.github.kyuubiran.ezxhelper.utils.loadClassOrNull
 import icu.nullptr.twifucker.modulePrefs
 
@@ -17,19 +17,19 @@ object SensitiveMediaWarningHook : BaseHook() {
             loadClassOrNull("com.twitter.model.json.core.JsonSensitiveMediaWarning\$\$JsonObjectMapper")
                 ?: throw ClassNotFoundException()
 
-        jsonSensitiveMediaWarningMapperClass.let { c ->
-            findMethod(c) {
-                name == "parse" && returnType == jsonSensitiveMediaWarningClass
-            }.hookReplace { param ->
-                val fieldsName = listOf("adult_content", "graphic_violence", "other")
-                val warningFields =
-                    jsonSensitiveMediaWarningClass.declaredFields.filter { it.type == Boolean::class.java }
-                warningFields.forEachIndexed { i, field ->
-                    field.get(param.result).let { value ->
-                        if (value == true) {
-                            field.set(param.result, false)
-                            fieldsName[i].let { Log.d("Removed sensitive media warning: $it") }
-                        }
+        val warningFields =
+            jsonSensitiveMediaWarningClass.declaredFields.filter { it.type == Boolean::class.java }
+
+        findMethod(jsonSensitiveMediaWarningMapperClass) {
+            name == "_parse" && returnType == jsonSensitiveMediaWarningClass
+        }.hookAfter { param ->
+            if (param.result == null) return@hookAfter
+            val fieldsName = listOf("adult_content", "graphic_violence", "other")
+            warningFields.forEachIndexed { i, field ->
+                field.get(param.result).let { value ->
+                    if ((value as Boolean)) {
+                        field.set(param.result, false)
+                        fieldsName[i].let { Log.d("Removed sensitive media warning: $it") }
                     }
                 }
             }

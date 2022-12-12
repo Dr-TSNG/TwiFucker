@@ -7,17 +7,31 @@ import com.github.kyuubiran.ezxhelper.utils.loadClassOrNull
 import icu.nullptr.twifucker.modulePrefs
 
 object SensitiveMediaWarningHook : BaseHook() {
-    private val jsonSensitiveMediaWarningClass =
-        loadClassOrNull("com.twitter.model.json.core.JsonSensitiveMediaWarning\$\$JsonObjectMapper")
-
     override fun init() {
         if (!modulePrefs.getBoolean("disable_sensitive_media_warning", false)) return
-        jsonSensitiveMediaWarningClass?.let { c ->
+
+        val jsonSensitiveMediaWarningClass =
+            loadClassOrNull("com.twitter.model.json.core.JsonSensitiveMediaWarning")
+                ?: throw ClassNotFoundException()
+        val jsonSensitiveMediaWarningMapperClass =
+            loadClassOrNull("com.twitter.model.json.core.JsonSensitiveMediaWarning\$\$JsonObjectMapper")
+                ?: throw ClassNotFoundException()
+
+        jsonSensitiveMediaWarningMapperClass.let { c ->
             findMethod(c) {
-                name == "parseField"
+                name == "parse" && returnType == jsonSensitiveMediaWarningClass
             }.hookReplace { param ->
-                val fieldName = param.args[1] as String
-                Log.d("Hooking sensitive media warning: $fieldName")
+                val fieldsName = listOf("adult_content", "graphic_violence", "other")
+                val warningFields =
+                    jsonSensitiveMediaWarningClass.declaredFields.filter { it.type == Boolean::class.java }
+                warningFields.forEachIndexed { i, field ->
+                    field.get(param.result).let { value ->
+                        if (value == true) {
+                            field.set(param.result, false)
+                            fieldsName[i].let { Log.d("Removed sensitive media warning: $it") }
+                        }
+                    }
+                }
             }
         }
     }

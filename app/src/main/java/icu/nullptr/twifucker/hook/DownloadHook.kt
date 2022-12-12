@@ -490,7 +490,7 @@ object DownloadHook : BaseHook() {
             methodParamTypes = arrayOf(View::class.java.name),
         ).firstOrNull()?.getMethodInstance(ezXClassLoader)?.declaringClass
         val shareTweetItemAdapter3Field =
-            shareTweetOnClickListener2Class?.declaredFields?.lastOrNull()
+            shareTweetOnClickListener3Class?.declaredFields?.lastOrNull()
 
         val shareTweetItemAdapterClass = dexKit.findMethodUsingString(
             usingString = "^itemView.findViewById(R.id.action_sheet_item_icon)$",

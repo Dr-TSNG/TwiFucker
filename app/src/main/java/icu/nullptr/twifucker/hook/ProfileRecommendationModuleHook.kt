@@ -24,8 +24,12 @@ object ProfileRecommendationModuleHook : BaseHook() {
         findMethod(jsonProfileRecommendationModuleResponseMapperClass) {
             name == "parse" && returnType == jsonProfileRecommendationModuleResponseClass
         }.hookAfter {
-            recommendedUsersField.set(it.result, null)
-            Log.d("Removed recommended users")
+            recommendedUsersField.get(it.result).let { users ->
+                if (users is ArrayList<*> && users.isNotEmpty()) {
+                    recommendedUsersField.set(it.result, null)
+                    Log.d("Removed recommended users")
+                }
+            }
         }
     }
 }

@@ -115,8 +115,6 @@ object DownloadHook : BaseHook() {
             return
         }
 
-        appContext.addModuleAssetPath()
-
         // normal tweet
         shareTweetOnClickListenerClassName.let { className ->
             if (className.isEmpty()) return@let
@@ -128,6 +126,7 @@ object DownloadHook : BaseHook() {
                 // a - actionType
                 // b - title
                 // c - iconRes
+                appContext.addModuleAssetPath()
                 if (actionItemViewData?.getObjectOrNull("b") != appContext.getString(R.string.download_or_copy)) return@hookBefore
 
                 try {
@@ -151,6 +150,7 @@ object DownloadHook : BaseHook() {
                 // a - actionType
                 // b - title
                 // c - iconRes
+                appContext.addModuleAssetPath()
                 if (actionItemViewData?.getObjectOrNull("b") != appContext.getString(R.string.download_or_copy)) return@hookBefore
 
                 try {
@@ -174,6 +174,7 @@ object DownloadHook : BaseHook() {
                 // a - actionType
                 // b - title
                 // c - iconRes
+                appContext.addModuleAssetPath()
                 if (actionItemViewData?.getObjectOrNull("b") != appContext.getString(R.string.download_or_copy)) return@hookBefore
 
                 try {
@@ -193,6 +194,7 @@ object DownloadHook : BaseHook() {
             if (downloadUrls.isEmpty()) return@hookBefore
             val protectedShareTweetItemAdapterTitleTextView =
                 it.thisObject.getObjectOrNull(protectedShareTweetItemAdapterClassTitleFieldName) as TextView
+            appContext.addModuleAssetPath()
             if (protectedShareTweetItemAdapterTitleTextView.text != appContext.getString(R.string.download_or_copy)) return@hookBefore
 
             try {
@@ -222,6 +224,7 @@ object DownloadHook : BaseHook() {
                 ), argTypes(actionEnumClass, String::class.java)
             )
             // drawableRes, actionId, title
+            appContext.addModuleAssetPath()
             actionEnumWrapped?.putObject(
                 actionSheetItemFieldName, actionSheetItemClass.newInstance(
                     args(

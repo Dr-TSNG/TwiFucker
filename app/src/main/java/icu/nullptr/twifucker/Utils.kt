@@ -9,6 +9,7 @@ import com.github.kyuubiran.ezxhelper.utils.Log
 import icu.nullptr.twifucker.ui.SettingsDialog
 import java.io.File
 
+val reGenericClass by lazy { Regex("""^(\w+)<(\w+)>$""") }
 
 val logFileDir by lazy { File(appContext.externalCacheDir?.absolutePath + "/twifucker_log/") }
 

@@ -62,7 +62,9 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                 database.close()
             }
         }
-        Log.toast(context.getString(R.string.deleted_n_promoted_tweet, count))
+        if (count > 0) {
+            Log.toast(context.getString(R.string.deleted_n_promoted_tweet, count))
+        }
     }
 
     class PrefsFragment : PreferenceFragment(), Preference.OnPreferenceChangeListener,

@@ -22,6 +22,7 @@
     <string name="disable_recommended_users">Disable recommended users</string>
     <string name="disable_who_to_follow_title">Disable Who to Follow</string>
     <string name="disable_topics_to_follow_title">Disable Topics to Follow</string>
+    <string name="disable_threads">Disable Threads</string>
     <string name="enable_download_hook">Enable Download Hook</string>
     <string name="disable_url_redirect">Disable URL Redirect</string>
     <string name="hide_drawer_items">Hide drawer items</string>
@@ -38,6 +39,7 @@
     <string name="disable_promoted_trends_summary">search</string>
     <string name="disable_sensitive_media_warning_summary">home/profile timeline and tweet details</string>
     <string name="disable_recommended_users_summary">Don\'t show recommended users after you follow someone</string>
+    <string name="disable_threads_summary">Remove live content on top of timeline</string>
     <string name="enable_download_hook_summary">[Share -> Download or Copy] Tap to download, hold button to copy link</string>
     <string name="disable_url_redirect_summary">Stop t.co url redirection</string>
     <string name="hide_drawer_items_summary">Select drawer item(s) to be hidden</string>

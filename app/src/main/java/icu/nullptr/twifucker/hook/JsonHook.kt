@@ -60,8 +60,21 @@ object JsonHook : BaseHook() {
                 "disable_recommended_users", false
             ) && jsonHasRecommendedUsers()
         ) {
-            Log.d("Handle recommended users: $this}")
+            Log.d("Handle recommended users: $this")
             jsonRemoveRecommendedUsers()
+        }
+    }
+
+    private fun JSONObject.jsonHasThreads(): Boolean = has("threads")
+
+    private fun JSONObject.jsonRemoveThreads() {
+        remove("threads")
+    }
+
+    private fun JSONObject.jsonCheckAndRemoveThreads() {
+        if (modulePrefs.getBoolean("disable_threads", false) && jsonHasThreads()) {
+            Log.d("Handle threads: $this")
+            jsonRemoveThreads()
         }
     }
 
@@ -388,6 +401,8 @@ object JsonHook : BaseHook() {
             json.jsonGetData()?.dataCheckAndRemove()
 
             json.jsonCheckAndRemoveRecommendedUsers()
+
+            json.jsonCheckAndRemoveThreads()
 
             content = json.toString()
         } catch (_: JSONException) {

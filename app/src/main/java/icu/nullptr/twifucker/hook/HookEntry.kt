@@ -5,10 +5,8 @@ import android.app.Application
 import android.content.Context
 import com.github.kyuubiran.ezxhelper.init.EzXHelperInit
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.utils.Log
+import com.github.kyuubiran.ezxhelper.utils.*
 import com.github.kyuubiran.ezxhelper.utils.Log.logexIfThrow
-import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookBefore
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -109,6 +107,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         TimelineTrendHook,
                         SensitiveMediaWarningHook,
                         ProfileRecommendationModuleHook,
+                        JsonFleetsTimelineResponseHook,
                     )
                 )
             }

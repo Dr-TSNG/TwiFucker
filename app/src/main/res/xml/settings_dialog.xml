@@ -49,6 +49,10 @@
         <SwitchPreference
             android:key="disable_topics_to_follow"
             android:title="@string/disable_topics_to_follow_title" />
+        <SwitchPreference
+            android:key="disable_threads"
+            android:summary="@string/disable_threads_summary"
+            android:title="@string/disable_threads" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_experimental">

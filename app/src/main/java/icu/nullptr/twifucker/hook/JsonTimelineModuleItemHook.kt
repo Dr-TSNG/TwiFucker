@@ -4,7 +4,6 @@ import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import com.github.kyuubiran.ezxhelper.utils.loadClass
-import icu.nullptr.twifucker.isEntryNeedsRemove
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonTimelineModuleItemHook : BaseHook() {
@@ -47,7 +46,7 @@ object JsonTimelineModuleItemHook : BaseHook() {
                 items.forEach { item ->
                     jsonTimelineModuleItemEntryIdField.get(item).let { entryIdRaw ->
                         val entryId = entryIdRaw as String
-                        if (isEntryNeedsRemove(entryId)) {
+                        if (isEntryWhoToFollow(entryId)) {
                             itemsNeedRemove.add(item)
                         }
                     }
@@ -69,7 +68,7 @@ object JsonTimelineModuleItemHook : BaseHook() {
                 items.forEach { item ->
                     jsonTimelineModuleItemEntryIdField.get(item).let { entryIdRaw ->
                         val entryId = entryIdRaw as String
-                        if (isEntryNeedsRemove(entryId)) {
+                        if (isEntryWhoToFollow(entryId)) {
                             itemsNeedRemove.add(item)
                         }
                     }
@@ -79,5 +78,9 @@ object JsonTimelineModuleItemHook : BaseHook() {
                 }
             }
         }
+    }
+
+    private fun isEntryWhoToFollow(entryId: String): Boolean {
+        return entryId.startsWith("whoToFollow-") || entryId.startsWith("who-to-follow-")
     }
 }

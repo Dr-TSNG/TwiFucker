@@ -22,14 +22,17 @@ object SensitiveMediaWarningHook : BaseHook() {
             name == "_parse" && returnType == jsonSensitiveMediaWarningClass
         }.hookAfter { param ->
             param.result ?: return@hookAfter
-            val fieldsName = listOf("adult_content", "graphic_violence", "other")
-            warningFields.forEachIndexed { i, field ->
+            var count = 0
+            warningFields.forEach { field ->
                 field.get(param.result).let { value ->
                     if ((value as Boolean)) {
                         field.set(param.result, false)
-                        fieldsName[i].let { Log.d("Removed sensitive media warning: $it") }
+                        count++
                     }
                 }
+            }
+            if (count > 0) {
+                Log.d("Set $count sensitive media warning field(s) to false")
             }
         }
     }

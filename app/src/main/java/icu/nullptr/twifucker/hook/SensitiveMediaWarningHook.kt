@@ -21,7 +21,7 @@ object SensitiveMediaWarningHook : BaseHook() {
         findMethod(jsonSensitiveMediaWarningMapperClass) {
             name == "_parse" && returnType == jsonSensitiveMediaWarningClass
         }.hookAfter { param ->
-            if (param.result == null) return@hookAfter
+            param.result ?: return@hookAfter
             val fieldsName = listOf("adult_content", "graphic_violence", "other")
             warningFields.forEachIndexed { i, field ->
                 field.get(param.result).let { value ->

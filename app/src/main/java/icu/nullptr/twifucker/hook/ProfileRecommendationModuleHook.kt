@@ -22,7 +22,7 @@ object ProfileRecommendationModuleHook : BaseHook() {
         findMethod(jsonProfileRecommendationModuleResponseMapperClass) {
             name == "_parse" && returnType == jsonProfileRecommendationModuleResponseClass
         }.hookAfter { param ->
-            if (param.result == null) return@hookAfter
+            param.result ?: return@hookAfter
             recommendedUsersField.get(param.result).let { users ->
                 if (users is ArrayList<*> && users.isNotEmpty()) {
                     recommendedUsersField.set(param.result, null)

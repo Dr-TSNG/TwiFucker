@@ -31,6 +31,7 @@ object JsonTimelineUserHook : BaseHook() {
         findMethod(jsonTimelineUserMapperClass) {
             name == "_parse" && returnType == jsonTimelineUserClass
         }.hookAfter { param ->
+            param.result ?: return@hookAfter
             jsonPromotedContentUrtField.get(param.result) ?: return@hookAfter
             Log.d("Removed promoted user")
             jsonUserResultsField.set(param.result, null)

@@ -39,7 +39,7 @@ object JsonTimelineModuleItemHook : BaseHook() {
         findMethod(jsonAddToModuleInstructionMapperClass) {
             name == "_parse" && returnType == jsonAddToModuleInstructionClass
         }.hookAfter { param ->
-            if (param.result == null) return@hookAfter
+            param.result ?: return@hookAfter
             jsonTimelineModuleItemField1.get(param.result).let { itemsRaw ->
                 val items = itemsRaw as ArrayList<*>
                 val itemsNeedRemove = mutableListOf<Any>()
@@ -61,7 +61,7 @@ object JsonTimelineModuleItemHook : BaseHook() {
         findMethod(jsonTimelineModuleMapperClass) {
             name == "_parse" && returnType == jsonTimelineModuleClass
         }.hookAfter { param ->
-            if (param.result == null) return@hookAfter
+            param.result ?: return@hookAfter
             jsonTimelineModuleItemField2.get(param.result).let { itemsRaw ->
                 val items = itemsRaw as ArrayList<*>
                 val itemsNeedRemove = mutableListOf<Any>()

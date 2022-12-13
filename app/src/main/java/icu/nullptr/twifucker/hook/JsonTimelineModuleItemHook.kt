@@ -3,41 +3,35 @@ package icu.nullptr.twifucker.hook
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookAfter
-import com.github.kyuubiran.ezxhelper.utils.loadClassOrNull
+import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.isEntryNeedsRemove
 
 object JsonTimelineModuleItemHook : BaseHook() {
     override fun init() {
         val jsonTimelineModuleItemClass =
-            loadClassOrNull("com.twitter.model.json.timeline.urt.JsonTimelineModuleItem")
-                ?: throw ClassNotFoundException()
+            loadClass("com.twitter.model.json.timeline.urt.JsonTimelineModuleItem")
 
         val jsonTimelineModuleItemEntryIdField =
             jsonTimelineModuleItemClass.declaredFields.firstOrNull { it.type == String::class.java }
                 ?: throw NoSuchFieldException()
 
         val jsonAddToModuleInstructionClass =
-            loadClassOrNull("com.twitter.model.json.timeline.urt.JsonAddToModuleInstruction")
-                ?: throw ClassNotFoundException()
+            loadClass("com.twitter.model.json.timeline.urt.JsonAddToModuleInstruction")
         val jsonAddToModuleInstructionMapperClass =
-            loadClassOrNull("com.twitter.model.json.timeline.urt.JsonAddToModuleInstruction\$\$JsonObjectMapper")
-                ?: throw ClassNotFoundException()
+            loadClass("com.twitter.model.json.timeline.urt.JsonAddToModuleInstruction\$\$JsonObjectMapper")
 
         val jsonTimelineModuleItemField1 =
             jsonAddToModuleInstructionClass.declaredFields.firstOrNull { it.type == ArrayList::class.java }
                 ?: throw NoSuchFieldException()
 
         val jsonTimelineModuleClass =
-            loadClassOrNull("com.twitter.model.json.timeline.urt.JsonTimelineModule")
-                ?: throw ClassNotFoundException()
+            loadClass("com.twitter.model.json.timeline.urt.JsonTimelineModule")
         val jsonTimelineModuleMapperClass =
-            loadClassOrNull("com.twitter.model.json.timeline.urt.JsonTimelineModule\$\$JsonObjectMapper")
-                ?: throw ClassNotFoundException()
+            loadClass("com.twitter.model.json.timeline.urt.JsonTimelineModule\$\$JsonObjectMapper")
 
         val jsonTimelineModuleItemField2 =
             jsonTimelineModuleClass.declaredFields.firstOrNull { it.type == ArrayList::class.java }
                 ?: throw NoSuchFieldException()
-
 
 
         findMethod(jsonAddToModuleInstructionMapperClass) {

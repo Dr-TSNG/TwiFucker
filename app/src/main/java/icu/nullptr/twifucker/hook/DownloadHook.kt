@@ -8,6 +8,7 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.utils.*
 import icu.nullptr.twifucker.*
+import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
@@ -286,81 +287,81 @@ object DownloadHook : BaseHook() {
     private fun loadCachedHookInfo() {
         // tweet share download button
         tweetShareClassName = modulePrefs.getString(HOOK_TWEET_SHARE_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         tweetShareShowMethodName = modulePrefs.getString(HOOK_TWEET_SHARE_SHOW_METHOD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         tweetShareShareListFieldName = modulePrefs.getString(HOOK_TWEET_SHARE_LIST_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
 
         actionEnumWrappedClassName = modulePrefs.getString(HOOK_ACTION_ENUM_WRAPPED_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         actionEnumWrappedInnerClassName =
             modulePrefs.getString(HOOK_ACTION_ENUM_WRAPPED_INNER_CLASS, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
         actionEnumClassName = modulePrefs.getString(HOOK_ACTION_ENUM_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
 
         actionSheetItemClassName = modulePrefs.getString(HOOK_ACTION_SHEET_ITEM_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         actionSheetItemFieldName = modulePrefs.getString(HOOK_ACTION_SHEET_ITEM_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
 
         // tweet share onClick
         shareTweetOnClickListenerClassName =
             modulePrefs.getString(HOOK_SHARE_TWEET_ON_CLICK_LISTENER_CLASS, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
         shareTweetItemAdapterFieldName =
             modulePrefs.getString(HOOK_SHARE_TWEET_ITEM_ADAPTER_FIELD, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
         shareTweetOnClickListener2ClassName =
             modulePrefs.getString(HOOK_SHARE_TWEET_ON_CLICK_LISTENER_2_CLASS, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
         shareTweetItemAdapter2FieldName =
             modulePrefs.getString(HOOK_SHARE_TWEET_ITEM_ADAPTER_2_FIELD, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
         shareTweetOnClickListener3ClassName =
             modulePrefs.getString(HOOK_SHARE_TWEET_ON_CLICK_LISTENER_3_CLASS, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
         shareTweetItemAdapter3FieldName =
             modulePrefs.getString(HOOK_SHARE_TWEET_ITEM_ADAPTER_3_FIELD, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
         actionItemViewDataFieldName =
             modulePrefs.getString(HOOK_ACTION_ITEM_VIEW_DATA_FIELD, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
 
         // protected tweet share onClick
         protectedShareTweetItemAdapterClassName =
             modulePrefs.getString(HOOK_PROTECTED_SHARE_ITEM_ADAPTER_CLASS, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
         protectedShareTweetItemAdapterClassTitleFieldName =
             modulePrefs.getString(HOOK_PROTECTED_SHARE_TWEET_ITEM_ADAPTER_CLASS_TITLE_FIELD, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
 
         // share menu
         shareMenuClassName = modulePrefs.getString(HOOK_SHARE_MENU_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         shareMenuMethodName = modulePrefs.getString(HOOK_SHARE_MENU_METHOD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
 
         // tweet object
         tweetResultFieldName = modulePrefs.getString(HOOK_TWEET_RESULT_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         resultFieldName = modulePrefs.getString(HOOK_RESULT_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         legacyFieldName = modulePrefs.getString(HOOK_LEGACY_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         extendedEntitiesFieldName = modulePrefs.getString(HOOK_EXTENDED_ENTITIES_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         mediaFieldName = modulePrefs.getString(HOOK_MEDIA_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         mediaTypeFieldName = modulePrefs.getString(HOOK_MEDIA_TYPE_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         mediaUrlHttpsFieldName = modulePrefs.getString(HOOK_MEDIA_URL_HTTPS_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         mediaInfoFieldName = modulePrefs.getString(HOOK_MEDIA_INFO_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         variantsFieldName = modulePrefs.getString(HOOK_VARIANTS_FIELD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
     }
 
     private fun saveHookInfo() {
@@ -560,12 +561,12 @@ object DownloadHook : BaseHook() {
             } catch (_: Throwable) {
                 return@filter false
             }
-        }.firstOrNull()?.let { loadClassOrNull(it) } ?: throw ClassNotFoundException()
+        }.firstOrNull()?.let { loadClass(it) } ?: throw ClassNotFoundException()
         val shareMenuMethod = shareMenuClass.declaredMethods.firstOrNull { m ->
             m.returnType == Void.TYPE && m.parameterTypes.size == 4 && m.parameterTypes[0] == String::class.java && m.parameterTypes[1] == String::class.java
         } ?: throw NoSuchMethodError()
         val tweetResultField = shareMenuMethod.parameterTypes[2].declaredFields.firstOrNull { f ->
-            f.isPublic && f.isFinal && f.type.declaredFields.any { it.type == loadClassOrNull("com.twitter.model.vibe.Vibe") }
+            f.isPublic && f.isFinal && f.type.declaredFields.any { it.type == loadClass("com.twitter.model.vibe.Vibe") }
         } ?: throw NoSuchFieldError()
         val resultField = tweetResultField.type.declaredFields.groupBy { it.type }
             .filter { it.value.size == 2 && it.key.declaredFields.size == 3 }.map { it.value[1] }[0]
@@ -584,11 +585,11 @@ object DownloadHook : BaseHook() {
             usingString = "^MODEL3D$",
             methodName = "<clinit>",
             methodReturnType = Void.TYPE.name,
-        ).firstOrNull()?.let { loadClassOrNull(it.declaringClassName) }
+        ).firstOrNull()?.let { loadClass(it.declaringClassName) }
             ?: throw ClassNotFoundException()
-        val perMediaClass = loadClassOrNull(mediaTypeEnumClass.name.split("$")[0])
+        val perMediaClass = loadClass(mediaTypeEnumClass.name.split("$")[0])
         val mediaTypeField =
-            perMediaClass?.declaredFields?.firstOrNull { it.type == mediaTypeEnumClass }
+            perMediaClass.declaredFields.firstOrNull { it.type == mediaTypeEnumClass }
                 ?: throw NoSuchFieldError()
         val mediaUrlHttpsField =
             perMediaClass.declaredFields.firstOrNull { it.isNotStatic && it.type == String::class.java }

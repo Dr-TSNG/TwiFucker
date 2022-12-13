@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.hookReplace
 import com.github.kyuubiran.ezxhelper.utils.loadClass
+import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.BaseHook
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
@@ -54,7 +55,7 @@ object SettingsHook : BaseHook() {
     private fun loadCachedHookInfo() {
         onVersionClickListenerClassName =
             modulePrefs.getString("hook_on_version_click_listener_class", null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
     }
 
     private fun saveHookInfo() {

@@ -3,7 +3,7 @@ package icu.nullptr.twifucker.hook
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookAfter
-import com.github.kyuubiran.ezxhelper.utils.loadClassOrNull
+import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.modulePrefs
 
 object ProfileRecommendationModuleHook : BaseHook() {
@@ -11,11 +11,9 @@ object ProfileRecommendationModuleHook : BaseHook() {
         if (!modulePrefs.getBoolean("disable_recommended_users", false)) return
 
         val jsonProfileRecommendationModuleResponseClass =
-            loadClassOrNull("com.twitter.model.json.people.JsonProfileRecommendationModuleResponse")
-                ?: throw ClassNotFoundException()
+            loadClass("com.twitter.model.json.people.JsonProfileRecommendationModuleResponse")
         val jsonProfileRecommendationModuleResponseMapperClass =
-            loadClassOrNull("com.twitter.model.json.people.JsonProfileRecommendationModuleResponse\$\$JsonObjectMapper")
-                ?: throw ClassNotFoundException()
+            loadClass("com.twitter.model.json.people.JsonProfileRecommendationModuleResponse\$\$JsonObjectMapper")
 
         val recommendedUsersField =
             jsonProfileRecommendationModuleResponseClass.declaredFields.firstOrNull { it.type == ArrayList::class.java }

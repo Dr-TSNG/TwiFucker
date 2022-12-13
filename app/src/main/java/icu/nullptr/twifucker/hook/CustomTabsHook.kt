@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.utils.*
+import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
 import icu.nullptr.twifucker.hostAppLastUpdate
@@ -74,12 +75,12 @@ object CustomTabsHook : BaseHook() {
 
     private fun loadCachedHookInfo() {
         customTabsClassName = modulePrefs.getString(HOOK_CUSTOM_TABS_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         customTabsGetMethodName = modulePrefs.getString(HOOK_CUSTOM_TABS_GET_METHOD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         customTabsLaunchUrlMethodName =
             modulePrefs.getString(HOOK_CUSTOM_TABS_LAUNCH_URL_METHOD, null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
     }
 
     private fun saveHookInfo() {

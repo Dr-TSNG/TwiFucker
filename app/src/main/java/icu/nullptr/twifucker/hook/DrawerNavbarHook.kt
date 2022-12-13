@@ -3,6 +3,7 @@ package icu.nullptr.twifucker.hook
 import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.utils.*
 import icu.nullptr.twifucker.data.TwitterItem
+import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
 import icu.nullptr.twifucker.hostAppLastUpdate
@@ -101,21 +102,21 @@ object DrawerNavbarHook : BaseHook() {
 
     private fun loadCachedHookInfo() {
         drawerItemsClassName = modulePrefs.getString(HOOK_DRAWER_ITEMS_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         boolFalseClassName = modulePrefs.getString(HOOK_BOOL_FALSE_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         bottomNavbarClassName = modulePrefs.getString(HOOK_BOTTOM_NAVBAR_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         customMapClassName = modulePrefs.getString(HOOK_CUSTOM_MAP_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         customMapInitMethodName = modulePrefs.getString(HOOK_CUSTOM_MAP_INIT_METHOD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         customMapInnerClassName = modulePrefs.getString(HOOK_CUSTOM_MAP_INNER_CLASS, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         customMapInnerAddMethodName = modulePrefs.getString(HOOK_CUSTOM_MAP_INNER_ADD_METHOD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
         customMapInnerGetMethodName = modulePrefs.getString(HOOK_CUSTOM_MAP_INNER_GET_METHOD, null)
-            ?: throw Throwable("cached hook not found")
+            ?: throw CachedHookNotFound()
     }
 
     private fun saveHookInfo() {
@@ -140,7 +141,7 @@ object DrawerNavbarHook : BaseHook() {
             usingString = "^renderLambdaToString(this)$",
             methodReturnType = String::class.java.name,
         ).firstOrNull {
-            loadClassOrNull(it.declaringClassName)?.superclass == Object::class.java
+            loadClass(it.declaringClassName).superclass == Object::class.java
         }?.declaringClassName ?: throw ClassNotFoundException()
 
         val booleanClass = loadClass("java.lang.Boolean")
@@ -179,10 +180,10 @@ object DrawerNavbarHook : BaseHook() {
             callerMethodParamTypes = emptyArray(),
         )
         val boolFalseClass = falseFieldMap.keys.firstOrNull {
-            val declaringClass = loadClassOrNull(it.declaringClassName)
-            val declaredMethodsSize = declaringClass?.declaredMethods?.size
-            val declaredFieldsSize = declaringClass?.declaredFields?.size
-            declaringClass?.superclass?.name == boolSuperClassName && declaredMethodsSize == 1 && declaredFieldsSize == 1 && declaringClass.declaredFields[0].isStatic && !declaringClass.name.contains(
+            val declaringClass = loadClass(it.declaringClassName)
+            val declaredMethodsSize = declaringClass.declaredMethods.size
+            val declaredFieldsSize = declaringClass.declaredFields.size
+            declaringClass.superclass?.name == boolSuperClassName && declaredMethodsSize == 1 && declaredFieldsSize == 1 && declaringClass.declaredFields[0].isStatic && !declaringClass.name.contains(
                 "$"
             )
         }?.declaringClassName ?: throw ClassNotFoundException()
@@ -196,7 +197,7 @@ object DrawerNavbarHook : BaseHook() {
             usingString = "^expectedSize$",
             methodParamTypes = arrayOf(Int::class.java.name),
         )
-            .firstOrNull { loadClassOrNull(it.declaringClassName)?.interfaces?.contains(Map::class.java) == true }
+            .firstOrNull { loadClass(it.declaringClassName).interfaces.contains(Map::class.java) }
             ?: throw ClassNotFoundException()
 
         val customMapInitMethod = customMapInitMethodDescriptor.getMethodInstance(ezXClassLoader)
@@ -217,7 +218,7 @@ object DrawerNavbarHook : BaseHook() {
             } catch (_: Throwable) {
                 false
             }
-        }?.let { loadClassOrNull(it) } ?: throw ClassNotFoundException()
+        }?.let { loadClass(it) } ?: throw ClassNotFoundException()
 
         drawerItemsClassName = drawerItemsClass
         boolFalseClassName = boolFalseClass

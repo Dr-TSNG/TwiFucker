@@ -7,6 +7,9 @@ import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.modulePrefs
 
 object SensitiveMediaWarningHook : BaseHook() {
+    override val name: String
+        get() = "SensitiveMediaWarningHook"
+
     override fun init() {
         if (!modulePrefs.getBoolean("disable_sensitive_media_warning", false)) return
 

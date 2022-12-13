@@ -15,6 +15,9 @@ import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
 
 object CustomTabsHook : BaseHook() {
+    override val name: String
+        get() = "CustomTabsHook"
+
     private const val HOOK_CUSTOM_TABS_CLASS = "hook_custom_tabs_class"
     private const val HOOK_CUSTOM_TABS_GET_METHOD = "hook_custom_tabs_get_method"
     private const val HOOK_CUSTOM_TABS_LAUNCH_URL_METHOD = "hook_custom_tabs_launch_url_method"

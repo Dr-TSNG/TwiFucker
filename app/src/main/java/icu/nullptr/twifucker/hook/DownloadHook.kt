@@ -16,6 +16,9 @@ import icu.nullptr.twifucker.ui.DownloadDialog
 
 
 object DownloadHook : BaseHook() {
+    override val name: String
+        get() = "DownloadHook"
+
     private var downloadUrls: List<String> = listOf()
 
     // tweet share download button

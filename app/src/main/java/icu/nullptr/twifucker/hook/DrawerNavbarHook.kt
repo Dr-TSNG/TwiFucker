@@ -14,6 +14,9 @@ import icu.nullptr.twifucker.ui.SettingsDialog.Companion.PREF_HIDDEN_DRAWER_ITEM
 import io.luckypray.dexkit.DexKitBridge
 
 object DrawerNavbarHook : BaseHook() {
+    override val name: String
+        get() = "DrawerNavbarHook"
+
     private const val HOOK_DRAWER_ITEMS_CLASS = "hook_drawer_items_class"
     private const val HOOK_BOOL_FALSE_CLASS = "hook_bool_false_class"
     private const val HOOK_BOTTOM_NAVBAR_CLASS = "hook_bottom_navbar_class"

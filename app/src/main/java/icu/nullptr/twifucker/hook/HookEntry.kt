@@ -124,8 +124,8 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 val ts = System.currentTimeMillis()
                 it.init()
                 it.isInit = true
-                Log.i("Inited ${it.javaClass.simpleName} hook in ${System.currentTimeMillis() - ts} ms")
-            }.logexIfThrow("Failed init hook: ${it.javaClass.simpleName}")
+                Log.i("Inited ${it.name} hook in ${System.currentTimeMillis() - ts} ms")
+            }.logexIfThrow("Failed init hook: ${it.name}")
         }
     }
 }

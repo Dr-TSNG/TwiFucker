@@ -8,6 +8,8 @@ import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.reGenericClass
 
 object TimelineTrendHook : BaseHook() {
+    override val name: String
+        get() = "TimelineTrendHook"
 
     override fun init() {
         if (!modulePrefs.getBoolean("disable_promoted_trends", true)) return

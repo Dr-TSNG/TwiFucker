@@ -7,6 +7,9 @@ import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonTimelineUserHook : BaseHook() {
+    override val name: String
+        get() = "JsonTimelineUserHook"
+
     override fun init() {
         if (!modulePrefs.getBoolean("disable_promoted_user", true)) return
 
@@ -33,8 +36,8 @@ object JsonTimelineUserHook : BaseHook() {
         }.hookAfter { param ->
             param.result ?: return@hookAfter
             jsonPromotedContentUrtField.get(param.result) ?: return@hookAfter
-            Log.d("Removed promoted user")
             jsonUserResultsField.set(param.result, null)
+            Log.d("Removed promoted user")
         }
     }
 }

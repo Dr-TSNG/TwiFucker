@@ -7,6 +7,9 @@ import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.modulePrefs
 
 object ProfileRecommendationModuleHook : BaseHook() {
+    override val name: String
+        get() = "ProfileRecommendationModule"
+
     override fun init() {
         if (!modulePrefs.getBoolean("disable_recommended_users", false)) return
 

@@ -6,6 +6,9 @@ import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import icu.nullptr.twifucker.getId
 
 object AltTextHook : BaseHook() {
+    override val name: String
+        get() = "AltTextHook"
+
     override fun init() {
         findMethod(TextView::class.java) {
             name == "setText" && parameterTypes.contentEquals(arrayOf(CharSequence::class.java))
@@ -19,5 +22,4 @@ object AltTextHook : BaseHook() {
             }
         }
     }
-
 }

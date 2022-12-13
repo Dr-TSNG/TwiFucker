@@ -16,6 +16,8 @@ import icu.nullptr.twifucker.ui.SettingsDialog
 import io.luckypray.dexkit.descriptor.member.DexMethodDescriptor
 
 object SettingsHook : BaseHook() {
+    override val name: String
+        get() = "SettingsHook"
 
     private val aboutActivityClass = loadClass("com.twitter.app.settings.AboutActivity")
     private val preferenceClass = loadClass("android.preference.Preference")

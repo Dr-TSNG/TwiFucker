@@ -11,6 +11,9 @@ import java.io.BufferedReader
 import java.io.InputStream
 
 object JsonHook : BaseHook() {
+    override val name: String
+        get() = "JsonHook"
+
     override fun init() {
         try {
             val jsonClass =

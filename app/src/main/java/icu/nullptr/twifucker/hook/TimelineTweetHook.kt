@@ -1,33 +1,45 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.utils.Log
+import com.github.kyuubiran.ezxhelper.utils.findMethod
+import com.github.kyuubiran.ezxhelper.utils.hookAfter
+import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.modulePrefs
 
 object TimelineTweetHook : BaseHook() {
-    private val jsonTimelineTweetClass =
-        loadClass("com.twitter.model.json.timeline.urt.JsonTimelineTweet")
-    private val jsonTimelineTweetMapperClass =
-        loadClass("com.twitter.model.json.timeline.urt.JsonTimelineTweet\$\$JsonObjectMapper")
-    private val jsonTimelineTweetEntryIdField =
-        jsonTimelineTweetClass.declaredFields.firstOrNull { it.type == String::class.java }
-            ?: throw NoSuchFieldError()
-    private val jsonTimelineTweetTweetResultField =
-        jsonTimelineTweetClass.declaredFields.firstOrNull { it.isNotStatic }
-            ?: throw NoSuchFieldError()
-
     override fun init() {
         if (!modulePrefs.getBoolean("disable_promoted_content", true)) return
 
+        val jsonTimelineTweetClass =
+            loadClass("com.twitter.model.json.timeline.urt.JsonTimelineTweet")
+        val jsonTimelineTweetMapperClass =
+            loadClass("com.twitter.model.json.timeline.urt.JsonTimelineTweet\$\$JsonObjectMapper")
+
+        val jsonTweetResultsClass =
+            loadClass("com.twitter.model.json.core.JsonTweetResults").declaredFields.firstOrNull()?.type
+                ?: throw NoSuchFieldError()
+        val jsonTweetResultsField =
+            jsonTimelineTweetClass.declaredFields.firstOrNull { it.type == jsonTweetResultsClass }
+                ?: throw NoSuchFieldError()
+
+        val jsonPromotedContentUrtClass =
+            loadClass("com.twitter.model.json.timeline.urt.JsonPromotedContentUrt")
+        val jsonPromotedContentUrtField =
+            jsonTimelineTweetClass.declaredFields.firstOrNull { it.type == jsonPromotedContentUrtClass }
+                ?: throw NoSuchFieldError()
+
+        val entryIdField =
+            jsonTimelineTweetClass.declaredFields.firstOrNull { it.type == String::class.java }
+                ?: throw NoSuchFieldError()
+
         findMethod(jsonTimelineTweetMapperClass) {
-            name == "parseField"
+            name == "_parse" && returnType == jsonTimelineTweetClass
         }.hookAfter { param ->
-            val fieldName = param.args[1] as String
-            // timeline ads and replies ads
-            if (fieldName == "promotedMetadata" || fieldName == "tweetPromotedMetadata") {
-                Log.d("Hooking timeline ads $fieldName")
-                jsonTimelineTweetTweetResultField.set(param.args[0], null)
-                jsonTimelineTweetEntryIdField.set(param.args[0], null)
-            }
+            param.result ?: return@hookAfter
+            jsonPromotedContentUrtField.get(param.result) ?: return@hookAfter
+            jsonTweetResultsField.set(param.result, null)
+            entryIdField.set(param.result, "")
+            Log.d("Removed promoted content")
         }
     }
 }

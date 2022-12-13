@@ -7,28 +7,26 @@ import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.isEntryNeedsRemove
 
 object TimelineEntryHook : BaseHook() {
-    private val jsonTimelineEntryClass =
-        loadClass("com.twitter.model.json.timeline.urt.JsonTimelineEntry")
-    private val jsonTimelineEntryMapperClass =
-        loadClass("com.twitter.model.json.timeline.urt.JsonTimelineEntry\$\$JsonObjectMapper")
-    private val jsonTimelineEntryEntryIdField =
-        jsonTimelineEntryClass.declaredFields.firstOrNull { it.type == String::class.java }
+    override fun init() {
+        val jsonTimelineEntryClass =
+            loadClass("com.twitter.model.json.timeline.urt.JsonTimelineEntry")
+        val jsonTimelineEntryMapperClass =
+            loadClass("com.twitter.model.json.timeline.urt.JsonTimelineEntry\$\$JsonObjectMapper")
+
+        val entryIdField =
+            jsonTimelineEntryClass.declaredFields.firstOrNull { it.type == String::class.java }
+                ?: throw NoSuchFieldError()
+        val contentField = jsonTimelineEntryClass.declaredFields.firstOrNull { it.type.isInterface }
             ?: throw NoSuchFieldError()
 
-    override fun init() {
         findMethod(jsonTimelineEntryMapperClass) {
-            name == "parseField"
+            name == "_parse" && returnType == jsonTimelineEntryClass
         }.hookAfter { param ->
-            val fieldName = param.args[1] as String
-            if (fieldName != "entryId") return@hookAfter
-            val entryId =
-                jsonTimelineEntryEntryIdField.get(param.args[0])?.let { it as String }
-                    ?: return@hookAfter
+            param.result ?: return@hookAfter
+            val entryId = entryIdField.get(param.result) as String
             if (isEntryNeedsRemove(entryId)) {
-                Log.d(
-                    "Hooking timeline entry item $fieldName $entryId"
-                )
-                jsonTimelineEntryEntryIdField.set(param.args[0], "")
+                contentField.set(param.result, null)
+                Log.d("Remove timeline entry item: $entryId")
             }
         }
     }

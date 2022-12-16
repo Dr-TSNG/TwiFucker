@@ -37,14 +37,6 @@ object DownloadHook : BaseHook() {
     private const val HOOK_SHARE_TWEET_ON_CLICK_LISTENER_CLASS =
         "hook_share_tweet_on_click_listener_class"
     private const val HOOK_SHARE_TWEET_ITEM_ADAPTER_FIELD = "hook_share_tweet_item_adapter_field"
-    private const val HOOK_SHARE_TWEET_ON_CLICK_LISTENER_2_CLASS =
-        "hook_share_tweet_on_click_listener_2_class"
-    private const val HOOK_SHARE_TWEET_ITEM_ADAPTER_2_FIELD =
-        "hook_share_tweet_item_adapter_2_field"
-    private const val HOOK_SHARE_TWEET_ON_CLICK_LISTENER_3_CLASS =
-        "hook_share_tweet_on_click_listener_3_class"
-    private const val HOOK_SHARE_TWEET_ITEM_ADAPTER_3_FIELD =
-        "hook_share_tweet_item_adapter_3_field"
     private const val HOOK_ACTION_ITEM_VIEW_DATA_FIELD = "hook_action_item_view_data_field"
 
     // protected tweet share onClick
@@ -83,10 +75,6 @@ object DownloadHook : BaseHook() {
     // tweet share onClick
     private lateinit var shareTweetOnClickListenerClassName: String
     private lateinit var shareTweetItemAdapterFieldName: String
-    private lateinit var shareTweetOnClickListener2ClassName: String
-    private lateinit var shareTweetItemAdapter2FieldName: String
-    private lateinit var shareTweetOnClickListener3ClassName: String
-    private lateinit var shareTweetItemAdapter3FieldName: String
     private lateinit var actionItemViewDataFieldName: String
 
     // protected tweet share onClick
@@ -125,54 +113,6 @@ object DownloadHook : BaseHook() {
                 if (downloadUrls.isEmpty()) return@hookBefore
                 val actionItemViewData =
                     it.thisObject.getObjectOrNull(shareTweetItemAdapterFieldName)
-                        ?.getObjectOrNull(actionItemViewDataFieldName)
-                // a - actionType
-                // b - title
-                // c - iconRes
-                appContext.addModuleAssetPath()
-                if (actionItemViewData?.getObjectOrNull("b") != appContext.getString(R.string.download_or_copy)) return@hookBefore
-
-                try {
-                    currentActivity.get()?.let { act ->
-                        DownloadDialog(act, downloadUrls) {
-                            downloadUrls = listOf()
-                        }.show()
-                    }
-                } catch (t: Throwable) {
-                    Log.e(t)
-                }
-            }
-        }
-        shareTweetOnClickListener2ClassName.let { className ->
-            if (className.isEmpty()) return@let
-            findMethod(className) { name == "onClick" }.hookBefore {
-                if (downloadUrls.isEmpty()) return@hookBefore
-                val actionItemViewData =
-                    it.thisObject.getObjectOrNull(shareTweetItemAdapter2FieldName)
-                        ?.getObjectOrNull(actionItemViewDataFieldName)
-                // a - actionType
-                // b - title
-                // c - iconRes
-                appContext.addModuleAssetPath()
-                if (actionItemViewData?.getObjectOrNull("b") != appContext.getString(R.string.download_or_copy)) return@hookBefore
-
-                try {
-                    currentActivity.get()?.let { act ->
-                        DownloadDialog(act, downloadUrls) {
-                            downloadUrls = listOf()
-                        }.show()
-                    }
-                } catch (t: Throwable) {
-                    Log.e(t)
-                }
-            }
-        }
-        shareTweetOnClickListener3ClassName.let { className ->
-            if (className.isEmpty()) return@let
-            findMethod(className) { name == "onClick" }.hookBefore {
-                if (downloadUrls.isEmpty()) return@hookBefore
-                val actionItemViewData =
-                    it.thisObject.getObjectOrNull(shareTweetItemAdapter3FieldName)
                         ?.getObjectOrNull(actionItemViewDataFieldName)
                 // a - actionType
                 // b - title
@@ -319,18 +259,6 @@ object DownloadHook : BaseHook() {
         shareTweetItemAdapterFieldName =
             modulePrefs.getString(HOOK_SHARE_TWEET_ITEM_ADAPTER_FIELD, null)
                 ?: throw CachedHookNotFound()
-        shareTweetOnClickListener2ClassName =
-            modulePrefs.getString(HOOK_SHARE_TWEET_ON_CLICK_LISTENER_2_CLASS, null)
-                ?: throw CachedHookNotFound()
-        shareTweetItemAdapter2FieldName =
-            modulePrefs.getString(HOOK_SHARE_TWEET_ITEM_ADAPTER_2_FIELD, null)
-                ?: throw CachedHookNotFound()
-        shareTweetOnClickListener3ClassName =
-            modulePrefs.getString(HOOK_SHARE_TWEET_ON_CLICK_LISTENER_3_CLASS, null)
-                ?: throw CachedHookNotFound()
-        shareTweetItemAdapter3FieldName =
-            modulePrefs.getString(HOOK_SHARE_TWEET_ITEM_ADAPTER_3_FIELD, null)
-                ?: throw CachedHookNotFound()
         actionItemViewDataFieldName =
             modulePrefs.getString(HOOK_ACTION_ITEM_VIEW_DATA_FIELD, null)
                 ?: throw CachedHookNotFound()
@@ -389,14 +317,6 @@ object DownloadHook : BaseHook() {
                 HOOK_SHARE_TWEET_ON_CLICK_LISTENER_CLASS, shareTweetOnClickListenerClassName
             )
             it.putString(HOOK_SHARE_TWEET_ITEM_ADAPTER_FIELD, shareTweetItemAdapterFieldName)
-            it.putString(
-                HOOK_SHARE_TWEET_ON_CLICK_LISTENER_2_CLASS, shareTweetOnClickListener2ClassName
-            )
-            it.putString(HOOK_SHARE_TWEET_ITEM_ADAPTER_2_FIELD, shareTweetItemAdapter2FieldName)
-            it.putString(
-                HOOK_SHARE_TWEET_ON_CLICK_LISTENER_3_CLASS, shareTweetOnClickListener3ClassName
-            )
-            it.putString(HOOK_SHARE_TWEET_ITEM_ADAPTER_3_FIELD, shareTweetItemAdapter3FieldName)
             it.putString(HOOK_ACTION_ITEM_VIEW_DATA_FIELD, actionItemViewDataFieldName)
 
             // protected tweet share onClick
@@ -472,32 +392,28 @@ object DownloadHook : BaseHook() {
         actionSheetItemFieldName = actionSheetItemField.name
 
         // tweet share onClick
-        val shareTweetOnClickListenerClass = dexKit.findMethodUsingString(
-            usingString = "^profile_modal$",
-            methodName = "onClick",
-            methodReturnType = Void.TYPE.name,
-            methodParamTypes = arrayOf(View::class.java.name),
-        ).firstOrNull()?.getMethodInstance(ezXClassLoader)?.declaringClass
+        val shareTweetOnClickListenerRefMethodsDesc = dexKit.findMethodUsingString(
+            usingString = "itemView.findViewById(R.id.action_sheet_item_icon)",
+        )
+        val shareTweetOnClickListenerConstructorDesc =
+            shareTweetOnClickListenerRefMethodsDesc.firstNotNullOfOrNull { methodDesc ->
+                val result = dexKit.findMethodInvoking(
+                    methodDescriptor = methodDesc.descriptor,
+                    beCalledMethodName = "<init>",
+                    beCalledMethodParamTypes = arrayOf(
+                        Object::class.java.name,
+                        Object::class.java.name,
+                        Int::class.java.name
+                    )
+                )
+                result.values.firstOrNull()
+            }?.firstOrNull()
+
+        val shareTweetOnClickListenerClass =
+            shareTweetOnClickListenerConstructorDesc?.getConstructorInstance(ezXClassLoader)?.declaringClass
+                ?: throw ClassNotFoundException()
         val shareTweetItemAdapterField =
-            shareTweetOnClickListenerClass?.declaredFields?.lastOrNull()
-        // twitter alpha 9.69 alpha 4
-        val shareTweetOnClickListener2Class = dexKit.findMethodUsingString(
-            usingString = "^fabContainerView.findViewById(R.id.tweet_label)$",
-            methodName = "onClick",
-            methodReturnType = Void.TYPE.name,
-            methodParamTypes = arrayOf(View::class.java.name),
-        ).firstOrNull()?.getMethodInstance(ezXClassLoader)?.declaringClass
-        val shareTweetItemAdapter2Field =
-            shareTweetOnClickListener2Class?.declaredFields?.lastOrNull()
-        // twitter alpha 9.69 alpha 9
-        val shareTweetOnClickListener3Class = dexKit.findMethodUsingString(
-            usingString = "^\$onSwitchToggled$",
-            methodName = "onClick",
-            methodReturnType = Void.TYPE.name,
-            methodParamTypes = arrayOf(View::class.java.name),
-        ).firstOrNull()?.getMethodInstance(ezXClassLoader)?.declaringClass
-        val shareTweetItemAdapter3Field =
-            shareTweetOnClickListener3Class?.declaredFields?.lastOrNull()
+            shareTweetOnClickListenerClass.declaredFields.lastOrNull() ?: throw NoSuchFieldError()
 
         val shareTweetItemAdapterClass = dexKit.findMethodUsingString(
             usingString = "^itemView.findViewById(R.id.action_sheet_item_icon)$",
@@ -514,19 +430,8 @@ object DownloadHook : BaseHook() {
             shareTweetItemAdapterClass.declaredFields.firstOrNull { f -> f.isPublic && f.isNotStatic && f.isNotFinal }
                 ?: throw NoSuchFieldError()
 
-        if (shareTweetOnClickListenerClass == null && shareTweetOnClickListener2Class == null && shareTweetOnClickListener3Class == null) {
-            throw ClassNotFoundException()
-        }
-        if (shareTweetItemAdapterField == null && shareTweetItemAdapter2Field == null && shareTweetItemAdapter3Field == null) {
-            throw NoSuchFieldError()
-        }
-
-        shareTweetOnClickListenerClassName = shareTweetOnClickListenerClass?.name ?: ""
-        shareTweetItemAdapterFieldName = shareTweetItemAdapterField?.name ?: ""
-        shareTweetOnClickListener2ClassName = shareTweetOnClickListener2Class?.name ?: ""
-        shareTweetItemAdapter2FieldName = shareTweetItemAdapter2Field?.name ?: ""
-        shareTweetOnClickListener3ClassName = shareTweetOnClickListener3Class?.name ?: ""
-        shareTweetItemAdapter3FieldName = shareTweetItemAdapter3Field?.name ?: ""
+        shareTweetOnClickListenerClassName = shareTweetOnClickListenerClass.name
+        shareTweetItemAdapterFieldName = shareTweetItemAdapterField.name
         actionItemViewDataFieldName = actionItemViewDataField.name
 
         // protected tweet share onClick

@@ -82,6 +82,13 @@ fun isEntryNeedsRemove(entryId: String): Boolean {
     ) {
         return true
     }
+    // tweet detail related tweets
+    if (entryId.startsWith("tweetdetailrelatedtweets-") && modulePrefs.getBoolean(
+            "disable_tweet_detail_related_tweets", false
+        )
+    ) {
+        return true
+    }
     return false
 }
 

@@ -53,6 +53,9 @@
             android:key="disable_threads"
             android:summary="@string/disable_threads_summary"
             android:title="@string/disable_threads" />
+        <SwitchPreference
+            android:key="disable_tweet_detail_related_tweets"
+            android:title="@string/disable_tweet_detail_related_tweets" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_experimental">

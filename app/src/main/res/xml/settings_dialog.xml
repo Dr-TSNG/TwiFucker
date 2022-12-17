@@ -94,6 +94,11 @@
         <Preference
             android:key="clear_log"
             android:title="@string/clear_log" />
+        <Preference
+            android:enabled="false"
+            android:key="delete_databases"
+            android:summary="@string/delete_databases_summary"
+            android:title="@string/delete_databases" />
     </PreferenceCategory>
 
 </PreferenceScreen>

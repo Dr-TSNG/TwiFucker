@@ -7,7 +7,7 @@ import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.reGenericClass
 
-object TimelineTrendHook : BaseHook() {
+object JsonTimelineTrendHook : BaseHook() {
     override val name: String
         get() = "TimelineTrendHook"
 

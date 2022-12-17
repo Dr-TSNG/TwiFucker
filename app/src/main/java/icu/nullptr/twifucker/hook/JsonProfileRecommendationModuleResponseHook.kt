@@ -6,7 +6,7 @@ import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.modulePrefs
 
-object ProfileRecommendationModuleHook : BaseHook() {
+object JsonProfileRecommendationModuleResponseHook : BaseHook() {
     override val name: String
         get() = "ProfileRecommendationModule"
 

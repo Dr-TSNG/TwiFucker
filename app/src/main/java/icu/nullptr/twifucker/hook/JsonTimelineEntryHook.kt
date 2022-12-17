@@ -6,7 +6,7 @@ import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import com.github.kyuubiran.ezxhelper.utils.loadClass
 import icu.nullptr.twifucker.isEntryNeedsRemove
 
-object TimelineEntryHook : BaseHook() {
+object JsonTimelineEntryHook : BaseHook() {
     override val name: String
         get() = "TimelineEntryHook"
 

@@ -102,12 +102,12 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
             } else {
                 hooks.addAll(
                     listOf(
-                        TimelineEntryHook,
+                        JsonTimelineEntryHook,
                         JsonTimelineTweetHook,
                         JsonTimelineUserHook,
-                        TimelineTrendHook,
+                        JsonTimelineTrendHook,
                         SensitiveMediaWarningHook,
-                        ProfileRecommendationModuleHook,
+                        JsonProfileRecommendationModuleResponseHook,
                         JsonFleetsTimelineResponseHook,
                     )
                 )

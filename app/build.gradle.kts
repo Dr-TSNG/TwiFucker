@@ -105,17 +105,6 @@ afterEvaluate {
             }
         }
     }
-
-    val adb: String = androidComponents.sdkComponents.adb.get().asFile.absolutePath
-    task("installAndStartTwitter") {
-        dependsOn("buildDebug")
-        doLast {
-            val apk = file("$buildDir/outputs/apk/debug").listFiles()!!.single().absolutePath
-            "$adb install $apk".execute()
-            "$adb shell am force-stop com.twitter.android".execute()
-            "$adb shell am start com.twitter.android/com.twitter.android.StartActivity".execute()
-        }
-    }
 }
 
 dependencies {
@@ -123,4 +112,26 @@ dependencies {
     compileOnly("de.robv.android.xposed:api:82")
 
     implementation("com.github.LuckyPray:DexKit:b289b3e069")
+}
+
+val adbExecutable: String = androidComponents.sdkComponents.adb.get().asFile.absolutePath
+
+val restartTwitter = task("restartTwitter").doLast {
+    exec {
+        commandLine(adbExecutable, "shell", "am", "force-stop", "com.twitter.android")
+    }
+    exec {
+        commandLine(
+            adbExecutable, "shell", "am", "start",
+            "$(pm resolve-activity --components com.twitter.android)"
+        )
+    }
+}
+
+tasks.whenTaskAdded {
+    when (name) {
+        "installDebug" -> {
+            finalizedBy(restartTwitter)
+        }
+    }
 }

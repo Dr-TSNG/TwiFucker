@@ -8,6 +8,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
+import android.media.MediaScannerConnection
 import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +26,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class DownloadDialog(
-    context: Context, downloadUrls: List<String>
+    context: Context, downloadUrls: List<String>, onDismiss: () -> Unit,
 ) : AlertDialog.Builder(context) {
     companion object {
         private fun contentTypeToExt(contentType: String): String {
@@ -39,7 +40,7 @@ class DownloadDialog(
             }
         }
 
-        private fun copyFile(fileName: String) {
+        private fun copyFile(fileName: String): String {
             val downloadPath = File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                 "TwiFucker"
@@ -51,6 +52,8 @@ class DownloadDialog(
             val inputStream = File(appContext.cacheDir, fileName).inputStream()
             val outputStream = outputFile.outputStream()
             inputStream.copyTo(outputStream)
+
+            return outputFile.absolutePath
         }
 
         private fun download(
@@ -85,8 +88,12 @@ class DownloadDialog(
                     inputStream.close()
                     httpConnection.disconnect()
 
-                    copyFile(file.name)
+                    val outputPath = copyFile(file.name)
                     file.delete()
+
+                    MediaScannerConnection.scanFile(
+                        context, arrayOf(outputPath), null, null
+                    )
 
                     onDownloadCompleted?.invoke()
                 } catch (t: Throwable) {
@@ -155,7 +162,10 @@ class DownloadDialog(
                 }
             }
         }
-        setNegativeButton(R.string.settings_dismiss, null)
+        setNegativeButton(R.string.settings_dismiss) { _, _ ->
+            onDismiss()
+        }
+        setOnDismissListener { onDismiss() }
 
         setTitle(R.string.download_or_copy)
         show()

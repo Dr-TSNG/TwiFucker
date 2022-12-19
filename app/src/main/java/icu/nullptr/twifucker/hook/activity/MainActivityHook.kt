@@ -11,7 +11,11 @@ import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog
 
 object MainActivityHook : BaseHook() {
+    override val name: String
+        get() = "MainActivityHook"
+
     private lateinit var theHook: Unhook
+
     override fun init() {
         theHook = findMethod("com.twitter.app.main.MainActivity", findSuper = true) {
             name == "onResume"

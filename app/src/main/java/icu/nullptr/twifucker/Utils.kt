@@ -3,17 +3,29 @@ package icu.nullptr.twifucker
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import com.github.kyuubiran.ezxhelper.init.InitFields
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
 import com.github.kyuubiran.ezxhelper.utils.Log
 import icu.nullptr.twifucker.ui.SettingsDialog
 import java.io.File
 
+val reGenericClass by lazy { Regex("""^(\w+)<(\w+)>$""") }
 
 val logFileDir by lazy { File(appContext.externalCacheDir?.absolutePath + "/twifucker_log/") }
 
 val logFile by lazy { File(logFileDir, "log.txt") }
 
 val logJsonFile by lazy { File(logFileDir, "log_json.txt") }
+
+@Suppress("DEPRECATION")
+val hostAppLastUpdate by lazy {
+    appContext.packageManager.getPackageInfo(
+        appContext.packageName, 0
+    ).lastUpdateTime
+}
+val moduleLastModify by lazy {
+    File(InitFields.modulePath).lastModified()
+}
 
 @Suppress("DEPRECATION")
 val modulePrefs: SharedPreferences by lazy {
@@ -55,7 +67,9 @@ fun isEntryNeedsRemove(entryId: String): Boolean {
         return true
     }
     // who to follow module
-    if (entryId.startsWith("whoToFollow-") && modulePrefs.getBoolean(
+    if ((entryId.startsWith("whoToFollow-") || entryId.startsWith("who-to-follow-") || entryId.startsWith(
+            "connect-module-"
+        )) && modulePrefs.getBoolean(
             "disable_who_to_follow", false
         )
     ) {
@@ -64,6 +78,13 @@ fun isEntryNeedsRemove(entryId: String): Boolean {
     // topics to follow module
     if (entryId.startsWith("TopicsModule-") && modulePrefs.getBoolean(
             "disable_topics_to_follow", false
+        )
+    ) {
+        return true
+    }
+    // tweet detail related tweets
+    if (entryId.startsWith("tweetdetailrelatedtweets-") && modulePrefs.getBoolean(
+            "disable_tweet_detail_related_tweets", false
         )
     ) {
         return true

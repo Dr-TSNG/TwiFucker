@@ -11,6 +11,9 @@ import com.github.kyuubiran.ezxhelper.utils.findMethod
 import com.github.kyuubiran.ezxhelper.utils.hookBefore
 
 object UrlHook : BaseHook() {
+    override val name: String
+        get() = "UrlHook"
+
     override fun init() {
         findAllMethods(Intent::class.java) { name == "replaceExtras" }.hookBefore { param ->
             val bundle = param.args[0] as Bundle

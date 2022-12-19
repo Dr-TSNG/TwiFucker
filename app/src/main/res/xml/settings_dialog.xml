@@ -49,6 +49,13 @@
         <SwitchPreference
             android:key="disable_topics_to_follow"
             android:title="@string/disable_topics_to_follow_title" />
+        <SwitchPreference
+            android:key="disable_threads"
+            android:summary="@string/disable_threads_summary"
+            android:title="@string/disable_threads" />
+        <SwitchPreference
+            android:key="disable_tweet_detail_related_tweets"
+            android:title="@string/disable_tweet_detail_related_tweets" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_experimental">
@@ -87,6 +94,11 @@
         <Preference
             android:key="clear_log"
             android:title="@string/clear_log" />
+        <Preference
+            android:enabled="false"
+            android:key="delete_databases"
+            android:summary="@string/delete_databases_summary"
+            android:title="@string/delete_databases" />
     </PreferenceCategory>
 
 </PreferenceScreen>

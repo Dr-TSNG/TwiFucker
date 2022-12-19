@@ -22,6 +22,8 @@
     <string name="disable_recommended_users">Disable recommended users</string>
     <string name="disable_who_to_follow_title">Disable Who to Follow</string>
     <string name="disable_topics_to_follow_title">Disable Topics to Follow</string>
+    <string name="disable_threads">Disable Threads</string>
+    <string name="disable_tweet_detail_related_tweets">Disable Tweet Detail Related Tweets</string>
     <string name="enable_download_hook">Enable Download Hook</string>
     <string name="disable_url_redirect">Disable URL Redirect</string>
     <string name="hide_drawer_items">Hide drawer items</string>
@@ -30,20 +32,24 @@
     <string name="export_log">Export log</string>
     <string name="export_json_log">Export JSON log</string>
     <string name="clear_log">Clear log</string>
+    <string name="delete_databases">Delete databases</string>
 
     <string name="about_summary">Visit the GitHub page for more support</string>
     <string name="show_toast_summary">You can find this page through settings/additional/version</string>
+    <string name="use_legacy_hook_summary">Legacy hook processes JSON string directly</string>
     <string name="disable_promoted_content_summary">home/profile/search timeline</string>
     <string name="disable_promoted_user_summary">home/profile/search timeline</string>
     <string name="disable_promoted_trends_summary">search</string>
     <string name="disable_sensitive_media_warning_summary">home/profile timeline and tweet details</string>
     <string name="disable_recommended_users_summary">Don\'t show recommended users after you follow someone</string>
+    <string name="disable_threads_summary">Remove live content on top of timeline</string>
     <string name="enable_download_hook_summary">[Share -> Download or Copy] Tap to download, hold button to copy link</string>
     <string name="disable_url_redirect_summary">Stop t.co url redirection</string>
     <string name="hide_drawer_items_summary">Select drawer item(s) to be hidden</string>
     <string name="hide_bottom_navbar_items_summary">Select bottom navigation bar item(s) to be hidden</string>
     <string name="enable_log_summary">Enable legacy hook for more logging. Log is saved to Android/data/com.twitter.android/cache/twifucker_log</string>
     <string name="export_json_log_summary">Legacy hook is required to be enabled</string>
+    <string name="delete_databases_summary">Debug only</string>
 
     <string name="download_or_copy">Download or Copy</string>
     <string name="download_media">Media %1$d</string>
@@ -55,6 +61,6 @@
     <string name="download_all">Download All</string>
 
     <string name="deleted_n_promoted_tweet">Deleted %1$d promoted tweet(s) from app database</string>
-    <string name="use_legacy_hook_summary">Legacy hook processes JSON string directly</string>
+    <string name="deleted_n_database">Deleted %1$d database(s)</string>
 
 </resources>

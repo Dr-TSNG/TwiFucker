@@ -40,6 +40,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
         const val PREF_EXPORT_LOG = "export_log"
         const val PREF_EXPORT_JSON_LOG = "export_json_log"
         const val PREF_CLEAR_LOG = "clear_log"
+        const val PREF_DELETE_DATABASES = "delete_databases"
         const val PREF_ABOUT = "about"
 
         const val PREF_HIDDEN_DRAWER_ITEMS = "hidden_drawer_items"
@@ -49,7 +50,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
     private fun deleteFromDatabase() {
         val disablePromotedContent = modulePrefs.getBoolean(PREF_DISABLE_PROMOTED_CONTENT, true)
         if (!disablePromotedContent) return
-        val re = Regex("^\\d+-\\d+\\.db$")
+        val re = Regex("""^\d+-\d+(-versioncode-\d+)?.db$""")
         var count = 0
         context.databaseList().forEach { db ->
             if (re.matches(db)) {
@@ -62,7 +63,9 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                 database.close()
             }
         }
-        Log.toast(context.getString(R.string.deleted_n_promoted_tweet, count))
+        if (count > 0) {
+            Log.toast(context.getString(R.string.deleted_n_promoted_tweet, count))
+        }
     }
 
     class PrefsFragment : PreferenceFragment(), Preference.OnPreferenceChangeListener,
@@ -79,7 +82,12 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             findPreference(PREF_EXPORT_LOG).onPreferenceClickListener = this
             findPreference(PREF_EXPORT_JSON_LOG).onPreferenceClickListener = this
             findPreference(PREF_CLEAR_LOG).onPreferenceClickListener = this
+            findPreference(PREF_DELETE_DATABASES).onPreferenceClickListener = this
             findPreference(PREF_ABOUT).onPreferenceClickListener = this
+
+            if (BuildConfig.DEBUG) {
+                findPreference(PREF_DELETE_DATABASES).isEnabled = true
+            }
         }
 
         @Deprecated("Deprecated in Java")
@@ -111,6 +119,9 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                 }
                 PREF_CLEAR_LOG -> {
                     clearLog()
+                }
+                PREF_DELETE_DATABASES -> {
+                    deleteDatabases()
                 }
                 PREF_ABOUT -> {
                     activity.startActivity(
@@ -145,6 +156,20 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                 }
             }
             super.onActivityResult(requestCode, resultCode, data)
+        }
+
+        private fun deleteDatabases() {
+            val re = Regex("""^\d+-\d+(-versioncode-\d+)?.db$""")
+            var count = 0
+            context.databaseList().forEach { db ->
+                if (re.matches(db)) {
+                    context.deleteDatabase(db)
+                    count++
+                }
+            }
+            if (count > 0) {
+                Log.toast(context.getString(R.string.deleted_n_database, count))
+            }
         }
 
         private fun exportLog(logType: Int, fileName: String) {

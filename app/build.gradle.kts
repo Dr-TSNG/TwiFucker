@@ -11,7 +11,7 @@ plugins {
 val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
 
-val verName = "1.7"
+val verName = "1.8"
 val gitCommitCount = "git rev-list HEAD --count".execute().toInt()
 val gitCommitHash = "git rev-parse --verify --short HEAD".execute()
 
@@ -36,7 +36,9 @@ fun findInPath(executable: String): String? {
 }
 
 android {
+    namespace = "icu.nullptr.twifucker"
     compileSdk = 33
+    buildToolsVersion = "33.0.1"
 
     defaultConfig {
         applicationId = "icu.nullptr.twifucker"
@@ -86,9 +88,6 @@ android {
     dependenciesInfo {
         includeInApk = false
     }
-
-    buildToolsVersion = "33.0.0"
-    namespace = "icu.nullptr.twifucker"
 }
 
 afterEvaluate {

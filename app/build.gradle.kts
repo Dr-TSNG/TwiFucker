@@ -49,6 +49,10 @@ android {
 
         if (properties.getProperty("buildWithGitSuffix").toBoolean()) versionNameSuffix =
             ".r${gitCommitCount}.${gitCommitHash}"
+
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+        }
     }
 
     val config = properties.getProperty("fileDir")?.let {

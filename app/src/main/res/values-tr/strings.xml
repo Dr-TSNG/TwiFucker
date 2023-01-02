@@ -51,7 +51,6 @@
     <string name="downloading">İndiriliyor…</string>
     <string name="download_failed">İndirme işlemi başarısız</string>
     <string name="download_completed">İndirme işlemi tamamlandı</string>
-    <string name="download_copy_failed">Dosya kopyalanamadı</string>
     <string name="download_all">Tümünü İndir</string>
 
     <string name="deleted_n_promoted_tweet">Uygulama veritabanından %1$d tanıtılan tweet silindi</string>

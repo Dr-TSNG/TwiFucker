@@ -37,7 +37,6 @@
     <string name="download_link_copied">已复制下载链接</string>
     <string name="downloading">下载中…</string>
     <string name="download_failed">下载失败</string>
-    <string name="download_copy_failed">复制文件失败</string>
     <string name="deleted_n_promoted_tweet">已从数据库删除 %1$d 个推荐推文</string>
     <string name="download_media">媒体 %1$d</string>
 </resources>

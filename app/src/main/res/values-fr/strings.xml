@@ -51,7 +51,6 @@
     <string name="downloading">Téléchargement…</string>
     <string name="download_failed">Échec du téléchargement</string>
     <string name="download_completed">Téléchargement terminé</string>
-    <string name="download_copy_failed">Échec de la copie du fichier</string>
     <string name="download_all">Tout Télécharger</string>
 
     <string name="deleted_n_promoted_tweet">Suppression de %1$d tweet(s) promotionnel(s) de la base de donnée de l\’application</string>

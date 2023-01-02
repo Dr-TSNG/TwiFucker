@@ -114,7 +114,7 @@ dependencies {
     implementation("com.github.kyuubiran:EzXHelper:1.0.3")
     compileOnly("de.robv.android.xposed:api:82")
 
-    implementation("com.github.LuckyPray:DexKit:4f04994690")
+    implementation("org.luckypray:DexKit:1.1.0-beta")
 }
 
 val adbExecutable: String = androidComponents.sdkComponents.adb.get().asFile.absolutePath

@@ -13,6 +13,7 @@ import icu.nullptr.twifucker.hostAppLastUpdate
 import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog
+import io.luckypray.dexkit.builder.MethodInvokingArgs
 import io.luckypray.dexkit.descriptor.member.DexMethodDescriptor
 
 object SettingsHook : BaseHook() {
@@ -71,11 +72,14 @@ object SettingsHook : BaseHook() {
             it.name == "onCreate"
         } ?: throw NoSuchMethodError()
 
+
         val onPreferenceClickListenerClass = dexKit.findMethodInvoking(
-            methodDescriptor = DexMethodDescriptor(onCreateMethod).descriptor,
-            beCalledMethodName = "<init>",
-            beCalledMethodReturnType = Void.TYPE.name,
-            beCalledMethodParamTypes = arrayOf(aboutActivityClass.name),
+            MethodInvokingArgs.Builder().apply {
+                methodDescriptor = DexMethodDescriptor(onCreateMethod).descriptor
+                beInvokedMethodName = "<init>"
+                beInvokedMethodReturnType = Void.TYPE.name
+                beInvokedMethodParameterTypes = arrayOf(aboutActivityClass.name)
+            }.build()
         ).firstNotNullOfOrNull {
             it.value
         }?.firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass

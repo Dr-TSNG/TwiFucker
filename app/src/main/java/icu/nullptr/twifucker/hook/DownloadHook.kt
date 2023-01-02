@@ -13,6 +13,8 @@ import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
 import icu.nullptr.twifucker.ui.DownloadDialog
+import io.luckypray.dexkit.builder.MethodInvokingArgs
+import io.luckypray.dexkit.builder.MethodUsingStringArgs
 
 
 object DownloadHook : BaseHook() {
@@ -349,7 +351,9 @@ object DownloadHook : BaseHook() {
     private fun searchHook() {
         // tweet share download button
         val tweetShareClass = dexKit.findMethodUsingString(
-            usingString = "^timeline_selected_caret_position$",
+            MethodUsingStringArgs.Builder().apply {
+                usingString = "^timeline_selected_caret_position$"
+            }.build()
         ).map {
             it.getMethodInstance(ezXClassLoader)
         }
@@ -371,9 +375,11 @@ object DownloadHook : BaseHook() {
         val actionEnumClass = actionEnumWrappedClassRefMethod.parameterTypes[0]
 
         val actionSheetItemClass = dexKit.findMethodUsingString(
-            usingString = "^ActionSheetItem(drawableRes=$",
-            methodName = "toString",
-            methodReturnType = String::class.java.name,
+            MethodUsingStringArgs.Builder().apply {
+                usingString = "^ActionSheetItem(drawableRes=$"
+                methodName = "toString"
+                methodReturnType = String::class.java.name
+            }.build()
         ).firstOrNull()?.getMethodInstance(ezXClassLoader)?.declaringClass
             ?: throw ClassNotFoundException()
         val actionSheetItemField =
@@ -393,18 +399,22 @@ object DownloadHook : BaseHook() {
 
         // tweet share onClick
         val shareTweetOnClickListenerRefMethodsDesc = dexKit.findMethodUsingString(
-            usingString = "itemView.findViewById(R.id.action_sheet_item_icon)",
+            MethodUsingStringArgs.Builder().apply {
+                usingString = "itemView.findViewById(R.id.action_sheet_item_icon)"
+            }.build()
         )
         val shareTweetOnClickListenerConstructorDesc =
             shareTweetOnClickListenerRefMethodsDesc.firstNotNullOfOrNull { methodDesc ->
                 val result = dexKit.findMethodInvoking(
-                    methodDescriptor = methodDesc.descriptor,
-                    beCalledMethodName = "<init>",
-                    beCalledMethodParamTypes = arrayOf(
-                        Object::class.java.name,
-                        Object::class.java.name,
-                        Int::class.java.name
-                    )
+                    MethodInvokingArgs.Builder().apply {
+                        methodDescriptor = methodDesc.descriptor
+                        beInvokedMethodName = "<init>"
+                        beInvokedMethodParameterTypes = arrayOf(
+                            Object::class.java.name,
+                            Object::class.java.name,
+                            Int::class.java.name
+                        )
+                    }.build()
                 )
                 result.values.firstOrNull()
             }?.firstOrNull()
@@ -416,9 +426,11 @@ object DownloadHook : BaseHook() {
             shareTweetOnClickListenerClass.declaredFields.lastOrNull() ?: throw NoSuchFieldError()
 
         val shareTweetItemAdapterClass = dexKit.findMethodUsingString(
-            usingString = "^itemView.findViewById(R.id.action_sheet_item_icon)$",
-            methodName = "<init>",
-            methodReturnType = Void.TYPE.name,
+            MethodUsingStringArgs.Builder().apply {
+                usingString = "^itemView.findViewById(R.id.action_sheet_item_icon)$"
+                methodName = "<init>"
+                methodReturnType = Void.TYPE.name
+            }.build()
         ).map {
             it.getConstructorInstance(ezXClassLoader).declaringClass
         }.firstOrNull {
@@ -436,15 +448,19 @@ object DownloadHook : BaseHook() {
 
         // protected tweet share onClick
         val refMethodDescriptor = dexKit.findMethodUsingString(
-            usingString = "^bceHierarchyContext$",
-            methodReturnType = Void.TYPE.name,
+            MethodUsingStringArgs.Builder().apply {
+                usingString = "^bceHierarchyContext$"
+                methodReturnType = Void.TYPE.name
+            }.build()
         ).firstOrNull {
             val clazz = it.getMethodInstance(ezXClassLoader).declaringClass
             clazz?.declaredFields?.any { f -> f.type == View::class.java } ?: false
         } ?: throw NoSuchMethodError()
         val refClass = dexKit.findMethodInvoking(
-            methodDescriptor = refMethodDescriptor.descriptor,
-            beCalledMethodName = "<init>",
+            MethodInvokingArgs.Builder().apply {
+                methodDescriptor = refMethodDescriptor.descriptor
+                beInvokedMethodName = "<init>"
+            }.build()
         ).firstNotNullOfOrNull {
             it.value.firstOrNull()?.getConstructorInstance(ezXClassLoader)?.declaringClass
         } ?: throw ClassNotFoundException()
@@ -493,9 +509,11 @@ object DownloadHook : BaseHook() {
                 ?: throw NoSuchFieldError()
 
         val mediaTypeEnumClass = dexKit.findMethodUsingString(
-            usingString = "^MODEL3D$",
-            methodName = "<clinit>",
-            methodReturnType = Void.TYPE.name,
+            MethodUsingStringArgs.Builder().apply {
+                usingString = "^MODEL3D$"
+                methodName = "<clinit>"
+                methodReturnType = Void.TYPE.name
+            }.build()
         ).firstOrNull()?.let { loadClass(it.declaringClassName) }
             ?: throw ClassNotFoundException()
         val perMediaClass = loadClass(mediaTypeEnumClass.name.split("$")[0])

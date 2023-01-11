@@ -90,7 +90,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 MainActivityHook,
                 SettingsHook,
                 UrlHook,
-                AltTextHook,
+                SelectableTextHook,
                 DownloadHook,
                 ActivityHook,
                 CustomTabsHook,

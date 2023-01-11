@@ -19,7 +19,7 @@
     <string name="disable_promoted_user_title">プロモーションユーザーを無効化</string>
     <string name="disable_promoted_trends_title">プロモーショントレンドを無効化</string>
     <string name="disable_sensitive_media_warning_title">センシティブなメディア警告を無効化</string>
-    <string name="disable_who_to_follow_title">おすすめユーザーを無効化</string
+    <string name="disable_who_to_follow_title">おすすめユーザーを無効化</string>
     <string name="disable_topics_to_follow_title">おすすめトピックを無効化</string>
     <string name="disable_threads">スレッドの表示を無効化</string>
     <string name="enable_download_hook">ダウンロードフックを有効化</string>

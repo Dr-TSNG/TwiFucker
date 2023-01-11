@@ -32,3 +32,9 @@ Slightly broken due to Twitter new drawer layout.
 
 ## Disable url redirect
 Prevent Twitter redirect from `t.co` to target link when clicking on a link in Twitter.
+
+## Disable Threads (live content)
+<img alt="disable threads" src="./images/disable_threads.webp" width="256" />
+
+## Disable Tweet Detail Related Tweets
+<img alt="disable tweet detail related tweets" src="./images/disable_tweet_detail_related_tweets.webp" width="256" />

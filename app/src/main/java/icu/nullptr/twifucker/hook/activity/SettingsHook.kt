@@ -1,19 +1,23 @@
 package icu.nullptr.twifucker.hook.activity
 
 import android.app.Activity
-import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.init.InitFields.modulePath
+import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.utils.Log
 import com.github.kyuubiran.ezxhelper.utils.hookReplace
 import com.github.kyuubiran.ezxhelper.utils.loadClass
+import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.BaseHook
-import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
-import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
+import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
+import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
+import icu.nullptr.twifucker.hostAppLastUpdate
+import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog
-import java.io.File
+import io.luckypray.dexkit.descriptor.member.DexMethodDescriptor
 
 object SettingsHook : BaseHook() {
+    override val name: String
+        get() = "SettingsHook"
 
     private val aboutActivityClass = loadClass("com.twitter.app.settings.AboutActivity")
     private val preferenceClass = loadClass("android.preference.Preference")
@@ -53,7 +57,7 @@ object SettingsHook : BaseHook() {
     private fun loadCachedHookInfo() {
         onVersionClickListenerClassName =
             modulePrefs.getString("hook_on_version_click_listener_class", null)
-                ?: throw Throwable("cached hook not found")
+                ?: throw CachedHookNotFound()
     }
 
     private fun saveHookInfo() {
@@ -66,23 +70,20 @@ object SettingsHook : BaseHook() {
         val onCreateMethod = aboutActivityClass.declaredMethods.firstOrNull {
             it.name == "onCreate"
         } ?: throw NoSuchMethodError()
-        val initMethodIndex = dexHelper.findMethodInvoking(
-            dexHelper.encodeMethodIndex(onCreateMethod),
-            dexHelper.encodeClassIndex(Void.TYPE),
-            1,
-            null,
-            -1,
-            longArrayOf(dexHelper.encodeClassIndex(aboutActivityClass)),
-            null,
-            null,
-            true,
-        ).first()
-        val onPreferenceClickListenerClass =
-            dexHelper.decodeMethodIndex(initMethodIndex)?.declaringClass
-                ?: throw ClassNotFoundException()
+
+        val onPreferenceClickListenerClass = dexKit.findMethodInvoking {
+            methodDescriptor = DexMethodDescriptor(onCreateMethod).descriptor
+            beInvokedMethodName = "<init>"
+            beInvokedMethodReturnType = Void.TYPE.name
+            beInvokedMethodParameterTypes = arrayOf(aboutActivityClass.name)
+        }.firstNotNullOfOrNull {
+            it.value
+        }?.firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass
+            ?: throw ClassNotFoundException()
         val onVersionClickMethod = onPreferenceClickListenerClass.declaredMethods.firstOrNull {
             it.parameterTypes.size == 1 && it.parameterTypes[0] == preferenceClass
         } ?: throw NoSuchMethodError()
+
         onVersionClickListenerClassName = onPreferenceClickListenerClass.name
         onVersionClickMethodName = onVersionClickMethod.name
     }
@@ -90,20 +91,15 @@ object SettingsHook : BaseHook() {
     private fun loadHookInfo() {
         val hookSettingsLastUpdate = modulePrefs.getLong("hook_settings_last_update", 0)
 
-        @Suppress("DEPRECATION") val appLastUpdateTime = appContext.packageManager.getPackageInfo(
-            appContext.packageName, 0
-        ).lastUpdateTime
-        val moduleLastUpdate = File(modulePath).lastModified()
-
-        Log.d("hookSettingsLastUpdate: $hookSettingsLastUpdate, appLastUpdateTime: $appLastUpdateTime, moduleLastUpdate: $moduleLastUpdate")
+        Log.d("hookSettingsLastUpdate: $hookSettingsLastUpdate, hostAppLastUpdate: $hostAppLastUpdate, moduleLastModify: $moduleLastModify")
 
         val timeStart = System.currentTimeMillis()
 
-        if (hookSettingsLastUpdate > appLastUpdateTime && hookSettingsLastUpdate > moduleLastUpdate) {
+        if (hookSettingsLastUpdate > hostAppLastUpdate && hookSettingsLastUpdate > moduleLastModify) {
             loadCachedHookInfo()
             Log.d("Settings Hook load time: ${System.currentTimeMillis() - timeStart} ms")
         } else {
-            loadDexHelper()
+            loadDexKit()
             searchHook()
             Log.d("Settings Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()

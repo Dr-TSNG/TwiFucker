@@ -4,15 +4,24 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.github.kyuubiran.ezxhelper.init.InitFields
+import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
 import com.github.kyuubiran.ezxhelper.utils.*
-import icu.nullptr.twifucker.hook.HookEntry.Companion.dexHelper
-import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexHelper
+import icu.nullptr.twifucker.exceptions.CachedHookNotFound
+import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
+import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
+import icu.nullptr.twifucker.hostAppLastUpdate
 import icu.nullptr.twifucker.hostPrefs
+import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
-import java.io.File
 
 object CustomTabsHook : BaseHook() {
+    override val name: String
+        get() = "CustomTabsHook"
+
+    private const val HOOK_CUSTOM_TABS_CLASS = "hook_custom_tabs_class"
+    private const val HOOK_CUSTOM_TABS_GET_METHOD = "hook_custom_tabs_get_method"
+    private const val HOOK_CUSTOM_TABS_LAUNCH_URL_METHOD = "hook_custom_tabs_launch_url_method"
+
     private val DOMAIN_WHITELIST_SUFFIX = listOf("pscp.tv", "periscope.tv", "twitter.com", "t.co")
     private lateinit var customTabsClassName: String
     private lateinit var customTabsGetMethodName: String
@@ -68,37 +77,31 @@ object CustomTabsHook : BaseHook() {
     }
 
     private fun loadCachedHookInfo() {
-        customTabsClassName = modulePrefs.getString("hook_custom_tabs_class", null)
-            ?: throw Throwable("cached hook not found")
-        customTabsGetMethodName = modulePrefs.getString("hook_custom_tabs_get_method", null)
-            ?: throw Throwable("cached hook not found")
+        customTabsClassName = modulePrefs.getString(HOOK_CUSTOM_TABS_CLASS, null)
+            ?: throw CachedHookNotFound()
+        customTabsGetMethodName = modulePrefs.getString(HOOK_CUSTOM_TABS_GET_METHOD, null)
+            ?: throw CachedHookNotFound()
         customTabsLaunchUrlMethodName =
-            modulePrefs.getString("hook_custom_tabs_launch_url_method", null)
-                ?: throw Throwable("cached hook not found")
+            modulePrefs.getString(HOOK_CUSTOM_TABS_LAUNCH_URL_METHOD, null)
+                ?: throw CachedHookNotFound()
     }
 
     private fun saveHookInfo() {
         modulePrefs.edit().let {
-            it.putString("hook_custom_tabs_class", customTabsClassName)
-            it.putString("hook_custom_tabs_get_method", customTabsGetMethodName)
-            it.putString("hook_custom_tabs_launch_url_method", customTabsLaunchUrlMethodName)
+            it.putString(HOOK_CUSTOM_TABS_CLASS, customTabsClassName)
+            it.putString(HOOK_CUSTOM_TABS_GET_METHOD, customTabsGetMethodName)
+            it.putString(HOOK_CUSTOM_TABS_LAUNCH_URL_METHOD, customTabsLaunchUrlMethodName)
         }.apply()
     }
 
     private fun searchHook() {
-        val customTabsClass = dexHelper.findMethodUsingString(
-            "android.support.customtabs.action.CustomTabsService",
-            false,
-            dexHelper.encodeClassIndex(Void.TYPE),
-            0,
-            null,
-            -1,
-            null,
-            null,
-            null,
-            true,
-        ).firstOrNull()?.let { dexHelper.decodeMethodIndex(it)?.declaringClass }
+
+        val customTabsClass = dexKit.findMethodUsingString {
+            usingString = "^android.support.customtabs.action.CustomTabsService$"
+            methodReturnType = Void.TYPE.name
+        }.firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass
             ?: throw ClassNotFoundException()
+
         val customTabsGetMethod = customTabsClass.declaredMethods.firstOrNull {
             it.isStatic && it.parameterTypes.isEmpty() && it.returnType == customTabsClass
         } ?: throw NoSuchMethodException()
@@ -114,21 +117,15 @@ object CustomTabsHook : BaseHook() {
     private fun loadHookInfo() {
         val hookCustomTabsLastUpdate = modulePrefs.getLong("hook_custom_tabs_last_update", 0)
 
-        @Suppress("DEPRECATION") val appLastUpdateTime =
-            InitFields.appContext.packageManager.getPackageInfo(
-                InitFields.appContext.packageName, 0
-            ).lastUpdateTime
-        val moduleLastUpdate = File(InitFields.modulePath).lastModified()
-
-        Log.d("hookCustomTabsLastUpdate: $hookCustomTabsLastUpdate, appLastUpdateTime: $appLastUpdateTime, moduleLastUpdate: $moduleLastUpdate")
+        Log.d("hookCustomTabsLastUpdate: $hookCustomTabsLastUpdate, hostAppLastUpdate: $hostAppLastUpdate, moduleLastModify: $moduleLastModify")
 
         val timeStart = System.currentTimeMillis()
 
-        if (hookCustomTabsLastUpdate > appLastUpdateTime && hookCustomTabsLastUpdate > moduleLastUpdate) {
+        if (hookCustomTabsLastUpdate > hostAppLastUpdate && hookCustomTabsLastUpdate > moduleLastModify) {
             loadCachedHookInfo()
             Log.d("Custom Tabs Hook load time: ${System.currentTimeMillis() - timeStart} ms")
         } else {
-            loadDexHelper()
+            loadDexKit()
             searchHook()
             Log.d("Custom Tabs Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()

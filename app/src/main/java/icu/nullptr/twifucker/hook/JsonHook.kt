@@ -11,6 +11,9 @@ import java.io.BufferedReader
 import java.io.InputStream
 
 object JsonHook : BaseHook() {
+    override val name: String
+        get() = "JsonHook"
+
     override fun init() {
         try {
             val jsonClass =
@@ -57,17 +60,33 @@ object JsonHook : BaseHook() {
                 "disable_recommended_users", false
             ) && jsonHasRecommendedUsers()
         ) {
-            Log.d("Handle recommended users: $this}")
+            Log.d("Handle recommended users: $this")
             jsonRemoveRecommendedUsers()
         }
     }
 
+    private fun JSONObject.jsonHasThreads(): Boolean = has("threads")
+
+    private fun JSONObject.jsonRemoveThreads() {
+        remove("threads")
+    }
+
+    private fun JSONObject.jsonCheckAndRemoveThreads() {
+        if (modulePrefs.getBoolean("disable_threads", false) && jsonHasThreads()) {
+            Log.d("Handle threads: $this")
+            jsonRemoveThreads()
+        }
+    }
+
     // data
-    private fun JSONObject.dataGetInstructions(): JSONArray? =
-        optJSONObject("user_result")?.optJSONObject("result")?.optJSONObject("timeline_response")
-            ?.optJSONObject("timeline")?.optJSONArray("instructions") ?: optJSONObject(
-            "timeline_response"
-        )?.optJSONArray("instructions")
+    private fun JSONObject.dataGetInstructions(): JSONArray? {
+        val timeline = optJSONObject("user_result")?.optJSONObject("result")
+            ?.optJSONObject("timeline_response")
+            ?.optJSONObject("timeline")
+            ?: optJSONObject("timeline_response")?.optJSONObject("timeline")
+            ?: optJSONObject("timeline_response")
+        return timeline?.optJSONArray("instructions")
+    }
 
     private fun JSONObject.dataCheckAndRemove() {
         dataGetInstructions()?.forEach { instruction ->
@@ -77,7 +96,13 @@ object JsonHook : BaseHook() {
     }
 
     private fun JSONObject.dataGetLegacy(): JSONObject? =
-        optJSONObject("tweet_result")?.optJSONObject("result")?.optJSONObject("legacy")
+        optJSONObject("tweet_result")?.optJSONObject("result")?.let {
+            if (it.has("tweet")) {
+                it.optJSONObject("tweet")
+            } else {
+                it
+            }
+        }?.optJSONObject("legacy")
 
     // tweets
     private fun JSONObject.tweetsForEach(action: (JSONObject) -> Unit) {
@@ -105,7 +130,9 @@ object JsonHook : BaseHook() {
             ?.has("tweetPromotedMetadata") == true
 
     private fun JSONObject.entryIsWhoToFollow(): Boolean =
-        optString("entryId").startsWith("whoToFollow-")
+        optString("entryId").let {
+            it.startsWith("whoToFollow-") || it.startsWith("who-to-follow-") || it.startsWith("connect-module-")
+        }
 
     private fun JSONObject.entryIsTopicsModule(): Boolean =
         optString("entryId").startsWith("TopicsModule-")
@@ -118,6 +145,13 @@ object JsonHook : BaseHook() {
     private fun JSONObject.entryIsConversationThread(): Boolean =
         optString("entryId").startsWith("conversationthread-")
 
+    private fun JSONObject.entryIsTweetDetailRelatedTweets(): Boolean = optString("entryId")
+        .startsWith("tweetdetailrelatedtweets-")
+
+    private fun JSONObject.entryIsVideoCarousel(): Boolean =
+        optJSONObject("content")?.optJSONObject("timelineModule")?.optJSONObject("clientEventInfo")
+            ?.optString("component") == "video_carousel"
+
     private fun JSONObject.entryGetLegacy(): JSONObject? {
         val temp = when {
             has("content") -> {
@@ -129,7 +163,13 @@ object JsonHook : BaseHook() {
             else -> return null
         }
         return temp?.optJSONObject("content")?.optJSONObject("tweetResult")?.optJSONObject("result")
-            ?.optJSONObject("legacy")
+            ?.let {
+                if (it.has("tweet")) {
+                    it.optJSONObject("tweet")
+                } else {
+                    it
+                }
+            }?.optJSONObject("legacy")
     }
 
     private fun JSONObject.entryGetTrends(): JSONArray? =
@@ -318,11 +358,45 @@ object JsonHook : BaseHook() {
         }
     }
 
+    private fun JSONArray.entriesRemoveTweetDetailRelatedTweets() {
+        val removeIndex = mutableListOf<Int>()
+        forEachIndexed { entryIndex, entry ->
+            if (!modulePrefs.getBoolean(
+                    "disable_tweet_detail_related_tweets",
+                    false
+                )
+            ) return@forEachIndexed
+            if ((entry as JSONObject).entryIsTweetDetailRelatedTweets()) {
+                Log.d("Handle tweet detail related tweets $entryIndex $entry")
+                removeIndex.add(entryIndex)
+            }
+        }
+        for (i in removeIndex.reversed()) {
+            remove(i)
+        }
+    }
+
+    private fun JSONArray.entriesRemoveVideoCarousel() {
+        val removeIndex = mutableListOf<Int>()
+        forEachIndexed { entryIndex, entry ->
+            if (!modulePrefs.getBoolean("disable_video_carousel", false)) return@forEachIndexed
+            if ((entry as JSONObject).entryIsVideoCarousel()) {
+                Log.d("Handle explore video carousel $entryIndex $entry")
+                removeIndex.add(entryIndex)
+            }
+        }
+        for (i in removeIndex.reversed()) {
+            remove(i)
+        }
+    }
+
     private fun JSONArray.entriesRemoveAnnoyance() {
         entriesRemoveTimelineAds()
         entriesRemoveWhoToFollow()
         entriesRemoveTopicsToFollow()
         entriesRemoveSensitiveMediaWarning()
+        entriesRemoveTweetDetailRelatedTweets()
+        entriesRemoveVideoCarousel()
     }
 
 
@@ -368,6 +442,8 @@ object JsonHook : BaseHook() {
             json.jsonGetData()?.dataCheckAndRemove()
 
             json.jsonCheckAndRemoveRecommendedUsers()
+
+            json.jsonCheckAndRemoveThreads()
 
             content = json.toString()
         } catch (_: JSONException) {

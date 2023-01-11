@@ -6,6 +6,9 @@ import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import java.lang.ref.WeakReference
 
 object ActivityHook : BaseHook() {
+    override val name: String
+        get() = "ActivityHook"
+
     override fun init() {
         findMethod(Activity::class.java) {
             name == "onResume"

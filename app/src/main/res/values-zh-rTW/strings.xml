@@ -37,7 +37,6 @@
     <string name="download_link_copied">已複製下載連結</string>
     <string name="downloading">下載中…</string>
     <string name="download_failed">下載失敗</string>
-    <string name="download_copy_failed">複製檔案失敗</string>
 
     <string name="deleted_n_promoted_tweet">從資料庫中刪除了 %1$d 個廣告或促銷推文。</string>
     <string name="download_media">媒體 %1$d</string>

@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">TwiFucker</string>
+    <string name="twifucker_settings">Ustawienia TwiFucker</string>
+    <string name="save">zapisz</string>
+    <string name="reset">uruchom ponownie</string>
+    <string name="save_restart">zapisz i uruchom ponownie</string>
+
+    <string name="settings_dismiss">anuluj</string>
+    <string name="settings_general">Ogólne</string>
+    <string name="settings_main">Główne</string>
+    <string name="settings_extra">Dodatkowe</string>
+    <string name="settings_experimental">Eksperymentalne</string>
+    <string name="settings_logging">Dzienniki</string>
+
+    <string name="about_title">TwiFucker by Nullptr</string>
+    <string name="show_toast_title">Pokaż powiadomienie Toast przy starcie</string>
+    <string name="use_legacy_hook">Użyj starszego przechwytywania</string>
+    <string name="disable_promoted_content_title">Wyłącz treści promowane</string>
+    <string name="disable_promoted_user_title">Wyłącz promowanych użytkowników</string>
+    <string name="disable_promoted_trends_title">Wyłącz promowane trendy</string>
+    <string name="disable_sensitive_media_warning_title">Wyłącz ostrzeżenie o wrażliwych treściach (18+)</string>
+    <string name="disable_recommended_users">Wyłącz rekomendowanych użytkowników</string>
+    <string name="disable_who_to_follow_title">Wyłącz "Warci obserwowania"</string>
+    <string name="disable_topics_to_follow_title">Wyłącz "Tematy do obserwowania</string>
+    <string name="disable_threads">Wyłącz wątki</string>
+    <string name="disable_tweet_detail_related_tweets">Wyłącz szczegóły dotyczące tweetów</string>
+    <string name="enable_download_hook">Włącz przycisk pobierania</string>
+    <string name="disable_url_redirect">Wyłącz przekierowanie adresów URL</string>
+    <string name="hide_drawer_items">Ukryj elementy w szufladzie</string>
+    <string name="hide_bottom_navbar_items">Ukryj dolne elementy paska nawigacyjnego</string>
+    <string name="enable_log">Włącz dziennik</string>
+    <string name="export_log">Eksportuj dziennik</string>
+    <string name="export_json_log">Eksportuj dziennik JSON</string>
+    <string name="clear_log">Wyczyść dziennik</string>
+    <string name="delete_databases">Usuń bazy danych</string>
+
+    <string name="about_summary">Odwiedź stronę GitHub, aby uzyskać dodatkowe wsparcie</string>
+    <string name="show_toast_summary">Możesz znaleźć tę stronę poprzez ustawienia/dodatkowe materiały/wersja</string>
+    <string name="use_legacy_hook_summary">Użyj starszego przechwytywania do bezpośredniego przetwarzania łańcuchów JSON</string>
+    <string name="disable_promoted_content_summary">strona główna/profil/oś czasu wyszukiwarki </string>
+    <string name="disable_promoted_user_summary">strona główna/profil/oś czasu wyszukiwarki</string>
+    <string name="disable_promoted_trends_summary">szukaj</string>
+    <string name="disable_sensitive_media_warning_summary">strona główna/oś czasu profilu i szczegóły tweeta</string>
+    <string name="disable_recommended_users_summary">Nie pokazuj rekomendowanych użytkowników po tym, jak kogoś zaobserwujesz</string>
+    <string name="disable_threads_summary">Usuń treści "na żywo" nad osią czasu</string>
+    <string name="enable_download_hook_summary">[Udostępnij -> Pobierz lub skopiuj] Dotknij, aby pobrać, przytrzymaj, aby skopiować link</string>
+    <string name="disable_url_redirect_summary">Zatrzymaj przekierowanie adresów URL t.co</string>
+    <string name="hide_drawer_items_summary">Wybierz elementy szuflady, które mają zostać ukryte</string>
+    <string name="hide_bottom_navbar_items_summary">Wybierz elementy dolnego paska nawigacyjnego, które mają być ukryte</string>
+    <string name="enable_log_summary">Włącz starsze przechwytywanie, aby uzyskać więcej dzienników. Dziennik jest zapisywany w Android/data/com.twitter.android/cache/twifucker_log</string>
+    <string name="export_json_log_summary">Starsze przechwytywanie musi być włączone</string>
+    <string name="delete_databases_summary">Tylko debugowanie</string>
+
+    <string name="download_or_copy">Pobierz lub skopiuj</string>
+    <string name="download_media">Media %1$d</string>
+    <string name="download_link_copied">Link do pobrania został skopiowany!</string>
+    <string name="downloading">Pobieranie…</string>
+    <string name="download_failed">Pobieranie nie powiodło się</string>
+    <string name="download_completed">Pobieranie zakończone</string>
+    <string name="download_all">Pobierz wszystko</string>
+
+    <string name="deleted_n_promoted_tweet">Usunięto %1$d promowanych tweetów z bazy danych aplikacji</string>
+    <string name="deleted_n_database">Usunięto %1$d baz danych</string>
+
+</resources>

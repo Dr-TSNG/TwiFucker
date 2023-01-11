@@ -4,6 +4,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://api.xposed.info/")
+        maven("https://jitpack.io")
     }
 }
 
@@ -14,7 +15,7 @@ pluginManagement {
         mavenCentral()
     }
     plugins {
-        id("org.jetbrains.kotlin.android") version "1.7.10"
+        id("org.jetbrains.kotlin.android") version "1.7.22"
     }
 }
 

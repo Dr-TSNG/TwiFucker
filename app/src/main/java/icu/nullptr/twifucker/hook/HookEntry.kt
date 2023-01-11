@@ -5,10 +5,8 @@ import android.app.Application
 import android.content.Context
 import com.github.kyuubiran.ezxhelper.init.EzXHelperInit
 import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.utils.Log
+import com.github.kyuubiran.ezxhelper.utils.*
 import com.github.kyuubiran.ezxhelper.utils.Log.logexIfThrow
-import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookAfter
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -17,7 +15,7 @@ import icu.nullptr.twifucker.hook.activity.SettingsHook
 import icu.nullptr.twifucker.logFile
 import icu.nullptr.twifucker.logFileDir
 import icu.nullptr.twifucker.modulePrefs
-import me.iacn.biliroaming.utils.DexHelper
+import io.luckypray.dexkit.DexKitBridge
 import java.lang.ref.WeakReference
 
 private const val TAG = "TwiFucker"
@@ -25,19 +23,22 @@ private const val TAG = "TwiFucker"
 class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     companion object {
-        lateinit var dexHelper: DexHelper
+        lateinit var dexKit: DexKitBridge
         lateinit var currentActivity: WeakReference<Activity>
         lateinit var logcatProcess: Process
 
-        fun loadDexHelper() {
-            if (this::dexHelper.isInitialized) return
+        fun loadDexKit() {
+            if (this::dexKit.isInitialized) return
             val ts = System.currentTimeMillis()
-            dexHelper = DexHelper(appContext.classLoader)
-            Log.i("DexHelper load in ${System.currentTimeMillis() - ts} ms")
+            System.loadLibrary("dexkit")
+            DexKitBridge.create(appContext.applicationInfo.sourceDir)?.let {
+                dexKit = it
+                Log.i("DexKit loaded in ${System.currentTimeMillis() - ts} ms")
+            }
         }
 
-        fun closeDexHelper() {
-            if (this::dexHelper.isInitialized) dexHelper.close()
+        fun closeDexKit() {
+            if (this::dexKit.isInitialized) dexKit.close()
         }
 
         fun isLogcatProcessInitialized(): Boolean {
@@ -75,7 +76,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         findMethod(Application::class.java) {
             name == "attach" && parameterTypes.contentEquals(arrayOf(Context::class.java))
-        }.hookAfter { param ->
+        }.hookBefore { param ->
             EzXHelperInit.initAppContext(param.args[0] as Context)
             EzXHelperInit.setEzClassLoader(appContext.classLoader)
 
@@ -89,7 +90,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 MainActivityHook,
                 SettingsHook,
                 UrlHook,
-                AltTextHook,
+                SelectableTextHook,
                 DownloadHook,
                 ActivityHook,
                 CustomTabsHook,
@@ -101,18 +102,19 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
             } else {
                 hooks.addAll(
                     listOf(
-                        TimelineEntryHook,
-                        TimelineModuleHook,
-                        TimelineUserHook,
-                        TimelineTrendHook,
-                        TimelineTweetHook,
+                        JsonTimelineEntryHook,
+                        JsonTimelineTweetHook,
+                        JsonTimelineUserHook,
+                        JsonTimelineTrendHook,
                         SensitiveMediaWarningHook,
-                        ProfileRecommendationModuleHook,
+                        JsonProfileRecommendationModuleResponseHook,
+                        JsonFleetsTimelineResponseHook,
+                        JsonTimelineModuleHook,
                     )
                 )
             }
             initHooks(hooks)
-            closeDexHelper()
+            closeDexKit()
         }
     }
 
@@ -123,8 +125,8 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 val ts = System.currentTimeMillis()
                 it.init()
                 it.isInit = true
-                Log.i("Inited ${it.javaClass.simpleName} hook in ${System.currentTimeMillis() - ts} ms")
-            }.logexIfThrow("Failed init hook: ${it.javaClass.simpleName}")
+                Log.i("Inited ${it.name} hook in ${System.currentTimeMillis() - ts} ms")
+            }.logexIfThrow("Failed init hook: ${it.name}")
         }
     }
 }

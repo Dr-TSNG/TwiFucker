@@ -144,8 +144,13 @@ object JsonHook : BaseHook() {
     private fun JSONObject.entryIsTweet(): Boolean = optString("entryId").startsWith("tweet-")
     private fun JSONObject.entryIsConversationThread(): Boolean =
         optString("entryId").startsWith("conversationthread-")
+
     private fun JSONObject.entryIsTweetDetailRelatedTweets(): Boolean = optString("entryId")
         .startsWith("tweetdetailrelatedtweets-")
+
+    private fun JSONObject.entryIsVideoCarousel(): Boolean =
+        optJSONObject("content")?.optJSONObject("timelineModule")?.optJSONObject("clientEventInfo")
+            ?.optString("component") == "video_carousel"
 
     private fun JSONObject.entryGetLegacy(): JSONObject? {
         val temp = when {
@@ -356,9 +361,27 @@ object JsonHook : BaseHook() {
     private fun JSONArray.entriesRemoveTweetDetailRelatedTweets() {
         val removeIndex = mutableListOf<Int>()
         forEachIndexed { entryIndex, entry ->
-            if (!modulePrefs.getBoolean("disable_tweet_detail_related_tweets", false)) return@forEachIndexed
+            if (!modulePrefs.getBoolean(
+                    "disable_tweet_detail_related_tweets",
+                    false
+                )
+            ) return@forEachIndexed
             if ((entry as JSONObject).entryIsTweetDetailRelatedTweets()) {
                 Log.d("Handle tweet detail related tweets $entryIndex $entry")
+                removeIndex.add(entryIndex)
+            }
+        }
+        for (i in removeIndex.reversed()) {
+            remove(i)
+        }
+    }
+
+    private fun JSONArray.entriesRemoveVideoCarousel() {
+        val removeIndex = mutableListOf<Int>()
+        forEachIndexed { entryIndex, entry ->
+            if (!modulePrefs.getBoolean("disable_video_carousel", false)) return@forEachIndexed
+            if ((entry as JSONObject).entryIsVideoCarousel()) {
+                Log.d("Handle explore video carousel $entryIndex $entry")
                 removeIndex.add(entryIndex)
             }
         }
@@ -373,6 +396,7 @@ object JsonHook : BaseHook() {
         entriesRemoveTopicsToFollow()
         entriesRemoveSensitiveMediaWarning()
         entriesRemoveTweetDetailRelatedTweets()
+        entriesRemoveVideoCarousel()
     }
 
 

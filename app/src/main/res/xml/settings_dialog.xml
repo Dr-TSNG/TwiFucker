@@ -56,6 +56,10 @@
         <SwitchPreference
             android:key="disable_tweet_detail_related_tweets"
             android:title="@string/disable_tweet_detail_related_tweets" />
+        <SwitchPreference
+            android:key="disable_video_carousel"
+            android:summary="@string/disable_video_carousel_summary"
+            android:title="@string/disable_video_carousel" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_experimental">

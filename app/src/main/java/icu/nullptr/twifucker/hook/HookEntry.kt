@@ -109,6 +109,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         SensitiveMediaWarningHook,
                         JsonProfileRecommendationModuleResponseHook,
                         JsonFleetsTimelineResponseHook,
+                        JsonTimelineModuleHook,
                     )
                 )
             }

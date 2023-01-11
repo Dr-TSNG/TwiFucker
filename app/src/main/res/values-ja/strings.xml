@@ -47,7 +47,7 @@
     <string name="hide_drawer_items_summary">非表示にするドロワーアイテムの選択</string>
     <string name="hide_bottom_navbar_items_summary">非表示にするナビゲーションバーの項目を選択</string>
     <string name="enable_log_summary">レガシーフックを有効化し、詳細なログを記録します。ログは「Android/data/com.twitter.android/cache/twifucker_log」に保存されます。</string>
-    <string name="export_json_log_summary">レガシーフックを有効化する必要があります</string>
+    <string name="export_json_log_summary">レガシーフックを有効化する必要があります。</string>
     <string name="delete_databases_summary">デバッグのみ</string>
 
     <string name="download_or_copy">ダウンロードまたはコピー</string>

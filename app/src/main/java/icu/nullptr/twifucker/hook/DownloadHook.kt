@@ -13,8 +13,6 @@ import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
 import icu.nullptr.twifucker.ui.DownloadDialog
-import io.luckypray.dexkit.builder.MethodInvokingArgs
-import io.luckypray.dexkit.builder.MethodUsingStringArgs
 
 
 object DownloadHook : BaseHook() {
@@ -350,11 +348,9 @@ object DownloadHook : BaseHook() {
 
     private fun searchHook() {
         // tweet share download button
-        val tweetShareClass = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.build {
-                usingString = "^timeline_selected_caret_position$"
-            }
-        ).map {
+        val tweetShareClass = dexKit.findMethodUsingString {
+            usingString = "^timeline_selected_caret_position$"
+        }.map {
             it.getMethodInstance(ezXClassLoader)
         }
             .firstOrNull { it.parameterTypes.size == 2 && it.parameterTypes[1] == Bundle::class.java }?.declaringClass
@@ -374,13 +370,11 @@ object DownloadHook : BaseHook() {
         val actionEnumWrappedInnerClass = actionEnumWrappedClass.constructors[0].parameterTypes[0]
         val actionEnumClass = actionEnumWrappedClassRefMethod.parameterTypes[0]
 
-        val actionSheetItemClass = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.build {
-                usingString = "^ActionSheetItem(drawableRes=$"
-                methodName = "toString"
-                methodReturnType = String::class.java.name
-            }
-        ).firstOrNull()?.getMethodInstance(ezXClassLoader)?.declaringClass
+        val actionSheetItemClass = dexKit.findMethodUsingString {
+            usingString = "^ActionSheetItem(drawableRes=$"
+            methodName = "toString"
+            methodReturnType = String::class.java.name
+        }.firstOrNull()?.getMethodInstance(ezXClassLoader)?.declaringClass
             ?: throw ClassNotFoundException()
         val actionSheetItemField =
             actionEnumWrappedInnerClass.declaredFields.firstOrNull { f -> f.type == actionSheetItemClass }
@@ -398,24 +392,20 @@ object DownloadHook : BaseHook() {
         actionSheetItemFieldName = actionSheetItemField.name
 
         // tweet share onClick
-        val shareTweetOnClickListenerRefMethodsDesc = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.build {
-                usingString = "itemView.findViewById(R.id.action_sheet_item_icon)"
-            }
-        )
+        val shareTweetOnClickListenerRefMethodsDesc = dexKit.findMethodUsingString {
+            usingString = "itemView.findViewById(R.id.action_sheet_item_icon)"
+        }
         val shareTweetOnClickListenerConstructorDesc =
             shareTweetOnClickListenerRefMethodsDesc.firstNotNullOfOrNull { methodDesc ->
-                val result = dexKit.findMethodInvoking(
-                    MethodInvokingArgs.build {
-                        methodDescriptor = methodDesc.descriptor
-                        beInvokedMethodName = "<init>"
-                        beInvokedMethodParameterTypes = arrayOf(
-                            Object::class.java.name,
-                            Object::class.java.name,
-                            Int::class.java.name
-                        )
-                    }
-                )
+                val result = dexKit.findMethodInvoking {
+                    methodDescriptor = methodDesc.descriptor
+                    beInvokedMethodName = "<init>"
+                    beInvokedMethodParameterTypes = arrayOf(
+                        Object::class.java.name,
+                        Object::class.java.name,
+                        Int::class.java.name
+                    )
+                }
                 result.values.firstOrNull()
             }?.firstOrNull()
 
@@ -425,13 +415,11 @@ object DownloadHook : BaseHook() {
         val shareTweetItemAdapterField =
             shareTweetOnClickListenerClass.declaredFields.lastOrNull() ?: throw NoSuchFieldError()
 
-        val shareTweetItemAdapterClass = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.build {
-                usingString = "^itemView.findViewById(R.id.action_sheet_item_icon)$"
-                methodName = "<init>"
-                methodReturnType = Void.TYPE.name
-            }
-        ).map {
+        val shareTweetItemAdapterClass = dexKit.findMethodUsingString {
+            usingString = "^itemView.findViewById(R.id.action_sheet_item_icon)$"
+            methodName = "<init>"
+            methodReturnType = Void.TYPE.name
+        }.map {
             it.getConstructorInstance(ezXClassLoader).declaringClass
         }.firstOrNull {
             it?.declaredFields?.any { f ->
@@ -447,21 +435,17 @@ object DownloadHook : BaseHook() {
         actionItemViewDataFieldName = actionItemViewDataField.name
 
         // protected tweet share onClick
-        val refMethodDescriptor = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.build {
-                usingString = "^bceHierarchyContext$"
-                methodReturnType = Void.TYPE.name
-            }
-        ).firstOrNull {
+        val refMethodDescriptor = dexKit.findMethodUsingString {
+            usingString = "^bceHierarchyContext$"
+            methodReturnType = Void.TYPE.name
+        }.firstOrNull {
             val clazz = it.getMethodInstance(ezXClassLoader).declaringClass
             clazz?.declaredFields?.any { f -> f.type == View::class.java } ?: false
         } ?: throw NoSuchMethodError()
-        val refClass = dexKit.findMethodInvoking(
-            MethodInvokingArgs.build {
-                methodDescriptor = refMethodDescriptor.descriptor
-                beInvokedMethodName = "<init>"
-            }
-        ).firstNotNullOfOrNull {
+        val refClass = dexKit.findMethodInvoking {
+            methodDescriptor = refMethodDescriptor.descriptor
+            beInvokedMethodName = "<init>"
+        }.firstNotNullOfOrNull {
             it.value.firstOrNull()?.getConstructorInstance(ezXClassLoader)?.declaringClass
         } ?: throw ClassNotFoundException()
         val protectedShareTweetItemAdapterClass =
@@ -508,13 +492,11 @@ object DownloadHook : BaseHook() {
             extendedEntitiesField.type.superclass.declaredFields.firstOrNull { it.type == List::class.java }
                 ?: throw NoSuchFieldError()
 
-        val mediaTypeEnumClass = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.build {
-                usingString = "^MODEL3D$"
-                methodName = "<clinit>"
-                methodReturnType = Void.TYPE.name
-            }
-        ).firstOrNull()?.let { loadClass(it.declaringClassName) }
+        val mediaTypeEnumClass = dexKit.findMethodUsingString {
+            usingString = "^MODEL3D$"
+            methodName = "<clinit>"
+            methodReturnType = Void.TYPE.name
+        }.firstOrNull()?.let { loadClass(it.declaringClassName) }
             ?: throw ClassNotFoundException()
         val perMediaClass = loadClass(mediaTypeEnumClass.name.split("$")[0])
         val mediaTypeField =

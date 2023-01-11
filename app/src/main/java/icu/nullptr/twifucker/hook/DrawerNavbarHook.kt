@@ -11,8 +11,6 @@ import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog.Companion.PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS
 import icu.nullptr.twifucker.ui.SettingsDialog.Companion.PREF_HIDDEN_DRAWER_ITEMS
-import io.luckypray.dexkit.builder.MethodUsingFieldArgs
-import io.luckypray.dexkit.builder.MethodUsingStringArgs
 import io.luckypray.dexkit.enums.FieldUsingType
 
 object DrawerNavbarHook : BaseHook() {
@@ -142,12 +140,10 @@ object DrawerNavbarHook : BaseHook() {
     }
 
     private fun searchHook() {
-        val boolSuperClassName = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.build {
-                usingString = "^renderLambdaToString(this)$"
-                methodReturnType = String::class.java.name
-            }
-        ).firstOrNull {
+        val boolSuperClassName = dexKit.findMethodUsingString {
+            usingString = "^renderLambdaToString(this)$"
+            methodReturnType = String::class.java.name
+        }.firstOrNull {
             loadClass(it.declaringClassName).superclass == Object::class.java
         }?.declaringClassName ?: throw ClassNotFoundException()
 
@@ -177,18 +173,16 @@ object DrawerNavbarHook : BaseHook() {
 //            dexHelper.decodeMethodIndex(it)
 //        }
 
-        val falseFieldMap = dexKit.findMethodUsingField(
-            MethodUsingFieldArgs.build {
-                fieldDescriptor = ""
-                fieldDeclareClass = booleanClass.name
-                fieldName = falseField.name
-                fieldType = falseField.type.name
-                usingType = FieldUsingType.GET
-                callerMethodName = "invoke"
-                callerMethodReturnType = Object::class.java.name
-                callerMethodParamTypes = emptyArray()
-            }
-        )
+        val falseFieldMap = dexKit.findMethodUsingField {
+            fieldDescriptor = ""
+            fieldDeclareClass = booleanClass.name
+            fieldName = falseField.name
+            fieldType = falseField.type.name
+            usingType = FieldUsingType.GET
+            callerMethodName = "invoke"
+            callerMethodReturnType = Object::class.java.name
+            callerMethodParamTypes = emptyArray()
+        }
         val boolFalseClass = falseFieldMap.keys.firstOrNull {
             val declaringClass = loadClass(it.declaringClassName)
             val declaredMethodsSize = declaringClass.declaredMethods.size
@@ -198,19 +192,15 @@ object DrawerNavbarHook : BaseHook() {
             )
         }?.declaringClassName ?: throw ClassNotFoundException()
 
-        val drawerItemsClass = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.build {
-                usingString = "^drawerItemGroupMap$"
-                methodReturnType = Void.TYPE.name
-            }
-        ).firstNotNullOfOrNull { it.declaringClassName } ?: throw ClassNotFoundException()
+        val drawerItemsClass = dexKit.findMethodUsingString {
+            usingString = "^drawerItemGroupMap$"
+            methodReturnType = Void.TYPE.name
+        }.firstNotNullOfOrNull { it.declaringClassName } ?: throw ClassNotFoundException()
 
-        val customMapInitMethodDescriptor = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.build {
-                usingString = "^expectedSize$"
-                methodParamTypes = arrayOf(Int::class.java.name)
-            }
-        )
+        val customMapInitMethodDescriptor = dexKit.findMethodUsingString {
+            usingString = "^expectedSize$"
+            methodParamTypes = arrayOf(Int::class.java.name)
+        }
             .firstOrNull { loadClass(it.declaringClassName).interfaces.contains(Map::class.java) }
             ?: throw ClassNotFoundException()
 

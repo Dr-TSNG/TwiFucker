@@ -13,7 +13,6 @@ import icu.nullptr.twifucker.hostAppLastUpdate
 import icu.nullptr.twifucker.hostPrefs
 import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
-import io.luckypray.dexkit.builder.MethodUsingStringArgs
 
 object CustomTabsHook : BaseHook() {
     override val name: String
@@ -97,12 +96,10 @@ object CustomTabsHook : BaseHook() {
 
     private fun searchHook() {
 
-        val customTabsClass = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.build {
-                usingString = "^android.support.customtabs.action.CustomTabsService$"
-                methodReturnType = Void.TYPE.name
-            }
-        ).firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass
+        val customTabsClass = dexKit.findMethodUsingString {
+            usingString = "^android.support.customtabs.action.CustomTabsService$"
+            methodReturnType = Void.TYPE.name
+        }.firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass
             ?: throw ClassNotFoundException()
 
         val customTabsGetMethod = customTabsClass.declaredMethods.firstOrNull {

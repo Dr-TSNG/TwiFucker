@@ -34,7 +34,7 @@
 
     <string name="about_summary">GitHubページでサポートを受ける</string>
 
-    <string name="show_toast_summary">非表示後は 設定>その他のリソース>バージョン をタップで確認できます。</string>
+    <string name="show_toast_summary">非表示後は、「設定 -> その他のリソース -> バージョン」をタップで確認できます。</string>
     <string name="disable_promoted_content_summary">ホーム/プロフィール/検索/タイムライン</string>
     <string name="disable_promoted_user_summary">ホーム/プロフィール/検索/タイムライン</string>
     <string name="disable_promoted_trends_summary">検索</string>

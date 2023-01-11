@@ -143,10 +143,10 @@ object DrawerNavbarHook : BaseHook() {
 
     private fun searchHook() {
         val boolSuperClassName = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.Builder().apply {
+            MethodUsingStringArgs.build {
                 usingString = "^renderLambdaToString(this)$"
                 methodReturnType = String::class.java.name
-            }.build()
+            }
         ).firstOrNull {
             loadClass(it.declaringClassName).superclass == Object::class.java
         }?.declaringClassName ?: throw ClassNotFoundException()
@@ -178,16 +178,16 @@ object DrawerNavbarHook : BaseHook() {
 //        }
 
         val falseFieldMap = dexKit.findMethodUsingField(
-            MethodUsingFieldArgs.Builder().apply {
+            MethodUsingFieldArgs.build {
                 fieldDescriptor = ""
                 fieldDeclareClass = booleanClass.name
                 fieldName = falseField.name
                 fieldType = falseField.type.name
-                type = FieldUsingType.GET
+                usingType = FieldUsingType.GET
                 callerMethodName = "invoke"
                 callerMethodReturnType = Object::class.java.name
                 callerMethodParamTypes = emptyArray()
-            }.build()
+            }
         )
         val boolFalseClass = falseFieldMap.keys.firstOrNull {
             val declaringClass = loadClass(it.declaringClassName)
@@ -199,17 +199,17 @@ object DrawerNavbarHook : BaseHook() {
         }?.declaringClassName ?: throw ClassNotFoundException()
 
         val drawerItemsClass = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.Builder().apply {
+            MethodUsingStringArgs.build {
                 usingString = "^drawerItemGroupMap$"
                 methodReturnType = Void.TYPE.name
-            }.build()
+            }
         ).firstNotNullOfOrNull { it.declaringClassName } ?: throw ClassNotFoundException()
 
         val customMapInitMethodDescriptor = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.Builder().apply {
+            MethodUsingStringArgs.build {
                 usingString = "^expectedSize$"
                 methodParamTypes = arrayOf(Int::class.java.name)
-            }.build()
+            }
         )
             .firstOrNull { loadClass(it.declaringClassName).interfaces.contains(Map::class.java) }
             ?: throw ClassNotFoundException()

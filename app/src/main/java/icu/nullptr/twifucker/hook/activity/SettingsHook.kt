@@ -72,14 +72,13 @@ object SettingsHook : BaseHook() {
             it.name == "onCreate"
         } ?: throw NoSuchMethodError()
 
-
         val onPreferenceClickListenerClass = dexKit.findMethodInvoking(
-            MethodInvokingArgs.Builder().apply {
+            MethodInvokingArgs.build {
                 methodDescriptor = DexMethodDescriptor(onCreateMethod).descriptor
                 beInvokedMethodName = "<init>"
                 beInvokedMethodReturnType = Void.TYPE.name
                 beInvokedMethodParameterTypes = arrayOf(aboutActivityClass.name)
-            }.build()
+            }
         ).firstNotNullOfOrNull {
             it.value
         }?.firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass

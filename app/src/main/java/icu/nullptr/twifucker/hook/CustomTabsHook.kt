@@ -98,10 +98,10 @@ object CustomTabsHook : BaseHook() {
     private fun searchHook() {
 
         val customTabsClass = dexKit.findMethodUsingString(
-            MethodUsingStringArgs.Builder().apply {
+            MethodUsingStringArgs.build {
                 usingString = "^android.support.customtabs.action.CustomTabsService$"
                 methodReturnType = Void.TYPE.name
-            }.build()
+            }
         ).firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass
             ?: throw ClassNotFoundException()
 

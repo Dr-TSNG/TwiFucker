@@ -56,7 +56,6 @@
     <string name="downloading">ダウンロード中…</string>
     <string name="download_failed">ダウンロードが失敗しました。</string>
     <string name="download_completed">ダウンロードが完了しました。</string>
-    <string name="download_copy_failed">ファイルのコピーに失敗しました。</string>
     <string name="download_all">すべてダウンロード</string>
 
     <string name="deleted_n_promoted_tweet">アプリのデータベースから%1$d件のプロモーションツイートを削除しました。</string>

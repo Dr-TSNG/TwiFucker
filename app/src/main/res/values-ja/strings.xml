@@ -1,24 +1,63 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TwiFucker</string>
-    <string name="twifucker_settings">TwiFucker 設定</string>
-    <string name="save_restart">保存して再起動</string>
+    <string name="twifucker_settings">TwiFuckerの設定</string>
+    <string name="save">保存</string>
+    <string name="reset">リセット</string>
+    <string name="save_restart">保存をして再起動</string>
+    
     <string name="settings_dismiss">無視</string>
     <string name="settings_general">一般</string>
     <string name="settings_main">メイン</string>
     <string name="settings_extra">エクストラ</string>
+    <string name="settings_experimental">試験的</string>
+    <string name="settings_logging">ログの取得</string>
+
     <string name="about_title">TwiFucker by Nullptr</string>
     <string name="show_toast_title">起動時にトーストを表示</string>
-    <string name="disable_promoted_content_title">プロモーション コンテンツを無効化</string>
-    <string name="disable_promoted_user_title">プロモーション ユーザーを無効化</string>
-    <string name="disable_promoted_trends_title">プロモーション トレンドを無効化</string>
+    <string name="use_legacy_hook">レガシーフックを有効化</string>
+    <string name="disable_promoted_content_title">プロモーションコンテンツを無効化</string>
+    <string name="disable_promoted_user_title">プロモーションユーザーを無効化</string>
+    <string name="disable_promoted_trends_title">プロモーショントレンドを無効化</string>
     <string name="disable_sensitive_media_warning_title">センシティブなメディア警告を無効化</string>
     <string name="disable_who_to_follow_title">おすすめユーザーを無効化</string>
     <string name="disable_topics_to_follow_title">おすすめトピックを無効化</string>
-    <string name="about_summary">GitHub ページでサポートを受ける</string>
-    <string name="show_toast_summary">このページは 設定/その他のリソース/バージョン から確認できます</string>
-    <string name="disable_promoted_content_summary">ホーム/プロフィール/検索 タイムライン</string>
-    <string name="disable_promoted_user_summary">ホーム/プロフィール/検索 タイムライン</string>
+    <string name="disable_threads">スレッドの表示を無効化</string>
+    <string name="enable_download_hook">ダウンロードフックを有効化</string>
+    <string name="disable_url_redirect">URLのリダイレクトを無効化</string>
+    <string name="hide_drawer_items">ドロワーのアイテムを非表示</string>
+    <string name="hide_bottom_navbar_items">ナビゲーションバー下部の項目を非表示</string>
+    <string name="enable_log">ログを有効化</string>
+    <string name="export_log">ログをエクスポート</string>
+    <string name="export_json_log">JSONログをエクスポート</string>
+    <string name="clear_log">ログをクリア</string>
+    <string name="delete_databases">データベースを削除</string>
+
+    <string name="about_summary">GitHubページでサポートを受ける</string>
+
+    <string name="show_toast_summary">非表示後は、「設定 -> その他のリソース -> バージョン」をタップで確認できます。</string>
+    <string name="disable_promoted_content_summary">ホーム/プロフィール/検索/タイムライン</string>
+    <string name="disable_promoted_user_summary">ホーム/プロフィール/検索/タイムライン</string>
     <string name="disable_promoted_trends_summary">検索</string>
-    <string name="disable_sensitive_media_warning_summary">ホーム/プロフィール タイムラインとツイート詳細画面</string>
+    <string name="disable_sensitive_media_warning_summary">ホーム/プロフィール タイムラインとツイートの詳細画面</string>
+
+    <string name="disable_recommended_users_summary">フォロー後におすすめユーザーを表示しない</string>
+    <string name="disable_threads_summary">タイムライン上部のライブコンテンツを削除します。</string>
+    <string name="enable_download_hook_summary">[共有 -> ダウンロードまたはコピー] タップでダウンロード、長押しでリンクをコピーをします。</string>
+    <string name="disable_url_redirect_summary">t.coのURLのリダイレクトを無効化します。</string>
+    <string name="hide_drawer_items_summary">非表示にするドロワーアイテムの選択</string>
+    <string name="hide_bottom_navbar_items_summary">非表示にするナビゲーションバーの項目を選択</string>
+    <string name="enable_log_summary">レガシーフックを有効化し、詳細なログを記録します。ログは「Android/data/com.twitter.android/cache/twifucker_log」に保存されます。</string>
+    <string name="export_json_log_summary">レガシーフックを有効化する必要があります。</string>
+    <string name="delete_databases_summary">デバッグのみ</string>
+
+    <string name="download_or_copy">ダウンロードまたはコピー</string>
+    <string name="download_media">メディア %1$d</string>
+    <string name="download_link_copied">ダウンロードリンクをコピーしました!</string>
+    <string name="downloading">ダウンロード中…</string>
+    <string name="download_failed">ダウンロードが失敗しました。</string>
+    <string name="download_completed">ダウンロードが完了しました。</string>
+    <string name="download_all">すべてダウンロード</string>
+
+    <string name="deleted_n_promoted_tweet">アプリのデータベースから%1$d件のプロモーションツイートを削除しました。</string>
+    <string name="use_legacy_hook_summary">レガシーフックはJSONの文字列を直接的に処理します。</string>
 </resources>

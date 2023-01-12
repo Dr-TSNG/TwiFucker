@@ -85,6 +85,11 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             findPreference(PREF_DELETE_DATABASES).onPreferenceClickListener = this
             findPreference(PREF_ABOUT).onPreferenceClickListener = this
 
+            findPreference("feature_switch").setOnPreferenceClickListener {
+                FeatureSwitchDialog(context)
+                true
+            }
+
             if (BuildConfig.DEBUG) {
                 findPreference(PREF_DELETE_DATABASES).isEnabled = true
             }

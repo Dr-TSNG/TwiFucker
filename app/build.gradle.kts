@@ -9,7 +9,11 @@ plugins {
 }
 
 val properties = Properties()
-properties.load(project.rootProject.file("local.properties").inputStream())
+project.rootProject.file("local.properties").let {
+    if (it.isFile && it.exists()) {
+        properties.load(it.inputStream())
+    }
+}
 
 val verName = "1.8"
 val gitCommitCount = "git rev-list HEAD --count".execute().toInt()

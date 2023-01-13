@@ -24,15 +24,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
-
-      - name: Cache gradle
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: ${{ runner.os }}-gradle-
+          cache: 'gradle'
 
       - name: Write key
         run: |
@@ -52,13 +44,13 @@ jobs:
       - name: Build release
         id: buildRelease
         run: |
-          ./gradlew :app:buildRelease
+          ./gradlew :app:buildRelease --no-daemon
           echo "releaseName=`ls app/build/outputs/apk/release/TwiFucker-*.apk | awk -F '(/|.apk)' '{print $6}'`" >> $GITHUB_OUTPUT
 
       - name: Build debug
         id: buildDebug
         run: |
-          ./gradlew :app:buildDebug
+          ./gradlew :app:buildDebug --no-daemon
           echo "debugName=`ls app/build/outputs/apk/debug/TwiFucker-*.apk | awk -F '(/|.apk)' '{print $6}'`" >> $GITHUB_OUTPUT
 
       - name: Upload release

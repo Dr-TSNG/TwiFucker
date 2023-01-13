@@ -49,7 +49,7 @@ object FeatureSwitchHook : BaseHook() {
                 val replaceKey = (obj as JSONObject).getString("key")
                 val replaceValue = obj.getBoolean("value")
                 if (paramKey == replaceKey) {
-                    Log.d("replaced feature switch: $paramKey $replaceValue")
+//                    Log.d("replaced feature switch: $paramKey $replaceValue")
                     param.result = replaceValue
                 }
             }

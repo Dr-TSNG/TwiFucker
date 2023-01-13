@@ -21,6 +21,9 @@ object JsonTimelineTweetHook : BaseHook() {
         val jsonTweetResultsField =
             jsonTimelineTweetClass.declaredFields.firstOrNull { it.type == jsonTweetResultsClass }
                 ?: throw NoSuchFieldError()
+        val jsonTweetIdField =
+            jsonTimelineTweetClass.declaredFields.firstOrNull { it.type == String::class.java }
+                ?: throw NoSuchFieldError()
 
         val jsonPromotedContentUrtClass =
             loadClass("com.twitter.model.json.timeline.urt.JsonPromotedContentUrt")
@@ -34,6 +37,7 @@ object JsonTimelineTweetHook : BaseHook() {
             param.result ?: return@hookAfter
             jsonPromotedContentUrtField.get(param.result) ?: return@hookAfter
             jsonTweetResultsField.set(param.result, null)
+            jsonTweetIdField.set(param.result, null) // saved search timeline
             Log.d("Removed promoted timeline tweet")
         }
     }

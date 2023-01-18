@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">TwiFucker</string>
+    <string name="twifucker_settings">Configuraciones TwiFucker</string>
+    <string name="save">guardar</string>
+    <string name="reset">reiniciar</string>
+    <string name="save_restart">guardar y reiniciar</string>
+    <string name="add">añadir</string>
+
+    <string name="settings_dismiss">descartar</string>
+    <string name="settings_general">General</string>
+    <string name="settings_main">Principal</string>
+    <string name="settings_extra">Extra</string>
+    <string name="settings_experimental">Experimental</string>
+    <string name="settings_logging">Logging</string>
+
+    <string name="about_title">TwiFucker by Nullptr</string>
+    <string name="show_toast_title">Mostrar notificación Toast al inicio</string>
+    <string name="use_legacy_hook">Usar enlace heredado</string>
+    <string name="disable_promoted_content_title">Deshabilitar contenido promocionado</string>
+    <string name="disable_promoted_user_title">Deshabilitar usuarios promocionados</string>
+    <string name="disable_promoted_trends_title">Desactivar tendencias promocionadas</string>
+    <string name="disable_sensitive_media_warning_title">Deshabilitar advertencia de contenido sensible</string>
+    <string name="disable_recommended_users">Deshabilitar usuarios recomendados</string>
+    <string name="disable_who_to_follow_title">Deshabilitar a quién seguir</string>
+    <string name="disable_topics_to_follow_title">Deshabilitar temas para seguir</string>
+    <string name="disable_threads">Deshabilitar hilos</string>
+    <string name="disable_tweet_detail_related_tweets">Deshabilitar los tweets relacionados con los detalles del tweet</string>
+    <string name="disable_video_carousel">Deshabilitar carrusel de videos</string>
+    <string name="enable_download_hook">Habilitar gancho de descarga</string>
+    <string name="disable_url_redirect">Desactivar redirección de URL</string>
+    <string name="hide_drawer_items">Ocultar elementos del cajón</string>
+    <string name="hide_bottom_navbar_items">Ocultar elementos de la barra de navegación inferior</string>
+    <string name="feature_switch">Cambio de función</string>
+    <string name="enable_log">Habilitar  log</string>
+    <string name="export_log">Exportar log</string>
+    <string name="export_json_log">Exportar JSON log</string>
+    <string name="clear_log">Limpiar log</string>
+    <string name="delete_databases">Eliminar base de datos</string>
+
+    <string name="about_summary">Visite la página de GitHub para obtener más ayuda</string>
+    <string name="show_toast_summary">Puede encontrar esta página a través de configuración/adicional/versión</string>
+    <string name="use_legacy_hook_summary">El enlace heredado procesa la cadena JSON directamente</string>
+    <string name="disable_promoted_content_summary">inicio/perfil/buscar línea de tiempo</string>
+    <string name="disable_promoted_user_summary">inicio/perfil/buscar línea de tiempo</string>
+    <string name="disable_promoted_trends_summary">buscar</string>
+    <string name="disable_sensitive_media_warning_summary">línea de tiempo de inicio/perfil y detalles del tweet</string>
+    <string name="disable_recommended_users_summary">No mostrar usuarios recomendados después de seguir a alguien</string>
+    <string name="disable_threads_summary">Eliminar contenido en vivo en la parte superior de la línea de tiempo</string>
+    <string name="disable_video_carousel_summary">Quitar el carrusel de videos en la pestaña de exploración</string>
+    <string name="enable_download_hook_summary">[Compartir -> Descargar o copiar] Toque para descargar, mantenga presionado el botón para copiar el enlace</string>
+    <string name="disable_url_redirect_summary">Detener la redirección de URL de t.co</string>
+    <string name="hide_drawer_items_summary">Seleccione los elementos del cajón que se ocultarán</string>
+    <string name="hide_bottom_navbar_items_summary">Seleccione los elementos de la barra de navegación inferior para ocultarlos</string>
+    <string name="feature_switch_summary">Modifique el indicador de función proporcionado por el servidor de Twitter (¡UTILICE BAJO SU PROPIO RIESGO!)</string>
+    <string name="enable_log_summary">Habilite el enlace heredado para obtener más registros. El registro se guarda en Android/data/com.twitter.android/cache/twifucker_log</string>
+    <string name="export_json_log_summary">Se requiere que el gancho heredado esté habilitado</string>
+    <string name="delete_databases_summary">Solo depurar</string>
+
+    <string name="download_or_copy">Descargar o copiar</string>
+    <string name="download_media">Media %1$d</string>
+    <string name="download_link_copied">Enlace de descarga copiado!</string>
+    <string name="downloading">Descargando…</string>
+    <string name="download_failed">Descarga fallida</string>
+    <string name="download_completed">Descarga completa</string>
+    <string name="download_all">Descargar todo</string>
+
+    <string name="deleted_n_promoted_tweet">Se eliminaron %1$d tweets promocionados de la base de datos de la aplicación</string>
+    <string name="deleted_n_database">Se eliminaron %1$d bases de datos)</string>
+
+</resources>

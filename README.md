@@ -13,3 +13,8 @@ You can find Beta version / Rootless integration (automatically embed latest Twi
 ## Usage
 
 - `Settings and privacy` > `Additional resources` > Tap version
+
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/Dr-TSNG/TwiFucker.svg)](https://starchart.cc/Dr-TSNG/TwiFucker)

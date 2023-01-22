@@ -15,7 +15,7 @@ project.rootProject.file("local.properties").let {
     }
 }
 
-val verName = "1.8"
+val verName = "1.9"
 val gitCommitCount = "git rev-list HEAD --count".execute().toInt()
 val gitCommitHash = "git rev-parse --verify --short HEAD".execute()
 
@@ -115,9 +115,8 @@ afterEvaluate {
 }
 
 dependencies {
-    implementation("com.github.kyuubiran:EzXHelper:1.0.3")
     compileOnly("de.robv.android.xposed:api:82")
-
+    implementation("com.github.kyuubiran:EzXHelper:1.0.3")
     implementation("org.luckypray:DexKit:1.1.0")
 }
 

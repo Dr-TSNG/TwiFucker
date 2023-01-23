@@ -1,18 +1,18 @@
 # TwiFucker
 
-## Yet Another Adkiller for Twitter
+## Twitterの新たなる広告キラーアプリ
 
 https://t.me/TwiFucker
 
-This is an Xposed module. Support only API 93+.
+このアプリはXposedモジュールです。API 93以降のみ対応しています。
 
-You can find Beta version / Rootless integration (automatically embed latest Twitter with [LSPatch](https://github.com/LSPosed/LSPatch)) at our Telegram channel.
+Beta版または非root向け統合版はこちらで探せます。 (Telegramのチャンネルで最新版のTwitterアプリに[LSPatch](https://github.com/LSPosed/LSPatch)で自動的にパッチをした物がダウンロード可能です)
 
-## [Features](./FEATURES.md)
+## [特徴](./FEATURES_jp.md)
 
-## Usage
+## 使い方
 
-- `Settings and privacy` > `Additional resources` > Tap version
+- 「設定とプライバシー」 > 「その他のリソース」 > バージョンをタップ
 
 
 ## Stargazers over time

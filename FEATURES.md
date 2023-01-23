@@ -38,3 +38,9 @@ Prevent Twitter redirect from `t.co` to target link when clicking on a link in T
 
 ## Disable Tweet Detail Related Tweets
 <img alt="disable tweet detail related tweets" src="./images/disable_tweet_detail_related_tweets.webp" width="256" />
+
+## Remove video carousel
+<img alt="remove video carousel" src="./images/video_carousel.webp" width="256" />
+
+## Feature switch
+Force enable/disable Twitter experimental feature.

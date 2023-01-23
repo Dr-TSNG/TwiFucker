@@ -79,6 +79,10 @@
             android:key="hide_bottom_navbar_items"
             android:summary="@string/hide_bottom_navbar_items_summary"
             android:title="@string/hide_bottom_navbar_items" />
+        <Preference
+            android:key="feature_switch"
+            android:summary="@string/feature_switch_summary"
+            android:title="@string/feature_switch" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_logging">

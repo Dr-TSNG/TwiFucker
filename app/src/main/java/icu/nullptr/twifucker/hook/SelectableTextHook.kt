@@ -21,7 +21,7 @@ object SelectableTextHook : BaseHook() {
             getId(it, "id")
         }
         findMethod(TextView::class.java) {
-            name == "setText" && parameterTypes.contentEquals(arrayOf(CharSequence::class.java))
+            name == "setText" && parameterTypes.size == 4
         }.hookAfter { param ->
             val textView = param.thisObject as TextView
             if (textView.id in notSelectableText && !textView.isTextSelectable) {

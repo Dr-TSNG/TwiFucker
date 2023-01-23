@@ -1,46 +1,46 @@
-# Features
+# 特徴
 
-## Remove promoted content
+## プロモーションコンテンツの削除
 <img alt="promoted tweet" src="./images/promoted_tweet.webp" width="256" />
 
-## Remove promoted users
+## プロモーションユーザーの削除
 <img alt="who to follow" src="./images/who_to_follow.webp" width="256" /> <img alt="who to follow in explore" src="./images/who_to_follow_explore.webp" width="256" />
 
 
-## Remove promoted trends
+## プロモーショントレンドを削除
 <img alt="promoted trends" src="./images/promoted_trends.webp" width="256" />
 
-## Remove sensitive media warning
+## センシティブなメディアの警告を無効化
 <img alt="sensitive media warning" src="./images/sensitive_media_warning.webp" width="256" />
 
-## Disable recommended users
+## おすすめユーザーを無効化
 <img alt="recommended users" src="./images/recommended_users.webp" width="256" />
 
-## Copyable alt text
+## コピー可能な代替テキスト
 <img alt="copyable alt text" src="./images/copyable_alt_text.webp" width="256" />
 
-## Download media menu
+## メディアのダウンロードメニュー
 <img alt="download menu share" src="./images/download_menu_share.webp" width="256" /> <img alt="download menu" src="./images/download_menu.webp" width="256" />
 
-## Hide drawer items
+## ドロワーの項目を非表示
 <img alt="hide drawer items" src="./images/hide_drawer_items.webp" width="256" />
 
-Slightly broken due to Twitter new drawer layout.
+Twitterの新しいドロワーレイアウトの影響で崩れる場合があります。
 
-## Hide navigation bar items
+## ナビゲーションバーの項目を非表示
 <img alt="hide navigation bar items" src="./images/hide_navigation_bar_items.webp" width="256" />
 
-## Disable url redirect
-Prevent Twitter redirect from `t.co` to target link when clicking on a link in Twitter.
+## URLのリダイレクトを無効化
+Twitterでリンクを開いた際に「t.co」からターゲットリンクにリダイレクトをさせないようにします。
 
-## Disable Threads (live content)
+## スレッドを表示を無効化 (ライブコンテンツ)
 <img alt="disable threads" src="./images/disable_threads.webp" width="256" />
 
-## Disable Tweet Detail Related Tweets
+## ツイート詳細の関連ツイートを無効化
 <img alt="disable tweet detail related tweets" src="./images/disable_tweet_detail_related_tweets.webp" width="256" />
 
-## Remove video carousel
+## 動画カルーセルを削除
 <img alt="remove video carousel" src="./images/video_carousel.webp" width="256" />
 
-## Feature switch
-Force enable/disable Twitter experimental feature.
+## 機能スイッチ
+Twitterの実験的な機能を強制的に有効化/無効化します。

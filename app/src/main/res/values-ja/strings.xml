@@ -27,7 +27,7 @@
   <string name="disable_video_carousel">動画カルーセルを無効化</string>
   <string name="enable_download_hook">ダウンロードフックを有効化</string>
   <string name="disable_url_redirect">URLのリダイレクトを無効化</string>
-  <string name="hide_drawer_items">ドロワーのアイテムを非表示</string>
+  <string name="hide_drawer_items">ドロワーの項目を非表示</string>
   <string name="hide_bottom_navbar_items">ナビゲーションバー下部の項目を非表示</string>
   <string name="feature_switch">機能スイッチ</string>
   <string name="enable_log">ログを有効化</string>

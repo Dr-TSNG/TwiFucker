@@ -4,7 +4,7 @@
 
 https://t.me/TwiFucker
 
-このアプリはXposedモジュールです。API 93以降のみ対応しています。
+このアプリはXposedモジュールです。API 93以降のみ対応をしています。
 
 Beta版または非root向け統合版はこちらで探せます。 (Telegramのチャンネルで最新版のTwitterアプリに[LSPatch](https://github.com/LSPosed/LSPatch)で自動的にパッチをした物がダウンロード可能です)
 

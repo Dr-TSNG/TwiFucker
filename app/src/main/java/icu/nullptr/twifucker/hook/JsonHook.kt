@@ -1,7 +1,13 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.XC_MethodHook
+import icu.nullptr.twifucker.forEach
+import icu.nullptr.twifucker.forEachIndexed
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.writeJsonLog
 import org.json.JSONArray
@@ -9,6 +15,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStream
+import java.lang.reflect.Modifier
 
 object JsonHook : BaseHook() {
     override val name: String
@@ -17,18 +24,22 @@ object JsonHook : BaseHook() {
     override fun init() {
         try {
             val jsonClass =
-                findField("com.bluelinelabs.logansquare.LoganSquare") { name == "JSON_FACTORY" }.type
+                FieldFinder.fromClass(loadClass("com.bluelinelabs.logansquare.LoganSquare"))
+                    .filterByName("JSON_FACTORY").first().type
             Log.d("Located json class ${jsonClass.simpleName}")
             // com.fasterxml.jackson.core.JsonFactory
-            val jsonMethod = findMethod(jsonClass) {
-                isFinal && parameterTypes.isNotEmpty() && parameterTypes[0] == InputStream::class.java
-            }
+            val jsonMethod =
+                MethodFinder.fromClass(jsonClass).filterByModifiers { Modifier.isFinal(it) }
+                    .filterByParamTypes { it.isNotEmpty() && it[0] == InputStream::class.java }
+                    .first()
             Log.d("Located json method ${jsonMethod.name}")
-            jsonMethod.hookBefore { param ->
-                try {
-                    handleJson(param)
-                } catch (t: Throwable) {
-                    Log.e(t)
+            jsonMethod.createHook {
+                before { param ->
+                    try {
+                        handleJson(param)
+                    } catch (t: Throwable) {
+                        Log.e(t)
+                    }
                 }
             }
         } catch (e: NoSuchFieldException) {
@@ -81,8 +92,7 @@ object JsonHook : BaseHook() {
     // data
     private fun JSONObject.dataGetInstructions(): JSONArray? {
         val timeline = optJSONObject("user_result")?.optJSONObject("result")
-            ?.optJSONObject("timeline_response")
-            ?.optJSONObject("timeline")
+            ?.optJSONObject("timeline_response")?.optJSONObject("timeline")
             ?: optJSONObject("timeline_response")?.optJSONObject("timeline")
             ?: optJSONObject("timeline_response")
         return timeline?.optJSONArray("instructions")
@@ -90,7 +100,7 @@ object JsonHook : BaseHook() {
 
     private fun JSONObject.dataCheckAndRemove() {
         dataGetInstructions()?.forEach { instruction ->
-            (instruction as JSONObject).instructionCheckAndRemove()
+            instruction.instructionCheckAndRemove()
         }
         dataGetLegacy()?.legacyCheckAndRemove()
     }
@@ -117,7 +127,7 @@ object JsonHook : BaseHook() {
 
     private fun JSONObject.tweetCheckAndRemove() {
         tweetGetExtendedEntitiesMedias()?.forEach { media ->
-            (media as JSONObject).mediaCheckAndRemove()
+            media.mediaCheckAndRemove()
         }
     }
 
@@ -129,10 +139,9 @@ object JsonHook : BaseHook() {
             ?.has("tweetPromotedMetadata") == true || optJSONObject("item")?.optJSONObject("content")
             ?.has("tweetPromotedMetadata") == true
 
-    private fun JSONObject.entryIsWhoToFollow(): Boolean =
-        optString("entryId").let {
-            it.startsWith("whoToFollow-") || it.startsWith("who-to-follow-") || it.startsWith("connect-module-")
-        }
+    private fun JSONObject.entryIsWhoToFollow(): Boolean = optString("entryId").let {
+        it.startsWith("whoToFollow-") || it.startsWith("who-to-follow-") || it.startsWith("connect-module-")
+    }
 
     private fun JSONObject.entryIsTopicsModule(): Boolean =
         optString("entryId").startsWith("TopicsModule-")
@@ -145,8 +154,8 @@ object JsonHook : BaseHook() {
     private fun JSONObject.entryIsConversationThread(): Boolean =
         optString("entryId").startsWith("conversationthread-")
 
-    private fun JSONObject.entryIsTweetDetailRelatedTweets(): Boolean = optString("entryId")
-        .startsWith("tweetdetailrelatedtweets-")
+    private fun JSONObject.entryIsTweetDetailRelatedTweets(): Boolean =
+        optString("entryId").startsWith("tweetdetailrelatedtweets-")
 
     private fun JSONObject.entryIsVideoCarousel(): Boolean =
         optJSONObject("content")?.optJSONObject("timelineModule")?.optJSONObject("clientEventInfo")
@@ -184,7 +193,7 @@ object JsonHook : BaseHook() {
         if (!modulePrefs.getBoolean("disable_promoted_trends", true)) return
         val trendRemoveIndex = mutableListOf<Int>()
         forEachIndexed { trendIndex, trend ->
-            if ((trend as JSONObject).trendHasPromotedMetadata()) {
+            if (trend.trendHasPromotedMetadata()) {
                 Log.d("Handle trends ads $trendIndex $trend")
                 trendRemoveIndex.add(trendIndex)
             }
@@ -203,10 +212,10 @@ object JsonHook : BaseHook() {
 
     private fun JSONObject.legacyCheckAndRemove() {
         legacyGetExtendedEntitiesMedias()?.forEach { media ->
-            (media as JSONObject).mediaCheckAndRemove()
+            media.mediaCheckAndRemove()
         }
         legacyGetRetweetedStatusLegacy()?.legacyGetExtendedEntitiesMedias()?.forEach { media ->
-            (media as JSONObject).mediaCheckAndRemove()
+            media.mediaCheckAndRemove()
         }
     }
 
@@ -252,7 +261,7 @@ object JsonHook : BaseHook() {
     private fun JSONArray.entriesRemoveTimelineAds() {
         val removeIndex = mutableListOf<Int>()
         forEachIndexed { entryIndex, entry ->
-            (entry as JSONObject).entryGetTrends()?.trendRemoveAds()
+            entry.entryGetTrends()?.trendRemoveAds()
 
             if (!modulePrefs.getBoolean("disable_promoted_content", true)) return@forEachIndexed
             if (entry.entryHasPromotedMetadata()) {
@@ -263,7 +272,7 @@ object JsonHook : BaseHook() {
             val innerRemoveIndex = mutableListOf<Int>()
             val contentItems = entry.entryGetContentItems()
             contentItems?.forEachIndexed inner@{ itemIndex, item ->
-                if ((item as JSONObject).entryHasPromotedMetadata()) {
+                if (item.entryHasPromotedMetadata()) {
                     Log.d("Handle timeline replies ads $entryIndex $entry")
                     if (contentItems.length() == 1) {
                         removeIndex.add(entryIndex)
@@ -285,7 +294,7 @@ object JsonHook : BaseHook() {
     private fun JSONArray.entriesRemoveWhoToFollow() {
         val entryRemoveIndex = mutableListOf<Int>()
         forEachIndexed { entryIndex, entry ->
-            if (!(entry as JSONObject).entryIsWhoToFollow()) return@forEachIndexed
+            if (!entry.entryIsWhoToFollow()) return@forEachIndexed
 
             if (modulePrefs.getBoolean("disable_who_to_follow", false)) {
                 Log.d("Handle whoToFollow $entryIndex $entry")
@@ -298,7 +307,7 @@ object JsonHook : BaseHook() {
             val items = entry.entryGetContentItems()
             val userRemoveIndex = mutableListOf<Int>()
             items?.forEachIndexed { index, item ->
-                (item as JSONObject).itemContainsPromotedUser().let {
+                item.itemContainsPromotedUser().let {
                     if (it) {
                         Log.d("Handle whoToFollow promoted user $index $item")
                         userRemoveIndex.add(index)
@@ -317,7 +326,7 @@ object JsonHook : BaseHook() {
     private fun JSONArray.entriesRemoveTopicsToFollow() {
         val entryRemoveIndex = mutableListOf<Int>()
         forEachIndexed { entryIndex, entry ->
-            if (!(entry as JSONObject).entryIsTopicsModule()) return@forEachIndexed
+            if (!entry.entryIsTopicsModule()) return@forEachIndexed
 
             if (modulePrefs.getBoolean("disable_topics_to_follow", false)) {
                 Log.d("Handle TopicsModule $entryIndex $entry")
@@ -334,18 +343,18 @@ object JsonHook : BaseHook() {
         if (entryIsTweet()) {
             entryGetLegacy()?.let {
                 it.legacyGetExtendedEntitiesMedias()?.forEach { media ->
-                    (media as JSONObject).mediaCheckAndRemove()
+                    media.mediaCheckAndRemove()
                 }
                 it.legacyGetRetweetedStatusLegacy()?.legacyGetExtendedEntitiesMedias()
                     ?.forEach { media ->
-                        (media as JSONObject).mediaCheckAndRemove()
+                        media.mediaCheckAndRemove()
                     }
             }
         } else if (entryIsConversationThread()) {
             entryGetContentItems()?.forEach { item ->
-                (item as JSONObject).entryGetLegacy()?.let { legacy ->
+                item.entryGetLegacy()?.let { legacy ->
                     legacy.legacyGetExtendedEntitiesMedias()?.forEach { media ->
-                        (media as JSONObject).mediaCheckAndRemove()
+                        media.mediaCheckAndRemove()
                     }
                 }
             }
@@ -354,7 +363,7 @@ object JsonHook : BaseHook() {
 
     private fun JSONArray.entriesRemoveSensitiveMediaWarning() {
         forEach { entry ->
-            (entry as JSONObject).entryRemoveSensitiveMediaWarning()
+            entry.entryRemoveSensitiveMediaWarning()
         }
     }
 
@@ -362,11 +371,10 @@ object JsonHook : BaseHook() {
         val removeIndex = mutableListOf<Int>()
         forEachIndexed { entryIndex, entry ->
             if (!modulePrefs.getBoolean(
-                    "disable_tweet_detail_related_tweets",
-                    false
+                    "disable_tweet_detail_related_tweets", false
                 )
             ) return@forEachIndexed
-            if ((entry as JSONObject).entryIsTweetDetailRelatedTweets()) {
+            if (entry.entryIsTweetDetailRelatedTweets()) {
                 Log.d("Handle tweet detail related tweets $entryIndex $entry")
                 removeIndex.add(entryIndex)
             }
@@ -380,7 +388,7 @@ object JsonHook : BaseHook() {
         val removeIndex = mutableListOf<Int>()
         forEachIndexed { entryIndex, entry ->
             if (!modulePrefs.getBoolean("disable_video_carousel", false)) return@forEachIndexed
-            if ((entry as JSONObject).entryIsVideoCarousel()) {
+            if (entry.entryIsVideoCarousel()) {
                 Log.d("Handle explore video carousel $entryIndex $entry")
                 removeIndex.add(entryIndex)
             }
@@ -437,7 +445,7 @@ object JsonHook : BaseHook() {
                 tweet.tweetCheckAndRemove()
             }
             json.jsonGetInstructions()?.forEach { instruction ->
-                (instruction as JSONObject).instructionCheckAndRemove()
+                instruction.instructionCheckAndRemove()
             }
             json.jsonGetData()?.dataCheckAndRemove()
 
@@ -455,9 +463,7 @@ object JsonHook : BaseHook() {
         try {
             val json = JSONArray(content)
             json.forEach {
-                if (it is JSONObject) {
-                    it.tweetCheckAndRemove()
-                }
+                it.tweetCheckAndRemove()
             }
             content = json.toString()
         } catch (_: JSONException) {

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
+import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import icu.nullptr.twifucker.R
 import icu.nullptr.twifucker.modulePrefs
 import org.json.JSONArray
@@ -61,7 +61,7 @@ class FeatureSwitchDialog(context: Context) : AlertDialog.Builder(context) {
     }
 
     init {
-        context.addModuleAssetPath()
+        addModuleAssetPath(context)
 
         val featureSwitch = modulePrefs.getString("feature_switch", "[]")
         var arr = JSONArray(featureSwitch)

@@ -1,10 +1,12 @@
 package icu.nullptr.twifucker.hook.activity
 
 import android.app.Activity
-import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.hookReplace
-import com.github.kyuubiran.ezxhelper.utils.loadClass
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.EzXHelper
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.BaseHook
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
@@ -26,13 +28,16 @@ object SettingsHook : BaseHook() {
     private lateinit var onVersionClickMethodName: String
 
     override fun init() {
-        val onVersionClickMethod = aboutActivityClass.declaredMethods.firstOrNull {
-            it.parameterTypes.size == 1 && it.parameterTypes[0] == preferenceClass
-        }
+        val onVersionClickMethod =
+            MethodFinder.fromClass(aboutActivityClass).filterByParamTypes(preferenceClass)
+                .firstOrNull()
+
         if (onVersionClickMethod != null) {
-            onVersionClickMethod.hookReplace { param ->
-                SettingsDialog(param.thisObject as Activity)
-                return@hookReplace true
+            onVersionClickMethod.createHook {
+                replace { param ->
+                    SettingsDialog(param.thisObject as Activity)
+                    return@replace true
+                }
             }
         } else {
             try {
@@ -42,15 +47,16 @@ object SettingsHook : BaseHook() {
                 return
             }
             val onVersionClickListenerClass = loadClass(onVersionClickListenerClassName)
-            val activityField = onVersionClickListenerClass.declaredFields.firstOrNull {
-                it.type == aboutActivityClass
-            } ?: throw NoSuchFieldError()
-            onVersionClickListenerClass.declaredMethods.first {
-                it.parameterTypes.size == 1 && it.parameterTypes[0] == preferenceClass
-            }.hookReplace { param ->
-                SettingsDialog(activityField.get(param.thisObject) as Activity)
-                return@hookReplace true
-            }
+            val activityField =
+                FieldFinder.fromClass(onVersionClickListenerClass).filterByType(aboutActivityClass)
+                    .first()
+            MethodFinder.fromClass(onVersionClickListenerClass).filterByParamTypes(preferenceClass)
+                .first().createHook {
+                    replace { param ->
+                        SettingsDialog(activityField.get(param.thisObject) as Activity)
+                        return@replace true
+                    }
+                }
         }
     }
 
@@ -67,9 +73,8 @@ object SettingsHook : BaseHook() {
     }
 
     private fun searchHook() {
-        val onCreateMethod = aboutActivityClass.declaredMethods.firstOrNull {
-            it.name == "onCreate"
-        } ?: throw NoSuchMethodError()
+        val onCreateMethod =
+            MethodFinder.fromClass(aboutActivityClass).filterByName("onCreate").first()
 
         val onPreferenceClickListenerClass = dexKit.findMethodInvoking {
             methodDescriptor = DexMethodDescriptor(onCreateMethod).descriptor
@@ -78,11 +83,10 @@ object SettingsHook : BaseHook() {
             beInvokedMethodParameterTypes = arrayOf(aboutActivityClass.name)
         }.firstNotNullOfOrNull {
             it.value
-        }?.firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass
+        }?.firstOrNull()?.getMemberInstance(EzXHelper.classLoader)?.declaringClass
             ?: throw ClassNotFoundException()
-        val onVersionClickMethod = onPreferenceClickListenerClass.declaredMethods.firstOrNull {
-            it.parameterTypes.size == 1 && it.parameterTypes[0] == preferenceClass
-        } ?: throw NoSuchMethodError()
+        val onVersionClickMethod = MethodFinder.fromClass(onPreferenceClickListenerClass)
+            .filterByParamTypes(preferenceClass).first()
 
         onVersionClickListenerClassName = onPreferenceClickListenerClass.name
         onVersionClickMethodName = onVersionClickMethod.name

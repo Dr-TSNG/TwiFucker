@@ -1,9 +1,10 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookAfter
-import com.github.kyuubiran.ezxhelper.utils.loadClass
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonTimelineModuleHook : BaseHook() {
@@ -19,21 +20,21 @@ object JsonTimelineModuleHook : BaseHook() {
         val jsonClientEventInfoClass =
             loadClass("com.twitter.model.json.timeline.urt.JsonClientEventInfo")
         val jsonClientEventInfoField =
-            jsonTimelineModuleClass.declaredFields.firstOrNull { it.type == jsonClientEventInfoClass }
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(jsonTimelineModuleClass).filterByType(jsonClientEventInfoClass)
+                .first()
         val moduleField =
-            jsonClientEventInfoClass.declaredFields.firstOrNull { it.type == String::class.java }
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(jsonClientEventInfoClass).filterByType(String::class.java).first()
 
-        findMethod(jsonTimelineModuleMapperClass) {
-            name == "_parse" && returnType == jsonTimelineModuleClass
-        }.hookAfter { param ->
-            param.result ?: return@hookAfter
-            val module = jsonClientEventInfoField.get(param.result) ?: return@hookAfter
-            if (moduleField.get(module) == "video_carousel") {
-                param.result = null
-                Log.d("Removed video carousel")
+        MethodFinder.fromClass(jsonTimelineModuleMapperClass).filterByName("_parse")
+            .filterByReturnType(jsonTimelineModuleClass).first().createHook {
+                after { param ->
+                    param.result ?: return@after
+                    val module = jsonClientEventInfoField.get(param.result) ?: return@after
+                    if (moduleField.get(module) == "video_carousel") {
+                        param.result = null
+                        Log.d("Removed video carousel")
+                    }
+                }
             }
-        }
     }
 }

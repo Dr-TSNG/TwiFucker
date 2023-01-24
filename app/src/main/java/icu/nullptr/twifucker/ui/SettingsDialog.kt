@@ -13,9 +13,9 @@ import android.os.Bundle
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.SwitchPreference
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
-import com.github.kyuubiran.ezxhelper.utils.restartHostApp
+import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.misc.Utils.restartHostApp
 import icu.nullptr.twifucker.*
 import icu.nullptr.twifucker.hook.DrawerNavbarHook.bottomNavbarItems
 import icu.nullptr.twifucker.hook.DrawerNavbarHook.drawerItems
@@ -270,7 +270,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
     }
 
     init {
-        context.addModuleAssetPath()
+        addModuleAssetPath(context)
 
         val act = context as Activity
 

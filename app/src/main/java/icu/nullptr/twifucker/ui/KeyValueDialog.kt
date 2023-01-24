@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.view.View
 import android.widget.*
-import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
+import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import icu.nullptr.twifucker.R
 import icu.nullptr.twifucker.modulePrefs
 import org.json.JSONArray
@@ -25,13 +25,11 @@ class KeyValueDialog(context: Context) : AlertDialog.Builder(context) {
 
         val valueLinearLayout = RelativeLayout(context)
         valueLinearLayout.layoutParams = RelativeLayout.LayoutParams(
-            RelativeLayout.LayoutParams.MATCH_PARENT,
-            RelativeLayout.LayoutParams.MATCH_PARENT
+            RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT
         )
         val valueText = TextView(context)
         val valueTextLp = RelativeLayout.LayoutParams(
-            RelativeLayout.LayoutParams.WRAP_CONTENT,
-            RelativeLayout.LayoutParams.WRAP_CONTENT
+            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
         )
         valueTextLp.addRule(RelativeLayout.ALIGN_PARENT_START)
         valueText.layoutParams = valueTextLp
@@ -39,8 +37,7 @@ class KeyValueDialog(context: Context) : AlertDialog.Builder(context) {
         valueText.text = "Boolean"
         valueSwitch = Switch(context)
         val valueSwitchLp = RelativeLayout.LayoutParams(
-            RelativeLayout.LayoutParams.WRAP_CONTENT,
-            RelativeLayout.LayoutParams.WRAP_CONTENT
+            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT
         )
         valueSwitchLp.addRule(RelativeLayout.ALIGN_PARENT_END)
         valueSwitch.layoutParams = valueSwitchLp
@@ -54,7 +51,7 @@ class KeyValueDialog(context: Context) : AlertDialog.Builder(context) {
     }
 
     init {
-        context.addModuleAssetPath()
+        addModuleAssetPath(context)
 
         setView(buildView(context))
         setNeutralButton(R.string.settings_dismiss, null)

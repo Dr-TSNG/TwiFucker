@@ -1,9 +1,10 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookAfter
-import com.github.kyuubiran.ezxhelper.utils.loadClass
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.reGenericClass
 
@@ -25,17 +26,17 @@ object JsonTimelineTrendHook : BaseHook() {
                     reGenericClass.matchEntire(it)?.groupValues?.get(2)
                         ?.let { genericClass -> loadClass(genericClass) }
                 } ?: throw ClassNotFoundException()
-        val jsonPromotedTrendMetadataField =
-            jsonTimelineTrendClass.declaredFields.firstOrNull { it.type == jsonPromotedTrendMetadataClass }
-                ?: throw NoSuchFieldError()
+        val jsonPromotedTrendMetadataField = FieldFinder.fromClass(jsonTimelineTrendClass)
+            .filterByType(jsonPromotedTrendMetadataClass).first()
 
-        findMethod(jsonTimelineTrendMapperClass) {
-            name == "_parse" && returnType == jsonTimelineTrendClass
-        }.hookAfter { param ->
-            param.result ?: return@hookAfter
-            jsonPromotedTrendMetadataField.get(param.result) ?: return@hookAfter
-            param.result = null
-            Log.d("Remove promoted trend item")
-        }
+        MethodFinder.fromClass(jsonTimelineTrendMapperClass).filterByName("_parse")
+            .filterByReturnType(jsonTimelineTrendClass).first().createHook {
+                after { param ->
+                    param.result ?: return@after
+                    jsonPromotedTrendMetadataField.get(param.result) ?: return@after
+                    param.result = null
+                    Log.d("Remove promoted trend item")
+                }
+            }
     }
 }

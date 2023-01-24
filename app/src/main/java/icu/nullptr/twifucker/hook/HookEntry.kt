@@ -3,12 +3,12 @@ package icu.nullptr.twifucker.hook
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import com.github.kyuubiran.ezxhelper.init.EzXHelperInit
-import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.Log.logexIfThrow
-import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookBefore
+import com.github.kyuubiran.ezxhelper.EzXHelper
+import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.Log.logexIfThrow
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -65,60 +65,60 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
-        EzXHelperInit.initZygote(startupParam)
-        EzXHelperInit.setLogTag(TAG)
-        EzXHelperInit.setToastTag(TAG)
+        EzXHelper.initZygote(startupParam)
+        EzXHelper.setLogTag(TAG)
+        EzXHelper.setToastTag(TAG)
         Log.d("InitZygote")
     }
 
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         if (lpparam.packageName != "com.twitter.android") return
-        EzXHelperInit.initHandleLoadPackage(lpparam)
+        EzXHelper.initHandleLoadPackage(lpparam)
         Log.d("HandleLoadedPackage")
 
-        findMethod(Application::class.java) {
-            name == "attach" && parameterTypes.contentEquals(arrayOf(Context::class.java))
-        }.hookBefore { param ->
-            EzXHelperInit.initAppContext(param.args[0] as Context)
-            EzXHelperInit.setEzClassLoader(appContext.classLoader)
+        MethodFinder.fromClass(Application::class.java).filterByName("attach")
+            .filterByParamTypes(Context::class.java).first().createHook {
+                before { param ->
+                    EzXHelper.initAppContext(param.args[0] as Context)
 
-            if (!lpparam.processName.contains(":")) {
-                startLog()
-            }
+                    if (!lpparam.processName.contains(":")) {
+                        startLog()
+                    }
 
-            Log.d("AttachContext")
+                    Log.d("AttachContext")
 
-            val hooks = arrayListOf(
-                MainActivityHook,
-                SettingsHook,
-                UrlHook,
-                SelectableTextHook,
-                DownloadHook,
-                ActivityHook,
-                CustomTabsHook,
-                DrawerNavbarHook,
-                FeatureSwitchHook,
-            )
-
-            if (modulePrefs.getBoolean("use_legacy_hook", false)) {
-                hooks.add(JsonHook)
-            } else {
-                hooks.addAll(
-                    listOf(
-                        JsonTimelineEntryHook,
-                        JsonTimelineTweetHook,
-                        JsonTimelineUserHook,
-                        JsonTimelineTrendHook,
-                        SensitiveMediaWarningHook,
-                        JsonProfileRecommendationModuleResponseHook,
-                        JsonFleetsTimelineResponseHook,
-                        JsonTimelineModuleHook,
+                    val hooks = arrayListOf(
+                        MainActivityHook,
+                        SettingsHook,
+                        UrlHook,
+                        SelectableTextHook,
+                        DownloadHook,
+                        ActivityHook,
+                        CustomTabsHook,
+                        DrawerNavbarHook,
+                        FeatureSwitchHook,
                     )
-                )
+
+                    if (modulePrefs.getBoolean("use_legacy_hook", false)) {
+                        hooks.add(JsonHook)
+                    } else {
+                        hooks.addAll(
+                            listOf(
+                                JsonTimelineEntryHook,
+                                JsonTimelineTweetHook,
+                                JsonTimelineUserHook,
+                                JsonTimelineTrendHook,
+                                SensitiveMediaWarningHook,
+                                JsonProfileRecommendationModuleResponseHook,
+                                JsonFleetsTimelineResponseHook,
+                                JsonTimelineModuleHook,
+                            )
+                        )
+                    }
+                    initHooks(hooks)
+                    closeDexKit()
+                }
             }
-            initHooks(hooks)
-            closeDexKit()
-        }
     }
 
     private fun initHooks(hook: List<BaseHook>) {

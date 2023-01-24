@@ -4,8 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
-import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.EzXHelper
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import de.robv.android.xposed.XposedHelpers
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
@@ -13,6 +17,7 @@ import icu.nullptr.twifucker.hostAppLastUpdate
 import icu.nullptr.twifucker.hostPrefs
 import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
+import java.lang.reflect.Modifier
 
 object CustomTabsHook : BaseHook() {
     override val name: String
@@ -37,50 +42,54 @@ object CustomTabsHook : BaseHook() {
             return
         }
 
-        findMethod(Activity::class.java) {
-            name == "startActivity" && parameterTypes.size == 2 && parameterTypes[0] == Intent::class.java && parameterTypes[1] == Bundle::class.java
-        }.hookBefore { param ->
-            val activity = param.thisObject as Activity
-            val intent = param.args[0] as Intent
+        MethodFinder.fromClass(Activity::class.java).filterByName("startActivity")
+            .filterByParamTypes {
+                it.size == 2 && it[0] == Intent::class.java && it[1] == Bundle::class.java
+            }.first().createHook {
+                before { param ->
+                    val activity = param.thisObject as Activity
+                    val intent = param.args[0] as Intent
 
-            if (intent.categories == null || (intent.action != Intent.ACTION_VIEW && intent.categories != null && !intent.categories.contains(
-                    Intent.CATEGORY_BROWSABLE
-                ))
-            ) {
-                return@hookBefore
+                    if (intent.categories == null || (intent.action != Intent.ACTION_VIEW && intent.categories != null && !intent.categories.contains(
+                            Intent.CATEGORY_BROWSABLE
+                        ))
+                    ) {
+                        return@before
+                    }
+
+                    val isInAppBrowserEnabled = hostPrefs.getBoolean("in_app_browser", true)
+                    val data = intent.dataString
+                    val uri = Uri.parse(data)
+                    val host = uri.host
+
+                    if ((host == null) || DOMAIN_WHITELIST_SUFFIX.any { host.endsWith(it) }) {
+                        return@before
+                    }
+
+                    val customTabsClass = loadClass(customTabsClassName)
+                    val customTabsObj =
+                        XposedHelpers.callStaticMethod(customTabsClass, customTabsGetMethodName)
+
+                    // skip original method
+                    param.result = null
+
+                    if (isInAppBrowserEnabled) {
+                        XposedHelpers.callMethod(
+                            customTabsObj, customTabsLaunchUrlMethodName, activity, data, null
+                        )
+                    } else {
+                        val newIntent = Intent(Intent.ACTION_VIEW, uri)
+                        activity.startActivity(newIntent)
+                    }
+                }
             }
-
-            val isInAppBrowserEnabled = hostPrefs.getBoolean("in_app_browser", true)
-            val data = intent.dataString
-            val uri = Uri.parse(data)
-            val host = uri.host
-
-            if ((host == null) || DOMAIN_WHITELIST_SUFFIX.any { host.endsWith(it) }) {
-                return@hookBefore
-            }
-
-            val customTabsClass = loadClass(customTabsClassName)
-            val customTabsObj = customTabsClass.invokeStaticMethod(customTabsGetMethodName)
-
-            // skip original method
-            param.result = null
-
-            if (isInAppBrowserEnabled) {
-                customTabsObj?.invokeMethodAuto(
-                    customTabsLaunchUrlMethodName, activity, data, null
-                )
-            } else {
-                val newIntent = Intent(Intent.ACTION_VIEW, uri)
-                activity.startActivity(newIntent)
-            }
-        }
     }
 
     private fun loadCachedHookInfo() {
-        customTabsClassName = modulePrefs.getString(HOOK_CUSTOM_TABS_CLASS, null)
-            ?: throw CachedHookNotFound()
-        customTabsGetMethodName = modulePrefs.getString(HOOK_CUSTOM_TABS_GET_METHOD, null)
-            ?: throw CachedHookNotFound()
+        customTabsClassName =
+            modulePrefs.getString(HOOK_CUSTOM_TABS_CLASS, null) ?: throw CachedHookNotFound()
+        customTabsGetMethodName =
+            modulePrefs.getString(HOOK_CUSTOM_TABS_GET_METHOD, null) ?: throw CachedHookNotFound()
         customTabsLaunchUrlMethodName =
             modulePrefs.getString(HOOK_CUSTOM_TABS_LAUNCH_URL_METHOD, null)
                 ?: throw CachedHookNotFound()
@@ -99,15 +108,18 @@ object CustomTabsHook : BaseHook() {
         val customTabsClass = dexKit.findMethodUsingString {
             usingString = "^android.support.customtabs.action.CustomTabsService$"
             methodReturnType = Void.TYPE.name
-        }.firstOrNull()?.getMemberInstance(ezXClassLoader)?.declaringClass
+        }.firstOrNull()?.getMemberInstance(EzXHelper.classLoader)?.declaringClass
             ?: throw ClassNotFoundException()
 
-        val customTabsGetMethod = customTabsClass.declaredMethods.firstOrNull {
-            it.isStatic && it.parameterTypes.isEmpty() && it.returnType == customTabsClass
-        } ?: throw NoSuchMethodException()
-        val customTabsLaunchUrlMethod = customTabsClass.declaredMethods.firstOrNull {
-            it.isNotStatic && it.isPublic && it.isFinal && it.parameterTypes.size == 3 && it.parameterTypes[0] == Activity::class.java && it.parameterTypes[1] == String::class.java
-        } ?: throw NoSuchMethodException()
+
+        val customTabsGetMethod =
+            MethodFinder.fromClass(customTabsClass).filterByModifiers { Modifier.isStatic(it) }
+                .filterByParamCount(0).filterByReturnType(customTabsClass).first()
+        val customTabsLaunchUrlMethod = MethodFinder.fromClass(customTabsClass).filterByModifiers {
+            !Modifier.isStatic(it) && Modifier.isPublic(it) && Modifier.isFinal(it)
+        }.filterByParamCount(3)
+            .filterByParamTypes { it[0] == Activity::class.java && it[1] == String::class.java }
+            .first()
 
         customTabsClassName = customTabsClass.name
         customTabsGetMethodName = customTabsGetMethod.name

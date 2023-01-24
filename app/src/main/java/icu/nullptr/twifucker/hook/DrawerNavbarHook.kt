@@ -1,7 +1,16 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
-import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClassOrNull
+import com.github.kyuubiran.ezxhelper.EzXHelper
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.MemberExtensions.isStatic
+import com.github.kyuubiran.ezxhelper.finders.ConstructorFinder
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import com.github.kyuubiran.ezxhelper.misc.Utils.getAllClassesList
+import de.robv.android.xposed.XposedHelpers
 import icu.nullptr.twifucker.data.TwitterItem
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
@@ -46,51 +55,62 @@ object DrawerNavbarHook : BaseHook() {
             return
         }
 
-        findConstructor(bottomNavbarClassName) {
-            true
-        }.hookBefore {
-            val hiddenItems =
-                modulePrefs.getStringSet(PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS, mutableSetOf())
-            val map = it.args[2] as Map<*, *>
-            val newMap = loadClass(customMapClassName).invokeStaticMethod(
-                customMapInitMethodName, args(map.size), argTypes(Int::class.java)
-            )
-            bottomNavbarItems.clear()
-            map.forEach { item ->
-                val keyString = item.key.toString()
-                bottomNavbarItems.add(
-                    TwitterItem(
-                        keyString,
-                        hiddenItems?.contains(keyString) == false
-                    )
+        ConstructorFinder.fromClass(loadClass(bottomNavbarClassName)).first().createHook {
+            before { param ->
+                val hiddenItems =
+                    modulePrefs.getStringSet(PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS, mutableSetOf())
+                val map = param.args[2] as Map<*, *>
+                val newMap = XposedHelpers.callStaticMethod(
+                    loadClass(customMapClassName),
+                    customMapInitMethodName,
+                    arrayOf(Int::class.java),
+                    map.size
                 )
-                if (hiddenItems?.contains(keyString) == false || keyString.lowercase() == "home") {
-                    newMap?.invokeMethod(
-                        customMapInnerAddMethodName,
-                        args(item.key, item.value),
-                        argTypes(Any::class.java, Any::class.java)
+                bottomNavbarItems.clear()
+                map.forEach { item ->
+                    val keyString = item.key.toString()
+                    bottomNavbarItems.add(
+                        TwitterItem(
+                            keyString, hiddenItems?.contains(keyString) == false
+                        )
                     )
+                    if (hiddenItems?.contains(keyString) == false || keyString.lowercase() == "home") {
+                        XposedHelpers.callMethod(
+                            newMap,
+                            customMapInnerAddMethodName,
+                            arrayOf(Any::class.java, Any::class.java),
+                            item.key,
+                            item.value
+                        )
+                    }
                 }
+                param.args[2] = XposedHelpers.callMethod(newMap, customMapInnerGetMethodName)
             }
-            it.args[2] = newMap?.invokeMethod(customMapInnerGetMethodName)
         }
 
-        findConstructor(drawerItemsClassName) {
-            true
-        }.hookBefore { param ->
-            val hiddenItems = modulePrefs.getStringSet(PREF_HIDDEN_DRAWER_ITEMS, mutableSetOf())
-            val drawerItemMap = param.args[0].invokeMethod("get") as Map<*, *>
-            drawerItems.clear()
-            drawerItemMap.forEach { item ->
-                val keyString = item.key.toString()
-                drawerItems.add(TwitterItem(keyString, hiddenItems?.contains(keyString) == false))
-                val boolField =
-                    item.value?.javaClass?.declaredFields?.firstOrNull { it.type.isInterface && it.type != List::class.java }
-                        ?: return@forEach
-                if (hiddenItems?.contains(keyString) == true && keyString.lowercase() != "settings") {
-                    item.value?.putObject(boolField, loadClass(boolFalseClassName).newInstance())
+        ConstructorFinder.fromClass(loadClass(drawerItemsClassName)).first().createHook {
+            before { param ->
+                val hiddenItems = modulePrefs.getStringSet(PREF_HIDDEN_DRAWER_ITEMS, mutableSetOf())
+                val drawerItemMap = XposedHelpers.callMethod(param.args[0], "get") as Map<*, *>
+                drawerItems.clear()
+                drawerItemMap.forEach { item ->
+                    val keyString = item.key.toString()
+                    drawerItems.add(
+                        TwitterItem(
+                            keyString, hiddenItems?.contains(keyString) == false
+                        )
+                    )
+                    val boolField = item.value?.let {
+                        FieldFinder.fromClass(it.javaClass).filter {
+                            type.isInterface && type != List::class.java
+                        }.first()
+                    } ?: return@forEach
+                    if (hiddenItems?.contains(keyString) == true && keyString.lowercase() != "settings") {
+                        XposedHelpers.setObjectField(
+                            item.value, boolField.name, loadClass(boolFalseClassName).newInstance()
+                        )
+                    }
                 }
-            }
 //            val drawerItemGroupMap = param.args[1].invokeMethod("get") as Map<*, *>
 //            drawerItemGroupMap.forEach { item ->
 //                val keyString = item.key.toString()
@@ -100,22 +120,23 @@ object DrawerNavbarHook : BaseHook() {
 //                        ?: return@forEach
 //                item.value?.putObject(boolField, loadClass(falseClassName).newInstance())
 //            }
+            }
         }
     }
 
     private fun loadCachedHookInfo() {
-        drawerItemsClassName = modulePrefs.getString(HOOK_DRAWER_ITEMS_CLASS, null)
-            ?: throw CachedHookNotFound()
-        boolFalseClassName = modulePrefs.getString(HOOK_BOOL_FALSE_CLASS, null)
-            ?: throw CachedHookNotFound()
-        bottomNavbarClassName = modulePrefs.getString(HOOK_BOTTOM_NAVBAR_CLASS, null)
-            ?: throw CachedHookNotFound()
-        customMapClassName = modulePrefs.getString(HOOK_CUSTOM_MAP_CLASS, null)
-            ?: throw CachedHookNotFound()
-        customMapInitMethodName = modulePrefs.getString(HOOK_CUSTOM_MAP_INIT_METHOD, null)
-            ?: throw CachedHookNotFound()
-        customMapInnerClassName = modulePrefs.getString(HOOK_CUSTOM_MAP_INNER_CLASS, null)
-            ?: throw CachedHookNotFound()
+        drawerItemsClassName =
+            modulePrefs.getString(HOOK_DRAWER_ITEMS_CLASS, null) ?: throw CachedHookNotFound()
+        boolFalseClassName =
+            modulePrefs.getString(HOOK_BOOL_FALSE_CLASS, null) ?: throw CachedHookNotFound()
+        bottomNavbarClassName =
+            modulePrefs.getString(HOOK_BOTTOM_NAVBAR_CLASS, null) ?: throw CachedHookNotFound()
+        customMapClassName =
+            modulePrefs.getString(HOOK_CUSTOM_MAP_CLASS, null) ?: throw CachedHookNotFound()
+        customMapInitMethodName =
+            modulePrefs.getString(HOOK_CUSTOM_MAP_INIT_METHOD, null) ?: throw CachedHookNotFound()
+        customMapInnerClassName =
+            modulePrefs.getString(HOOK_CUSTOM_MAP_INNER_CLASS, null) ?: throw CachedHookNotFound()
         customMapInnerAddMethodName = modulePrefs.getString(HOOK_CUSTOM_MAP_INNER_ADD_METHOD, null)
             ?: throw CachedHookNotFound()
         customMapInnerGetMethodName = modulePrefs.getString(HOOK_CUSTOM_MAP_INNER_GET_METHOD, null)
@@ -200,22 +221,21 @@ object DrawerNavbarHook : BaseHook() {
         val customMapInitMethodDescriptor = dexKit.findMethodUsingString {
             usingString = "^expectedSize$"
             methodParamTypes = arrayOf(Int::class.java.name)
-        }
-            .firstOrNull { loadClass(it.declaringClassName).interfaces.contains(Map::class.java) }
+        }.firstOrNull { loadClass(it.declaringClassName).interfaces.contains(Map::class.java) }
             ?: throw ClassNotFoundException()
 
-        val customMapInitMethod = customMapInitMethodDescriptor.getMethodInstance(ezXClassLoader)
+        val customMapInitMethod =
+            customMapInitMethodDescriptor.getMethodInstance(EzXHelper.classLoader)
 
         val customMapClass = customMapInitMethod.declaringClass
         val customMapInnerClass = customMapInitMethod.returnType
-        val customMapInnerGetMethod =
-            customMapInnerClass.declaredMethods.firstOrNull { it.returnType.name == customMapInitMethodDescriptor.declaringClassName }
-                ?: throw NoSuchMethodError()
-        val customMapInnerAddMethod = customMapInnerClass.declaredMethods.firstOrNull {
-            it.returnType.name == customMapInitMethodDescriptor.getMethodInstance(ezXClassLoader).returnType.name
-        } ?: throw NoSuchMethodError()
+        val customMapInnerGetMethod = MethodFinder.fromClass(customMapInnerClass)
+            .filter { returnType.name == customMapInitMethodDescriptor.declaringClassName }.first()
+        val customMapInnerAddMethod = MethodFinder.fromClass(customMapInnerClass)
+            .filter { returnType.name == customMapInitMethodDescriptor.getMethodInstance(EzXHelper.classLoader).returnType.name }
+            .first()
 
-        val bottomTabClass = ezXClassLoader.getAllClassesList().firstOrNull {
+        val bottomTabClass = EzXHelper.classLoader.getAllClassesList().firstOrNull {
             try {
                 val clazz = loadClassOrNull(it) ?: return@firstOrNull false
                 clazz.constructors.size == 1 && clazz.constructors[0].parameterTypes.size == 3 && clazz.constructors[0].parameterTypes[2] == Map::class.java && clazz.declaredFields.size == 3 && clazz.declaredFields.filter { f -> f.type == Map::class.java }.size == 1 && clazz.declaredMethods.size == 1 && clazz.interfaces.isEmpty()

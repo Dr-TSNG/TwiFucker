@@ -1,6 +1,10 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonTimelineTweetHook : BaseHook() {
@@ -16,29 +20,29 @@ object JsonTimelineTweetHook : BaseHook() {
             loadClass("com.twitter.model.json.timeline.urt.JsonTimelineTweet\$\$JsonObjectMapper")
 
         val jsonTweetResultsClass =
-            loadClass("com.twitter.model.json.core.JsonTweetResults").declaredFields.firstOrNull()?.type
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(loadClass("com.twitter.model.json.core.JsonTweetResults"))
+                .first().type
         val jsonTweetResultsField =
-            jsonTimelineTweetClass.declaredFields.firstOrNull { it.type == jsonTweetResultsClass }
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(jsonTimelineTweetClass).filterByType(jsonTweetResultsClass)
+                .first()
         val jsonTweetIdField =
-            jsonTimelineTweetClass.declaredFields.firstOrNull { it.type == String::class.java }
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(jsonTimelineTweetClass).filterByType(String::class.java).first()
 
         val jsonPromotedContentUrtClass =
             loadClass("com.twitter.model.json.timeline.urt.JsonPromotedContentUrt")
         val jsonPromotedContentUrtField =
-            jsonTimelineTweetClass.declaredFields.firstOrNull { it.type == jsonPromotedContentUrtClass }
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(jsonTimelineTweetClass).filterByType(jsonPromotedContentUrtClass)
+                .first()
 
-        findMethod(jsonTimelineTweetMapperClass) {
-            name == "_parse" && returnType == jsonTimelineTweetClass
-        }.hookAfter { param ->
-            param.result ?: return@hookAfter
-            jsonPromotedContentUrtField.get(param.result) ?: return@hookAfter
-            jsonTweetResultsField.set(param.result, null)
-            jsonTweetIdField.set(param.result, null) // saved search timeline
-            Log.d("Removed promoted timeline tweet")
-        }
+        MethodFinder.fromClass(jsonTimelineTweetMapperClass).filterByName("_parse")
+            .filterByReturnType(jsonTimelineTweetClass).first().createHook {
+                after { param ->
+                    param.result ?: return@after
+                    jsonPromotedContentUrtField.get(param.result) ?: return@after
+                    jsonTweetResultsField.set(param.result, null)
+                    jsonTweetIdField.set(param.result, null) // saved search timeline
+                    Log.d("Removed promoted timeline tweet")
+                }
+            }
     }
 }

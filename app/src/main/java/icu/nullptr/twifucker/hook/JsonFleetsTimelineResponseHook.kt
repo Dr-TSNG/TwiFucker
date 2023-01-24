@@ -1,6 +1,10 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonFleetsTimelineResponseHook : BaseHook() {
@@ -15,16 +19,16 @@ object JsonFleetsTimelineResponseHook : BaseHook() {
         val jsonFleetsTimelineResponseMapperClass =
             loadClass("com.twitter.fleets.api.json.JsonFleetsTimelineResponse\$\$JsonObjectMapper")
 
-        val threadsField =
-            jsonFleetsTimelineResponseClass.declaredFields.firstOrNull { it.type == ArrayList::class.java }
-                ?: throw NoSuchFieldException()
+        val threadsField = FieldFinder.fromClass(jsonFleetsTimelineResponseClass)
+            .filterByType(ArrayList::class.java).first()
 
-        findMethod(jsonFleetsTimelineResponseMapperClass) {
-            name == "_parse" && returnType == jsonFleetsTimelineResponseClass
-        }.hookAfter {
-            it.result ?: return@hookAfter
-            threadsField.set(it.result, null)
-            Log.d("Removed threads")
-        }
+        MethodFinder.fromClass(jsonFleetsTimelineResponseMapperClass).filterByName("_parse")
+            .filterByReturnType(jsonFleetsTimelineResponseClass).first().createHook {
+                after { param ->
+                    param.result ?: return@after
+                    threadsField.set(param.result, null)
+                    Log.d("Removed threads")
+                }
+            }
     }
 }

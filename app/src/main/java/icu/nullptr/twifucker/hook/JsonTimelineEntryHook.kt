@@ -1,9 +1,10 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookAfter
-import com.github.kyuubiran.ezxhelper.utils.loadClass
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import icu.nullptr.twifucker.isEntryNeedsRemove
 
 object JsonTimelineEntryHook : BaseHook() {
@@ -17,20 +18,20 @@ object JsonTimelineEntryHook : BaseHook() {
             loadClass("com.twitter.model.json.timeline.urt.JsonTimelineEntry\$\$JsonObjectMapper")
 
         val entryIdField =
-            jsonTimelineEntryClass.declaredFields.firstOrNull { it.type == String::class.java }
-                ?: throw NoSuchFieldError()
-        val contentField = jsonTimelineEntryClass.declaredFields.firstOrNull { it.type.isInterface }
-            ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(jsonTimelineEntryClass).filterByType(String::class.java).first()
+        val contentField =
+            FieldFinder.fromClass(jsonTimelineEntryClass).filter { type.isInterface }.first()
 
-        findMethod(jsonTimelineEntryMapperClass) {
-            name == "_parse" && returnType == jsonTimelineEntryClass
-        }.hookAfter { param ->
-            param.result ?: return@hookAfter
-            val entryId = entryIdField.get(param.result) as String
-            if (isEntryNeedsRemove(entryId)) {
-                contentField.set(param.result, null)
-                Log.d("Remove timeline entry item: $entryId")
+        MethodFinder.fromClass(jsonTimelineEntryMapperClass).filterByName("_parse")
+            .filterByReturnType(jsonTimelineEntryClass).first().createHook {
+                after { param ->
+                    param.result ?: return@after
+                    val entryId = entryIdField.get(param.result) as String
+                    if (isEntryNeedsRemove(entryId)) {
+                        contentField.set(param.result, null)
+                        Log.d("Remove timeline entry item: $entryId")
+                    }
+                }
             }
-        }
     }
 }

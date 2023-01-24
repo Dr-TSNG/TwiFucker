@@ -1,0 +1,3 @@
+[submodule "EzXHelper"]
+	path = EzXHelper
+	url = git@github.com:KyuubiRan/EzXHelper.git

@@ -4,15 +4,27 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.init.InitFields.ezXClassLoader
-import com.github.kyuubiran.ezxhelper.utils.*
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClassOrNull
+import com.github.kyuubiran.ezxhelper.EzXHelper
+import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
+import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.MemberExtensions.isNotFinal
+import com.github.kyuubiran.ezxhelper.MemberExtensions.isNotStatic
+import com.github.kyuubiran.ezxhelper.MemberExtensions.isPublic
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import com.github.kyuubiran.ezxhelper.misc.Utils.getAllClassesList
+import de.robv.android.xposed.XposedHelpers
 import icu.nullptr.twifucker.*
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
 import icu.nullptr.twifucker.ui.DownloadDialog
+import java.lang.reflect.Modifier
 
 
 object DownloadHook : BaseHook() {
@@ -109,148 +121,180 @@ object DownloadHook : BaseHook() {
         // normal tweet
         shareTweetOnClickListenerClassName.let { className ->
             if (className.isEmpty()) return@let
-            findMethod(className) { name == "onClick" }.hookBefore {
-                if (downloadUrls.isEmpty()) return@hookBefore
-                val actionItemViewData =
-                    it.thisObject.getObjectOrNull(shareTweetItemAdapterFieldName)
-                        ?.getObjectOrNull(actionItemViewDataFieldName)
-                // a - actionType
-                // b - title
-                // c - iconRes
-                appContext.addModuleAssetPath()
-                if (actionItemViewData?.getObjectOrNull("b") != appContext.getString(R.string.download_or_copy)) return@hookBefore
 
-                try {
-                    currentActivity.get()?.let { act ->
-                        DownloadDialog(act, downloadUrls) {
-                            downloadUrls = listOf()
-                        }.show()
-                    }
-                } catch (t: Throwable) {
-                    Log.e(t)
-                }
-            }
-        }
+            MethodFinder.fromClass(loadClass(className)).filterByName("onClick").first()
+                .createHook {
+                    before { param ->
+                        if (downloadUrls.isEmpty()) return@before
+                        val actionItemViewData = XposedHelpers.getObjectField(
+                            XposedHelpers.getObjectField(
+                                param.thisObject, shareTweetItemAdapterFieldName
+                            ), actionItemViewDataFieldName
+                        )
+                        // a - actionType
+                        // b - title
+                        // c - iconRes
+                        addModuleAssetPath(appContext)
+                        if (XposedHelpers.getObjectField(
+                                actionItemViewData, "b"
+                            ) != appContext.getString(R.string.download_or_copy)
+                        ) return@before
 
-        // protected tweet
-        findMethod(protectedShareTweetItemAdapterClassName) { name == "onClick" }.hookBefore {
-            if (downloadUrls.isEmpty()) return@hookBefore
-            val protectedShareTweetItemAdapterTitleTextView =
-                it.thisObject.getObjectOrNull(protectedShareTweetItemAdapterClassTitleFieldName) as TextView
-            appContext.addModuleAssetPath()
-            if (protectedShareTweetItemAdapterTitleTextView.text != appContext.getString(R.string.download_or_copy)) return@hookBefore
-
-            try {
-                currentActivity.get()?.let { act ->
-                    DownloadDialog(act, downloadUrls) {
-                        downloadUrls = listOf()
-                    }.show()
-                }
-            } catch (t: Throwable) {
-                Log.e(t)
-            }
-        }
-
-        findMethod(tweetShareClassName) { name == tweetShareShowMethodName }.hookBefore {
-            val shareList = it.thisObject.getObjectAs<List<*>>(tweetShareShareListFieldName)
-
-            val mutList = shareList.toMutableList()
-
-            val actionEnumWrappedClass = loadClass(actionEnumWrappedInnerClassName)
-            val actionEnumClass = loadClass(actionEnumClassName)
-            val actionSheetItemClass = loadClass(actionSheetItemClassName)
-            val actionEnumWrapped = actionEnumWrappedClass.newInstance(
-                args(
-                    actionEnumClass.invokeStaticMethod(
-                        "valueOf", args("None"), argTypes(String::class.java)
-                    ), ""
-                ), argTypes(actionEnumClass, String::class.java)
-            )
-            // drawableRes, actionId, title
-            appContext.addModuleAssetPath()
-            actionEnumWrapped?.putObject(
-                actionSheetItemFieldName, actionSheetItemClass.newInstance(
-                    args(
-                        getId("ic_vector_incoming", "drawable"),
-                        0,
-                        appContext.getString(R.string.download_or_copy)
-                    ), argTypes(Int::class.java, Int::class.java, String::class.java)
-                )
-            )
-
-            mutList.add(
-                loadClass(actionEnumWrappedClassName).newInstance(
-                    args(actionEnumWrapped), argTypes(actionEnumWrappedClass)
-                )
-            )
-
-            it.thisObject.putObject(tweetShareShareListFieldName, mutList.toList())
-        }
-
-        // share menu
-        findMethod(shareMenuClassName) {
-            name == shareMenuMethodName
-        }.hookBefore { param ->
-            val event = param.args[1]
-            // share_menu_click
-            // share_menu_cancel
-            if (event == "share_menu_cancel") {
-                downloadUrls = listOf()
-                return@hookBefore
-            }
-            if (event != "share_menu_click") return@hookBefore
-            val tweetResult = param.args[2]
-            val media =
-                tweetResult?.getObjectOrNull(tweetResultFieldName)?.getObjectOrNull(resultFieldName)
-                    ?.getObjectOrNull(legacyFieldName)?.getObjectOrNull(extendedEntitiesFieldName)
-                    ?.getObjectOrNull(mediaFieldName) as List<*>
-            val urls = arrayListOf<String>()
-            media.forEach { m ->
-                when (m?.getObjectOrNull(mediaTypeFieldName).toString()) {
-                    "IMAGE" -> {
-                        val mediaUrlHttps = m?.getObjectOrNull(mediaUrlHttpsFieldName) as String
-                        urls.add(genOrigUrl(mediaUrlHttps))
-                    }
-                    "VIDEO", "ANIMATED_GIF" -> {
-                        val variants = m?.getObjectOrNull(mediaInfoFieldName)
-                            ?.getObjectOrNull(variantsFieldName) as List<*>
-                        // a - bitrate
-                        // b - url
-                        // c - contentType
-                        variants.sortedByDescending { v ->
-                            v?.getObjectOrNull("a") as Int
-                        }[0]?.let {
-                            val url = it.getObjectOrNull("b") as String
-                            urls.add(clearUrlQueries(url))
+                        try {
+                            currentActivity.get()?.let { act ->
+                                DownloadDialog(act, downloadUrls) {
+                                    downloadUrls = listOf()
+                                }.show()
+                            }
+                        } catch (t: Throwable) {
+                            Log.e(t)
                         }
                     }
                 }
-            }
-            downloadUrls = urls
         }
+
+        // protected tweet
+        MethodFinder.fromClass(loadClass(protectedShareTweetItemAdapterClassName))
+            .filterByName("onClick").first().createHook {
+                before { param ->
+                    if (downloadUrls.isEmpty()) return@before
+
+                    val protectedShareTweetItemAdapterTitleTextView = XposedHelpers.getObjectField(
+                        param.thisObject, protectedShareTweetItemAdapterClassTitleFieldName
+                    ) as TextView
+                    addModuleAssetPath(appContext)
+                    if (protectedShareTweetItemAdapterTitleTextView.text != appContext.getString(R.string.download_or_copy)) return@before
+
+                    try {
+                        currentActivity.get()?.let { act ->
+                            DownloadDialog(act, downloadUrls) {
+                                downloadUrls = listOf()
+                            }.show()
+                        }
+                    } catch (t: Throwable) {
+                        Log.e(t)
+                    }
+                }
+            }
+
+        MethodFinder.fromClass(loadClass(tweetShareClassName))
+            .filterByName(tweetShareShowMethodName).first().createHook {
+                before { param ->
+                    val shareList = XposedHelpers.getObjectField(
+                        param.thisObject, tweetShareShareListFieldName
+                    ) as List<*>
+
+                    val mutList = shareList.toMutableList()
+
+                    val actionEnumWrappedClass = loadClass(actionEnumWrappedInnerClassName)
+                    val actionEnumClass = loadClass(actionEnumClassName)
+                    val actionSheetItemClass = loadClass(actionSheetItemClassName)
+
+                    val actionEnumWrapped = XposedHelpers.newInstance(
+                        actionEnumWrappedClass,
+                        XposedHelpers.callStaticMethod(actionEnumClass, "valueOf", "None"),
+                        ""
+                    )
+                    // drawableRes, actionId, title
+                    addModuleAssetPath(appContext)
+                    XposedHelpers.setObjectField(
+                        actionEnumWrapped, actionSheetItemFieldName,
+                        XposedHelpers.newInstance(
+                            actionSheetItemClass,
+                            getId("ic_vector_incoming", "drawable"),
+                            0,
+                            appContext.getString(R.string.download_or_copy)
+                        ),
+                    )
+
+                    mutList.add(
+                        XposedHelpers.newInstance(
+                            loadClass(actionEnumWrappedClassName), actionEnumWrapped
+                        )
+                    )
+
+                    XposedHelpers.setObjectField(
+                        param.thisObject, tweetShareShareListFieldName, mutList.toList()
+                    )
+                }
+            }
+
+        // share menu
+        MethodFinder.fromClass(loadClass(shareMenuClassName)).filterByName(shareMenuMethodName)
+            .first().createHook {
+                before { param ->
+                    val event = param.args[1]
+                    // share_menu_click
+                    // share_menu_cancel
+                    if (event == "share_menu_cancel") {
+                        downloadUrls = listOf()
+                        return@before
+                    }
+                    if (event != "share_menu_click") return@before
+                    val tweetResults = param.args[2]
+
+                    val tweetResult =
+                        XposedHelpers.getObjectField(tweetResults, tweetResultFieldName)
+                    val result = XposedHelpers.getObjectField(tweetResult, resultFieldName)
+                    val legacy = XposedHelpers.getObjectField(result, legacyFieldName)
+                    val extendedEntities =
+                        XposedHelpers.getObjectField(legacy, extendedEntitiesFieldName)
+                    val media =
+                        XposedHelpers.getObjectField(extendedEntities, mediaFieldName) as List<*>
+
+                    val urls = arrayListOf<String>()
+                    media.forEach { m ->
+                        val mediaType = XposedHelpers.getObjectField(m, mediaTypeFieldName)
+                        when (mediaType.toString()) {
+                            "IMAGE" -> {
+                                val mediaUrlHttps = XposedHelpers.getObjectField(
+                                    m, mediaUrlHttpsFieldName
+                                ) as String
+                                urls.add(genOrigUrl(mediaUrlHttps))
+                            }
+                            "VIDEO", "ANIMATED_GIF" -> {
+                                val mediaInfo = XposedHelpers.getObjectField(m, mediaInfoFieldName)
+                                val variants = XposedHelpers.getObjectField(
+                                    mediaInfo, variantsFieldName
+                                ) as List<*>
+                                // a - bitrate
+                                // b - url
+                                // c - contentType
+                                variants.sortedByDescending { v ->
+                                    XposedHelpers.getObjectField(v, "a") as Int
+                                }[0]?.let {
+                                    val url = XposedHelpers.getObjectField(it, "b") as String
+                                    urls.add(clearUrlQueries(url))
+                                }
+                            }
+                        }
+                    }
+                    downloadUrls = urls
+                }
+            }
     }
 
     private fun loadCachedHookInfo() {
         // tweet share download button
-        tweetShareClassName = modulePrefs.getString(HOOK_TWEET_SHARE_CLASS, null)
-            ?: throw CachedHookNotFound()
-        tweetShareShowMethodName = modulePrefs.getString(HOOK_TWEET_SHARE_SHOW_METHOD, null)
-            ?: throw CachedHookNotFound()
-        tweetShareShareListFieldName = modulePrefs.getString(HOOK_TWEET_SHARE_LIST_FIELD, null)
-            ?: throw CachedHookNotFound()
+        tweetShareClassName =
+            modulePrefs.getString(HOOK_TWEET_SHARE_CLASS, null) ?: throw CachedHookNotFound()
+        tweetShareShowMethodName =
+            modulePrefs.getString(HOOK_TWEET_SHARE_SHOW_METHOD, null) ?: throw CachedHookNotFound()
+        tweetShareShareListFieldName =
+            modulePrefs.getString(HOOK_TWEET_SHARE_LIST_FIELD, null) ?: throw CachedHookNotFound()
 
         actionEnumWrappedClassName = modulePrefs.getString(HOOK_ACTION_ENUM_WRAPPED_CLASS, null)
             ?: throw CachedHookNotFound()
         actionEnumWrappedInnerClassName =
             modulePrefs.getString(HOOK_ACTION_ENUM_WRAPPED_INNER_CLASS, null)
                 ?: throw CachedHookNotFound()
-        actionEnumClassName = modulePrefs.getString(HOOK_ACTION_ENUM_CLASS, null)
-            ?: throw CachedHookNotFound()
+        actionEnumClassName =
+            modulePrefs.getString(HOOK_ACTION_ENUM_CLASS, null) ?: throw CachedHookNotFound()
 
-        actionSheetItemClassName = modulePrefs.getString(HOOK_ACTION_SHEET_ITEM_CLASS, null)
-            ?: throw CachedHookNotFound()
-        actionSheetItemFieldName = modulePrefs.getString(HOOK_ACTION_SHEET_ITEM_FIELD, null)
-            ?: throw CachedHookNotFound()
+        actionSheetItemClassName =
+            modulePrefs.getString(HOOK_ACTION_SHEET_ITEM_CLASS, null) ?: throw CachedHookNotFound()
+        actionSheetItemFieldName =
+            modulePrefs.getString(HOOK_ACTION_SHEET_ITEM_FIELD, null) ?: throw CachedHookNotFound()
 
         // tweet share onClick
         shareTweetOnClickListenerClassName =
@@ -259,9 +303,8 @@ object DownloadHook : BaseHook() {
         shareTweetItemAdapterFieldName =
             modulePrefs.getString(HOOK_SHARE_TWEET_ITEM_ADAPTER_FIELD, null)
                 ?: throw CachedHookNotFound()
-        actionItemViewDataFieldName =
-            modulePrefs.getString(HOOK_ACTION_ITEM_VIEW_DATA_FIELD, null)
-                ?: throw CachedHookNotFound()
+        actionItemViewDataFieldName = modulePrefs.getString(HOOK_ACTION_ITEM_VIEW_DATA_FIELD, null)
+            ?: throw CachedHookNotFound()
 
         // protected tweet share onClick
         protectedShareTweetItemAdapterClassName =
@@ -272,30 +315,29 @@ object DownloadHook : BaseHook() {
                 ?: throw CachedHookNotFound()
 
         // share menu
-        shareMenuClassName = modulePrefs.getString(HOOK_SHARE_MENU_CLASS, null)
-            ?: throw CachedHookNotFound()
-        shareMenuMethodName = modulePrefs.getString(HOOK_SHARE_MENU_METHOD, null)
-            ?: throw CachedHookNotFound()
+        shareMenuClassName =
+            modulePrefs.getString(HOOK_SHARE_MENU_CLASS, null) ?: throw CachedHookNotFound()
+        shareMenuMethodName =
+            modulePrefs.getString(HOOK_SHARE_MENU_METHOD, null) ?: throw CachedHookNotFound()
 
         // tweet object
-        tweetResultFieldName = modulePrefs.getString(HOOK_TWEET_RESULT_FIELD, null)
-            ?: throw CachedHookNotFound()
-        resultFieldName = modulePrefs.getString(HOOK_RESULT_FIELD, null)
-            ?: throw CachedHookNotFound()
-        legacyFieldName = modulePrefs.getString(HOOK_LEGACY_FIELD, null)
-            ?: throw CachedHookNotFound()
-        extendedEntitiesFieldName = modulePrefs.getString(HOOK_EXTENDED_ENTITIES_FIELD, null)
-            ?: throw CachedHookNotFound()
-        mediaFieldName = modulePrefs.getString(HOOK_MEDIA_FIELD, null)
-            ?: throw CachedHookNotFound()
-        mediaTypeFieldName = modulePrefs.getString(HOOK_MEDIA_TYPE_FIELD, null)
-            ?: throw CachedHookNotFound()
-        mediaUrlHttpsFieldName = modulePrefs.getString(HOOK_MEDIA_URL_HTTPS_FIELD, null)
-            ?: throw CachedHookNotFound()
-        mediaInfoFieldName = modulePrefs.getString(HOOK_MEDIA_INFO_FIELD, null)
-            ?: throw CachedHookNotFound()
-        variantsFieldName = modulePrefs.getString(HOOK_VARIANTS_FIELD, null)
-            ?: throw CachedHookNotFound()
+        tweetResultFieldName =
+            modulePrefs.getString(HOOK_TWEET_RESULT_FIELD, null) ?: throw CachedHookNotFound()
+        resultFieldName =
+            modulePrefs.getString(HOOK_RESULT_FIELD, null) ?: throw CachedHookNotFound()
+        legacyFieldName =
+            modulePrefs.getString(HOOK_LEGACY_FIELD, null) ?: throw CachedHookNotFound()
+        extendedEntitiesFieldName =
+            modulePrefs.getString(HOOK_EXTENDED_ENTITIES_FIELD, null) ?: throw CachedHookNotFound()
+        mediaFieldName = modulePrefs.getString(HOOK_MEDIA_FIELD, null) ?: throw CachedHookNotFound()
+        mediaTypeFieldName =
+            modulePrefs.getString(HOOK_MEDIA_TYPE_FIELD, null) ?: throw CachedHookNotFound()
+        mediaUrlHttpsFieldName =
+            modulePrefs.getString(HOOK_MEDIA_URL_HTTPS_FIELD, null) ?: throw CachedHookNotFound()
+        mediaInfoFieldName =
+            modulePrefs.getString(HOOK_MEDIA_INFO_FIELD, null) ?: throw CachedHookNotFound()
+        variantsFieldName =
+            modulePrefs.getString(HOOK_VARIANTS_FIELD, null) ?: throw CachedHookNotFound()
     }
 
     private fun saveHookInfo() {
@@ -351,21 +393,22 @@ object DownloadHook : BaseHook() {
         val tweetShareClass = dexKit.findMethodUsingString {
             usingString = "^timeline_selected_caret_position$"
         }.map {
-            it.getMethodInstance(ezXClassLoader)
+            it.getMethodInstance(EzXHelper.classLoader)
         }
             .firstOrNull { it.parameterTypes.size == 2 && it.parameterTypes[1] == Bundle::class.java }?.declaringClass
             ?: throw ClassNotFoundException()
 
-        val tweetShareShowMethod =
-            tweetShareClass.declaredMethods.firstOrNull { m -> m.isPublic && m.isFinal && m.parameterTypes.size == 1 && m.returnType == Void.TYPE }
-                ?: throw NoSuchMethodError()
-        val tweetShareShareListField =
-            tweetShareClass.declaredFields.firstOrNull { f -> f.isPublic && f.isFinal && f.type == List::class.java }
-                ?: throw NoSuchFieldError()
+        val tweetShareShowMethod = MethodFinder.fromClass(tweetShareClass)
+            .filterByModifiers { Modifier.isPublic(it) && Modifier.isFinal(it) }
+            .filterByParamCount(1).filterByReturnType(Void.TYPE).first()
+        val tweetShareShareListField = FieldFinder.fromClass(tweetShareClass)
+            .filterByModifiers { Modifier.isPublic(it) && Modifier.isFinal(it) }
+            .filterByType(List::class.java).first()
 
-        val actionEnumWrappedClassRefMethod =
-            tweetShareClass.declaredMethods.firstOrNull { m -> m.isPublic && m.isFinal && m.parameterTypes.size == 4 && m.parameterTypes[1] == String::class.java && m.parameterTypes[2] == Boolean::class.java && m.parameterTypes[3] == String::class.java }
-                ?: throw NoSuchMethodError()
+        val actionEnumWrappedClassRefMethod = MethodFinder.fromClass(tweetShareClass)
+            .filterByModifiers { Modifier.isPublic(it) && Modifier.isFinal(it) }
+            .filterByParamTypes { it.size == 4 && it[1] == String::class.java && it[2] == Boolean::class.java && it[3] == String::class.java }
+            .first()
         val actionEnumWrappedClass = actionEnumWrappedClassRefMethod.returnType
         val actionEnumWrappedInnerClass = actionEnumWrappedClass.constructors[0].parameterTypes[0]
         val actionEnumClass = actionEnumWrappedClassRefMethod.parameterTypes[0]
@@ -374,11 +417,11 @@ object DownloadHook : BaseHook() {
             usingString = "^ActionSheetItem(drawableRes=$"
             methodName = "toString"
             methodReturnType = String::class.java.name
-        }.firstOrNull()?.getMethodInstance(ezXClassLoader)?.declaringClass
+        }.firstOrNull()?.getMethodInstance(EzXHelper.classLoader)?.declaringClass
             ?: throw ClassNotFoundException()
         val actionSheetItemField =
-            actionEnumWrappedInnerClass.declaredFields.firstOrNull { f -> f.type == actionSheetItemClass }
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(actionEnumWrappedInnerClass).filterByType(actionSheetItemClass)
+                .first()
 
         tweetShareClassName = tweetShareClass.name
         tweetShareShowMethodName = tweetShareShowMethod.name
@@ -401,34 +444,33 @@ object DownloadHook : BaseHook() {
                     methodDescriptor = methodDesc.descriptor
                     beInvokedMethodName = "<init>"
                     beInvokedMethodParameterTypes = arrayOf(
-                        Object::class.java.name,
-                        Object::class.java.name,
-                        Int::class.java.name
+                        Object::class.java.name, Object::class.java.name, Int::class.java.name
                     )
                 }
                 result.values.firstOrNull()
             }?.firstOrNull()
 
         val shareTweetOnClickListenerClass =
-            shareTweetOnClickListenerConstructorDesc?.getConstructorInstance(ezXClassLoader)?.declaringClass
+            shareTweetOnClickListenerConstructorDesc?.getConstructorInstance(EzXHelper.classLoader)?.declaringClass
                 ?: throw ClassNotFoundException()
         val shareTweetItemAdapterField =
-            shareTweetOnClickListenerClass.declaredFields.lastOrNull() ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(shareTweetOnClickListenerClass).last()
 
         val shareTweetItemAdapterClass = dexKit.findMethodUsingString {
             usingString = "^itemView.findViewById(R.id.action_sheet_item_icon)$"
             methodName = "<init>"
             methodReturnType = Void.TYPE.name
         }.map {
-            it.getConstructorInstance(ezXClassLoader).declaringClass
+            it.getConstructorInstance(EzXHelper.classLoader).declaringClass
         }.firstOrNull {
             it?.declaredFields?.any { f ->
                 f.isPublic && f.isNotStatic && f.isNotFinal
             } == true
         } ?: throw ClassNotFoundException()
-        val actionItemViewDataField =
-            shareTweetItemAdapterClass.declaredFields.firstOrNull { f -> f.isPublic && f.isNotStatic && f.isNotFinal }
-                ?: throw NoSuchFieldError()
+        val actionItemViewDataField = FieldFinder.fromClass(shareTweetItemAdapterClass)
+            .filterByModifiers {
+                Modifier.isPublic(it) && !Modifier.isStatic(it) && !Modifier.isFinal(it)
+            }.first()
 
         shareTweetOnClickListenerClassName = shareTweetOnClickListenerClass.name
         shareTweetItemAdapterFieldName = shareTweetItemAdapterField.name
@@ -439,21 +481,21 @@ object DownloadHook : BaseHook() {
             usingString = "^bceHierarchyContext$"
             methodReturnType = Void.TYPE.name
         }.firstOrNull {
-            val clazz = it.getMethodInstance(ezXClassLoader).declaringClass
+            val clazz = it.getMethodInstance(EzXHelper.classLoader).declaringClass
             clazz?.declaredFields?.any { f -> f.type == View::class.java } ?: false
         } ?: throw NoSuchMethodError()
         val refClass = dexKit.findMethodInvoking {
             methodDescriptor = refMethodDescriptor.descriptor
             beInvokedMethodName = "<init>"
         }.firstNotNullOfOrNull {
-            it.value.firstOrNull()?.getConstructorInstance(ezXClassLoader)?.declaringClass
+            it.value.firstOrNull()?.getConstructorInstance(EzXHelper.classLoader)?.declaringClass
         } ?: throw ClassNotFoundException()
         val protectedShareTweetItemAdapterClass =
-            refClass.declaredMethods.firstOrNull { m -> m.isPublic && m.parameterTypes.size == 2 && m.parameterTypes[0] == ViewGroup::class.java && m.parameterTypes[1] == Int::class.java }?.returnType
-                ?: throw ClassNotFoundException()
+            MethodFinder.fromClass(refClass).filterByModifiers { Modifier.isPublic(it) }
+                .filterByParamTypes(ViewGroup::class.java, Int::class.java).first().returnType
         val protectedShareTweetItemAdapterClassTitleField =
-            protectedShareTweetItemAdapterClass.declaredFields.firstOrNull { f -> f.type == TextView::class.java }
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(protectedShareTweetItemAdapterClass)
+                .filterByType(TextView::class.java).first()
 
         // protected tweet share onClick
         protectedShareTweetItemAdapterClassName = protectedShareTweetItemAdapterClass.name
@@ -461,7 +503,7 @@ object DownloadHook : BaseHook() {
             protectedShareTweetItemAdapterClassTitleField.name
 
         // share menu
-        val shareMenuClass = ezXClassLoader.getAllClassesList().filter {
+        val shareMenuClass = EzXHelper.classLoader.getAllClassesList().filter {
             val clazz = loadClassOrNull(it) ?: return@filter false
             try {
                 return@filter (clazz.constructors.any { c ->
@@ -473,12 +515,13 @@ object DownloadHook : BaseHook() {
                 return@filter false
             }
         }.firstOrNull()?.let { loadClass(it) } ?: throw ClassNotFoundException()
-        val shareMenuMethod = shareMenuClass.declaredMethods.firstOrNull { m ->
-            m.returnType == Void.TYPE && m.parameterTypes.size == 4 && m.parameterTypes[0] == String::class.java && m.parameterTypes[1] == String::class.java
-        } ?: throw NoSuchMethodError()
-        val tweetResultField = shareMenuMethod.parameterTypes[2].declaredFields.firstOrNull { f ->
-            f.isPublic && f.isFinal && f.type.declaredFields.any { it.type == loadClass("com.twitter.model.vibe.Vibe") }
-        } ?: throw NoSuchFieldError()
+        val shareMenuMethod = MethodFinder.fromClass(shareMenuClass).filterByReturnType(Void.TYPE)
+            .filterByParamTypes { it.size == 4 && it[0] == String::class.java && it[1] == String::class.java }
+            .first()
+        val tweetResultField = FieldFinder.fromClass(shareMenuMethod.parameterTypes[2])
+            .filterByModifiers { Modifier.isPublic(it) && Modifier.isFinal(it) }.filter {
+            type.declaredFields.any { it.type == loadClass("com.twitter.model.vibe.Vibe") }
+        }.first()
         val resultField = tweetResultField.type.declaredFields.groupBy { it.type }
             .filter { it.value.size == 2 && it.key.declaredFields.size == 3 }.map { it.value[1] }[0]
             ?: throw NoSuchFieldError()
@@ -488,29 +531,26 @@ object DownloadHook : BaseHook() {
         val extendedEntitiesField =
             legacyField.type.declaredFields.filter { it.isNotStatic }.maxByOrNull { it.name }
                 ?: throw NoSuchFieldError()
-        val mediaField =
-            extendedEntitiesField.type.superclass.declaredFields.firstOrNull { it.type == List::class.java }
-                ?: throw NoSuchFieldError()
+        val mediaField = FieldFinder.fromClass(extendedEntitiesField.type.superclass)
+            .filterByType(List::class.java).first()
 
         val mediaTypeEnumClass = dexKit.findMethodUsingString {
             usingString = "^MODEL3D$"
             methodName = "<clinit>"
             methodReturnType = Void.TYPE.name
-        }.firstOrNull()?.let { loadClass(it.declaringClassName) }
-            ?: throw ClassNotFoundException()
+        }.firstOrNull()?.let { loadClass(it.declaringClassName) } ?: throw ClassNotFoundException()
         val perMediaClass = loadClass(mediaTypeEnumClass.name.split("$")[0])
         val mediaTypeField =
             perMediaClass.declaredFields.firstOrNull { it.type == mediaTypeEnumClass }
                 ?: throw NoSuchFieldError()
         val mediaUrlHttpsField =
-            perMediaClass.declaredFields.firstOrNull { it.isNotStatic && it.type == String::class.java }
-                ?: throw NoSuchFieldError()
-        val mediaInfoField = perMediaClass.declaredFields.firstOrNull { f ->
-            f.type.declaredFields.size == 4 && f.type.declaredFields.filter { f2 -> f2.type == Float::class.java }.size == 2 && f.type.declaredFields.filter { f2 -> f2.type == List::class.java }.size == 1
-        } ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(perMediaClass).filterByModifiers { !Modifier.isStatic(it) }
+                .filterByType(String::class.java).first()
+        val mediaInfoField = FieldFinder.fromClass(perMediaClass).filter {
+            type.declaredFields.size == 4 && type.declaredFields.filter { f2 -> f2.type == Float::class.java }.size == 2 && type.declaredFields.filter { f2 -> f2.type == List::class.java }.size == 1
+        }.first()
         val variantsField =
-            mediaInfoField.type?.declaredFields?.firstOrNull { it.type == List::class.java }
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(mediaInfoField.type).filterByType(List::class.java).first()
 
         shareMenuClassName = shareMenuClass.name
         shareMenuMethodName = shareMenuMethod.name

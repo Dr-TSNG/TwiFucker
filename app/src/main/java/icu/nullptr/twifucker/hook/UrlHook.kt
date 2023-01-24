@@ -5,50 +5,63 @@ import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.findAllMethods
-import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookBefore
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 
 object UrlHook : BaseHook() {
     override val name: String
         get() = "UrlHook"
 
     override fun init() {
-        findAllMethods(Intent::class.java) { name == "replaceExtras" }.hookBefore { param ->
-            val bundle = param.args[0] as Bundle
-            val extraText = bundle.getString(Intent.EXTRA_TEXT)
-            if (extraText != null && extraText.isTwitterUrl()) {
-                val newExtraText = clearExtraParams(extraText)
-                bundle.putString(Intent.EXTRA_TEXT, newExtraText)
+        MethodFinder.fromClass(Intent::class.java).filterByName("replaceExtras").first()
+            .createHook {
+                before { param ->
+                    val bundle = param.args[0] as Bundle
+                    val extraText = bundle.getString(Intent.EXTRA_TEXT) ?: return@before
+                    if (extraText.isTwitterUrl()) {
+                        val newExtraText = clearExtraParams(extraText)
+                        bundle.putString(Intent.EXTRA_TEXT, newExtraText)
+                    }
+                }
             }
-        }
-        findAllMethods(Intent::class.java) { name == "createChooser" }.hookBefore { param ->
-            val intent = param.args[0] as Intent
-            val extraText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: return@hookBefore
-            if (!extraText.isTwitterUrl()) {
-                return@hookBefore
+
+        MethodFinder.fromClass(Intent::class.java).filterByName("createChooser").first()
+            .createHook {
+                before { param ->
+                    val intent = param.args[0] as Intent
+                    val extraText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: return@before
+                    if (!extraText.isTwitterUrl()) {
+                        return@before
+                    }
+                    intent.putExtra(Intent.EXTRA_TEXT, clearExtraParams(extraText))
+                }
             }
-            intent.putExtra(Intent.EXTRA_TEXT, clearExtraParams(extraText))
-        }
-        findAllMethods(ClipData::class.java) { name == "newPlainText" }.hookBefore { param ->
-            val text = (param.args[1] as CharSequence).toString()
-            if (!text.isTwitterUrl()) {
-                return@hookBefore
+
+        MethodFinder.fromClass(ClipData::class.java).filterByName("newPlainText").first()
+            .createHook {
+                before { param ->
+                    val text = (param.args[1] as CharSequence).toString()
+                    if (!text.isTwitterUrl()) {
+                        return@before
+                    }
+                    param.args[1] = clearExtraParams(text)
+                }
             }
-            param.args[1] = clearExtraParams(text)
-        }
-        findMethod("com.twitter.deeplink.implementation.UrlInterpreterActivity") {
-            name == "onCreate"
-        }.hookBefore { param ->
-            val intent = (param.thisObject as Activity).intent
-            val url = intent.data.toString()
-            if (!url.isTwitterUrl()) {
-                return@hookBefore
+
+        MethodFinder.fromClass(loadClass("com.twitter.deeplink.implementation.UrlInterpreterActivity"))
+            .filterByName("onCreate").first().createHook {
+                before { param ->
+                    val intent = (param.thisObject as Activity).intent
+                    val url = intent.data.toString()
+                    if (!url.isTwitterUrl()) {
+                        return@before
+                    }
+                    val newUrl = clearExtraParams(url)
+                    intent.data = Uri.parse(newUrl)
+                }
             }
-            val newUrl = clearExtraParams(url)
-            intent.data = Uri.parse(newUrl)
-        }
     }
 
     private fun String.isTwitterUrl(): Boolean {

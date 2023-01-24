@@ -3,11 +3,14 @@ package icu.nullptr.twifucker
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import com.github.kyuubiran.ezxhelper.init.InitFields
-import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.utils.Log
+import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
+import com.github.kyuubiran.ezxhelper.EzXHelper.modulePath
+import com.github.kyuubiran.ezxhelper.Log
 import icu.nullptr.twifucker.ui.SettingsDialog
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
+import java.util.*
 
 val reGenericClass by lazy { Regex("""^(\w+)<(\w+)>$""") }
 
@@ -24,7 +27,7 @@ val hostAppLastUpdate by lazy {
     ).lastUpdateTime
 }
 val moduleLastModify by lazy {
-    File(InitFields.modulePath).lastModified()
+    File(modulePath).lastModified()
 }
 
 @Suppress("DEPRECATION")
@@ -106,4 +109,20 @@ fun genOrigUrl(url: String): String {
     val urlWithoutExt = urlWithoutQueries.substring(0, urlWithoutQueries.lastIndexOf("."))
     val ext = getUrlExtension(urlWithoutQueries)
     return "$urlWithoutExt?format=$ext&name=orig"
+}
+
+inline fun JSONArray.forEach(action: (JSONObject) -> Unit) {
+    (0 until this.length()).forEach { i ->
+        if (this[i] is JSONObject) {
+            action(this[i] as JSONObject)
+        }
+    }
+}
+
+inline fun JSONArray.forEachIndexed(action: (index: Int, JSONObject) -> Unit) {
+    (0 until this.length()).forEach { i ->
+        if (this[i] is JSONObject) {
+            action(i, this[i] as JSONObject)
+        }
+    }
 }

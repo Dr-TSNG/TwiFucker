@@ -1,9 +1,10 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookAfter
-import com.github.kyuubiran.ezxhelper.utils.loadClass
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonTimelineUserHook : BaseHook() {
@@ -19,25 +20,25 @@ object JsonTimelineUserHook : BaseHook() {
             loadClass("com.twitter.model.json.timeline.urt.JsonTimelineUser\$\$JsonObjectMapper")
 
         val jsonUserResultsClass =
-            loadClass("com.twitter.model.json.core.JsonUserResults").declaredFields.firstOrNull()?.type
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(loadClass("com.twitter.model.json.core.JsonUserResults"))
+                .first().type
         val jsonUserResultsField =
-            jsonTimelineUserClass.declaredFields.firstOrNull { it.type == jsonUserResultsClass }
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(jsonTimelineUserClass).filterByType(jsonUserResultsClass).first()
 
         val jsonPromotedContentUrtClass =
             loadClass("com.twitter.model.json.timeline.urt.JsonPromotedContentUrt")
         val jsonPromotedContentUrtField =
-            jsonTimelineUserClass.declaredFields.firstOrNull { it.type == jsonPromotedContentUrtClass }
-                ?: throw NoSuchFieldError()
+            FieldFinder.fromClass(jsonTimelineUserClass).filterByType(jsonPromotedContentUrtClass)
+                .first()
 
-        findMethod(jsonTimelineUserMapperClass) {
-            name == "_parse" && returnType == jsonTimelineUserClass
-        }.hookAfter { param ->
-            param.result ?: return@hookAfter
-            jsonPromotedContentUrtField.get(param.result) ?: return@hookAfter
-            jsonUserResultsField.set(param.result, null)
-            Log.d("Removed promoted user")
-        }
+        MethodFinder.fromClass(jsonTimelineUserMapperClass).filterByName("_parse")
+            .filterByReturnType(jsonTimelineUserClass).first().createHook {
+                after { param ->
+                    param.result ?: return@after
+                    jsonPromotedContentUrtField.get(param.result) ?: return@after
+                    jsonUserResultsField.set(param.result, null)
+                    Log.d("Removed promoted user")
+                }
+            }
     }
 }

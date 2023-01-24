@@ -16,9 +16,9 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageButton
 import android.widget.TextView
-import com.github.kyuubiran.ezxhelper.init.InitFields.appContext
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.addModuleAssetPath
+import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
+import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
+import com.github.kyuubiran.ezxhelper.Log
 import icu.nullptr.twifucker.R
 import java.io.File
 import java.io.FileOutputStream
@@ -148,7 +148,7 @@ class DownloadDialog(
     }
 
     init {
-        context.addModuleAssetPath()
+        addModuleAssetPath(context)
 
         val adapter = DownloadMediaAdapter(context, downloadUrls)
         setAdapter(adapter, null)

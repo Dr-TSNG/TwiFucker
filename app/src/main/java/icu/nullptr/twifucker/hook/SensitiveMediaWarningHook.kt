@@ -1,9 +1,10 @@
 package icu.nullptr.twifucker.hook
 
-import com.github.kyuubiran.ezxhelper.utils.Log
-import com.github.kyuubiran.ezxhelper.utils.findMethod
-import com.github.kyuubiran.ezxhelper.utils.hookAfter
-import com.github.kyuubiran.ezxhelper.utils.loadClass
+import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
+import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
+import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.FieldFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import icu.nullptr.twifucker.modulePrefs
 
 object SensitiveMediaWarningHook : BaseHook() {
@@ -19,24 +20,25 @@ object SensitiveMediaWarningHook : BaseHook() {
             loadClass("com.twitter.model.json.core.JsonSensitiveMediaWarning\$\$JsonObjectMapper")
 
         val warningFields =
-            jsonSensitiveMediaWarningClass.declaredFields.filter { it.type == Boolean::class.java }
+            FieldFinder.fromClass(jsonSensitiveMediaWarningClass).filterByType(Boolean::class.java)
 
-        findMethod(jsonSensitiveMediaWarningMapperClass) {
-            name == "_parse" && returnType == jsonSensitiveMediaWarningClass
-        }.hookAfter { param ->
-            param.result ?: return@hookAfter
-            var count = 0
-            warningFields.forEach { field ->
-                field.get(param.result).let { value ->
-                    if ((value as Boolean)) {
-                        field.set(param.result, false)
-                        count++
+        MethodFinder.fromClass(jsonSensitiveMediaWarningMapperClass).filterByName("_parse")
+            .filterByReturnType(jsonSensitiveMediaWarningClass).first().createHook {
+                after { param ->
+                    param.result ?: return@after
+                    var count = 0
+                    warningFields.forEach { field ->
+                        field.get(param.result).let { value ->
+                            if ((value as Boolean)) {
+                                field.set(param.result, false)
+                                count++
+                            }
+                        }
+                    }
+                    if (count > 0) {
+                        Log.d("Set $count sensitive media warning field(s) to false")
                     }
                 }
             }
-            if (count > 0) {
-                Log.d("Set $count sensitive media warning field(s) to false")
-            }
-        }
     }
 }

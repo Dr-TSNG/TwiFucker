@@ -15,8 +15,8 @@ object UrlHook : BaseHook() {
         get() = "UrlHook"
 
     override fun init() {
-        MethodFinder.fromClass(Intent::class.java).filterByName("replaceExtras").first()
-            .createHook {
+        MethodFinder.fromClass(Intent::class.java).filterByName("replaceExtras")
+            .filterByParamTypes(Bundle::class.java).first().createHook {
                 before { param ->
                     val bundle = param.args[0] as Bundle
                     val extraText = bundle.getString(Intent.EXTRA_TEXT) ?: return@before
@@ -27,26 +27,30 @@ object UrlHook : BaseHook() {
                 }
             }
 
-        MethodFinder.fromClass(Intent::class.java).filterByName("createChooser").first()
-            .createHook {
-                before { param ->
-                    val intent = param.args[0] as Intent
-                    val extraText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: return@before
-                    if (!extraText.isTwitterUrl()) {
-                        return@before
+        MethodFinder.fromClass(Intent::class.java).filterByName("createChooser")
+            .filterByParamCount(2..3).filterByParamTypes {
+                it[0] == Intent::class.java && it[1] == CharSequence::class.java
+            }.forEach {
+                it.createHook {
+                    before { param ->
+                        val intent = param.args[0] as Intent
+                        val extraText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: return@before
+                        if (extraText.isTwitterUrl()) {
+                            intent.putExtra(Intent.EXTRA_TEXT, clearExtraParams(extraText))
+                        }
                     }
-                    intent.putExtra(Intent.EXTRA_TEXT, clearExtraParams(extraText))
                 }
             }
 
-        MethodFinder.fromClass(ClipData::class.java).filterByName("newPlainText").first()
+
+        MethodFinder.fromClass(ClipData::class.java).filterByName("newPlainText")
+            .filterByParamTypes(CharSequence::class.java, CharSequence::class.java).first()
             .createHook {
                 before { param ->
                     val text = (param.args[1] as CharSequence).toString()
-                    if (!text.isTwitterUrl()) {
-                        return@before
+                    if (text.isTwitterUrl()) {
+                        param.args[1] = clearExtraParams(text)
                     }
-                    param.args[1] = clearExtraParams(text)
                 }
             }
 
@@ -55,11 +59,10 @@ object UrlHook : BaseHook() {
                 before { param ->
                     val intent = (param.thisObject as Activity).intent
                     val url = intent.data.toString()
-                    if (!url.isTwitterUrl()) {
-                        return@before
+                    if (url.isTwitterUrl()) {
+                        val newUrl = clearExtraParams(url)
+                        intent.data = Uri.parse(newUrl)
                     }
-                    val newUrl = clearExtraParams(url)
-                    intent.data = Uri.parse(newUrl)
                 }
             }
     }

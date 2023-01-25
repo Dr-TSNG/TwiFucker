@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
-import com.github.kyuubiran.ezxhelper.ClassUtils.loadClassOrNull
 import com.github.kyuubiran.ezxhelper.EzXHelper
 import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
@@ -16,7 +15,6 @@ import com.github.kyuubiran.ezxhelper.MemberExtensions.isNotStatic
 import com.github.kyuubiran.ezxhelper.MemberExtensions.isPublic
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
-import com.github.kyuubiran.ezxhelper.misc.Utils.getAllClassesList
 import de.robv.android.xposed.XposedHelpers
 import icu.nullptr.twifucker.*
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
@@ -467,8 +465,8 @@ object DownloadHook : BaseHook() {
                 f.isPublic && f.isNotStatic && f.isNotFinal
             } == true
         } ?: throw ClassNotFoundException()
-        val actionItemViewDataField = FieldFinder.fromClass(shareTweetItemAdapterClass)
-            .filterByModifiers {
+        val actionItemViewDataField =
+            FieldFinder.fromClass(shareTweetItemAdapterClass).filterByModifiers {
                 Modifier.isPublic(it) && !Modifier.isStatic(it) && !Modifier.isFinal(it)
             }.first()
 
@@ -503,25 +501,19 @@ object DownloadHook : BaseHook() {
             protectedShareTweetItemAdapterClassTitleField.name
 
         // share menu
-        val shareMenuClass = EzXHelper.classLoader.getAllClassesList().filter {
-            val clazz = loadClassOrNull(it) ?: return@filter false
-            try {
-                return@filter (clazz.constructors.any { c ->
-                    c.parameterTypes.size >= 15 && c.parameterTypes[1] == loadClass("androidx.fragment.app.Fragment") && c.parameterTypes[14] == loadClass(
-                        "com.twitter.util.user.UserIdentifier"
-                    )
-                })
-            } catch (_: Throwable) {
-                return@filter false
-            }
-        }.firstOrNull()?.let { loadClass(it) } ?: throw ClassNotFoundException()
+        val shareMenuClass = dexKit.findMethodUsingString {
+            usingString = "^sandbox://tweetview?id=$"
+            methodReturnType = Void.TYPE.name
+        }.first().declaringClassName.let {
+            loadClass(it)
+        }
         val shareMenuMethod = MethodFinder.fromClass(shareMenuClass).filterByReturnType(Void.TYPE)
             .filterByParamTypes { it.size == 4 && it[0] == String::class.java && it[1] == String::class.java }
             .first()
         val tweetResultField = FieldFinder.fromClass(shareMenuMethod.parameterTypes[2])
             .filterByModifiers { Modifier.isPublic(it) && Modifier.isFinal(it) }.filter {
-            type.declaredFields.any { it.type == loadClass("com.twitter.model.vibe.Vibe") }
-        }.first()
+                type.declaredFields.any { it.type == loadClass("com.twitter.model.vibe.Vibe") }
+            }.first()
         val resultField = tweetResultField.type.declaredFields.groupBy { it.type }
             .filter { it.value.size == 2 && it.key.declaredFields.size == 3 }.map { it.value[1] }[0]
             ?: throw NoSuchFieldError()

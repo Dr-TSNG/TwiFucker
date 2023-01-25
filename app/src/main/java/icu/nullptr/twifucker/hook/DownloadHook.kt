@@ -122,8 +122,8 @@ object DownloadHook : BaseHook() {
 
             MethodFinder.fromClass(loadClass(className)).filterByName("onClick").first()
                 .createHook {
-                    before { param ->
-                        if (downloadUrls.isEmpty()) return@before
+                    beforeMeasure(name) { param ->
+                        if (downloadUrls.isEmpty()) return@beforeMeasure
                         val actionItemViewData = XposedHelpers.getObjectField(
                             XposedHelpers.getObjectField(
                                 param.thisObject, shareTweetItemAdapterFieldName
@@ -136,7 +136,7 @@ object DownloadHook : BaseHook() {
                         if (XposedHelpers.getObjectField(
                                 actionItemViewData, "b"
                             ) != appContext.getString(R.string.download_or_copy)
-                        ) return@before
+                        ) return@beforeMeasure
 
                         try {
                             currentActivity.get()?.let { act ->
@@ -154,14 +154,14 @@ object DownloadHook : BaseHook() {
         // protected tweet
         MethodFinder.fromClass(loadClass(protectedShareTweetItemAdapterClassName))
             .filterByName("onClick").first().createHook {
-                before { param ->
-                    if (downloadUrls.isEmpty()) return@before
+                beforeMeasure(name) { param ->
+                    if (downloadUrls.isEmpty()) return@beforeMeasure
 
                     val protectedShareTweetItemAdapterTitleTextView = XposedHelpers.getObjectField(
                         param.thisObject, protectedShareTweetItemAdapterClassTitleFieldName
                     ) as TextView
                     addModuleAssetPath(appContext)
-                    if (protectedShareTweetItemAdapterTitleTextView.text != appContext.getString(R.string.download_or_copy)) return@before
+                    if (protectedShareTweetItemAdapterTitleTextView.text != appContext.getString(R.string.download_or_copy)) return@beforeMeasure
 
                     try {
                         currentActivity.get()?.let { act ->
@@ -177,7 +177,7 @@ object DownloadHook : BaseHook() {
 
         MethodFinder.fromClass(loadClass(tweetShareClassName))
             .filterByName(tweetShareShowMethodName).first().createHook {
-                before { param ->
+                beforeMeasure(name) { param ->
                     val shareList = XposedHelpers.getObjectField(
                         param.thisObject, tweetShareShareListFieldName
                     ) as List<*>
@@ -220,15 +220,15 @@ object DownloadHook : BaseHook() {
         // share menu
         MethodFinder.fromClass(loadClass(shareMenuClassName)).filterByName(shareMenuMethodName)
             .first().createHook {
-                before { param ->
+                beforeMeasure(name) { param ->
                     val event = param.args[1]
                     // share_menu_click
                     // share_menu_cancel
                     if (event == "share_menu_cancel") {
                         downloadUrls = listOf()
-                        return@before
+                        return@beforeMeasure
                     }
-                    if (event != "share_menu_click") return@before
+                    if (event != "share_menu_click") return@beforeMeasure
                     val tweetResults = param.args[2]
 
                     val tweetResult =

@@ -5,13 +5,10 @@ import com.github.kyuubiran.ezxhelper.EzXHelper
 import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import icu.nullptr.twifucker.*
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
-import icu.nullptr.twifucker.forEach
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
-import icu.nullptr.twifucker.hostAppLastUpdate
-import icu.nullptr.twifucker.moduleLastModify
-import icu.nullptr.twifucker.modulePrefs
 import org.json.JSONArray
 import org.json.JSONException
 
@@ -44,7 +41,7 @@ object FeatureSwitchHook : BaseHook() {
         MethodFinder.fromClass(loadClass(featureSwitchGetBoolClassName)).filterByName(
             featureSwitchGetBoolMethodName
         ).first().createHook {
-            after { param ->
+            afterMeasure(name) { param ->
                 val paramKey = param.args[0] as String
                 arr.forEach { obj ->
                     val replaceKey = obj.getString("key")

@@ -10,13 +10,10 @@ import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.XposedHelpers
+import icu.nullptr.twifucker.*
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
-import icu.nullptr.twifucker.hostAppLastUpdate
-import icu.nullptr.twifucker.hostPrefs
-import icu.nullptr.twifucker.moduleLastModify
-import icu.nullptr.twifucker.modulePrefs
 import java.lang.reflect.Modifier
 
 object CustomTabsHook : BaseHook() {
@@ -46,7 +43,7 @@ object CustomTabsHook : BaseHook() {
             .filterByParamTypes {
                 it.size == 2 && it[0] == Intent::class.java && it[1] == Bundle::class.java
             }.first().createHook {
-                before { param ->
+                beforeMeasure(name) { param ->
                     val activity = param.thisObject as Activity
                     val intent = param.args[0] as Intent
 
@@ -54,7 +51,7 @@ object CustomTabsHook : BaseHook() {
                             Intent.CATEGORY_BROWSABLE
                         ))
                     ) {
-                        return@before
+                        return@beforeMeasure
                     }
 
                     val isInAppBrowserEnabled = hostPrefs.getBoolean("in_app_browser", true)
@@ -63,7 +60,7 @@ object CustomTabsHook : BaseHook() {
                     val host = uri.host
 
                     if ((host == null) || DOMAIN_WHITELIST_SUFFIX.any { host.endsWith(it) }) {
-                        return@before
+                        return@beforeMeasure
                     }
 
                     val customTabsClass = loadClass(customTabsClassName)

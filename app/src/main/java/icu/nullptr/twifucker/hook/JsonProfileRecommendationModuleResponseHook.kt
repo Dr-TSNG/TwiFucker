@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonProfileRecommendationModuleResponseHook : BaseHook() {
@@ -27,8 +28,8 @@ object JsonProfileRecommendationModuleResponseHook : BaseHook() {
         MethodFinder.fromClass(jsonProfileRecommendationModuleResponseMapperClass)
             .filterByName("_parse").filterByReturnType(jsonProfileRecommendationModuleResponseClass)
             .first().createHook {
-                after { param ->
-                    param.result ?: return@after
+                afterMeasure(name) { param ->
+                    param.result ?: return@afterMeasure
                     recommendedUsersField.get(param.result).let { users ->
                         if (users is ArrayList<*> && users.isNotEmpty()) {
                             recommendedUsersField.set(param.result, null)

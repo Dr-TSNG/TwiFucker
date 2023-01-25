@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonTimelineTweetHook : BaseHook() {
@@ -36,9 +37,9 @@ object JsonTimelineTweetHook : BaseHook() {
 
         MethodFinder.fromClass(jsonTimelineTweetMapperClass).filterByName("_parse")
             .filterByReturnType(jsonTimelineTweetClass).first().createHook {
-                after { param ->
-                    param.result ?: return@after
-                    jsonPromotedContentUrtField.get(param.result) ?: return@after
+                afterMeasure(name) { param ->
+                    param.result ?: return@afterMeasure
+                    jsonPromotedContentUrtField.get(param.result) ?: return@afterMeasure
                     jsonTweetResultsField.set(param.result, null)
                     jsonTweetIdField.set(param.result, null) // saved search timeline
                     Log.d("Removed promoted timeline tweet")

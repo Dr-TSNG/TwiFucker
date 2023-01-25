@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonTimelineModuleHook : BaseHook() {
@@ -27,9 +28,9 @@ object JsonTimelineModuleHook : BaseHook() {
 
         MethodFinder.fromClass(jsonTimelineModuleMapperClass).filterByName("_parse")
             .filterByReturnType(jsonTimelineModuleClass).first().createHook {
-                after { param ->
-                    param.result ?: return@after
-                    val module = jsonClientEventInfoField.get(param.result) ?: return@after
+                afterMeasure(name) { param ->
+                    param.result ?: return@afterMeasure
+                    val module = jsonClientEventInfoField.get(param.result) ?: return@afterMeasure
                     if (moduleField.get(module) == "video_carousel") {
                         param.result = null
                         Log.d("Removed video carousel")

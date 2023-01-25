@@ -7,6 +7,7 @@ import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.XC_MethodHook.Unhook
 import icu.nullptr.twifucker.BuildConfig
+import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.hook.BaseHook
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.SettingsDialog
@@ -20,7 +21,7 @@ object MainActivityHook : BaseHook() {
     override fun init() {
         theHook = MethodFinder.fromClass(loadClass("com.twitter.app.main.MainActivity"))
             .findSuper { false }.filterByName("onResume").first().createHook {
-                after { param ->
+                afterMeasure(name) { param ->
                     Log.d("MainActivity onResume")
                     if (BuildConfig.DEBUG || modulePrefs.getBoolean("first_run", true)) {
                         SettingsDialog(param.thisObject as Activity)

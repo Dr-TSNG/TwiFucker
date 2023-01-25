@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonFleetsTimelineResponseHook : BaseHook() {
@@ -24,8 +25,8 @@ object JsonFleetsTimelineResponseHook : BaseHook() {
 
         MethodFinder.fromClass(jsonFleetsTimelineResponseMapperClass).filterByName("_parse")
             .filterByReturnType(jsonFleetsTimelineResponseClass).first().createHook {
-                after { param ->
-                    param.result ?: return@after
+                afterMeasure(name) { param ->
+                    param.result ?: return@afterMeasure
                     threadsField.set(param.result, null)
                     Log.d("Removed threads")
                 }

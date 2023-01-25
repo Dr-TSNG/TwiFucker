@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
 import com.github.kyuubiran.ezxhelper.EzXHelper.modulePath
+import com.github.kyuubiran.ezxhelper.HookFactory
 import com.github.kyuubiran.ezxhelper.Log
+import de.robv.android.xposed.XC_MethodHook
 import icu.nullptr.twifucker.ui.SettingsDialog
 import org.json.JSONArray
 import org.json.JSONObject
@@ -123,6 +125,43 @@ inline fun JSONArray.forEachIndexed(action: (index: Int, JSONObject) -> Unit) {
     (0 until this.length()).forEach { i ->
         if (this[i] is JSONObject) {
             action(i, this[i] as JSONObject)
+        }
+    }
+}
+
+inline fun HookFactory.replaceMeasure(name: String, crossinline block: (XC_MethodHook.MethodHookParam) -> Any?) {
+    replace {
+        val start = System.currentTimeMillis()
+        val ret = block(it)
+        val end = System.currentTimeMillis()
+        val elapsed = end - start
+        if (elapsed > 10) {
+            Log.d("$name elapsed: ${System.currentTimeMillis() - start}ms")
+        }
+        return@replace ret
+    }
+}
+
+inline fun HookFactory.beforeMeasure(name: String, crossinline block: (XC_MethodHook.MethodHookParam) -> Unit) {
+    before {
+        val start = System.currentTimeMillis()
+        block(it)
+        val end = System.currentTimeMillis()
+        val elapsed = end - start
+        if (elapsed > 10) {
+            Log.d("$name elapsed: ${System.currentTimeMillis() - start}ms")
+        }
+    }
+}
+
+inline fun HookFactory.afterMeasure(name: String, crossinline block: (XC_MethodHook.MethodHookParam) -> Unit) {
+    after {
+        val start = System.currentTimeMillis()
+        block(it)
+        val end = System.currentTimeMillis()
+        val elapsed = end - start
+        if (elapsed > 10) {
+            Log.d("$name elapsed: ${System.currentTimeMillis() - start}ms")
         }
     }
 }

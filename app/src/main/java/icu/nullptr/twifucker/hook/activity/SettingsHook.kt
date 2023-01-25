@@ -14,6 +14,7 @@ import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
 import icu.nullptr.twifucker.hostAppLastUpdate
 import icu.nullptr.twifucker.moduleLastModify
 import icu.nullptr.twifucker.modulePrefs
+import icu.nullptr.twifucker.replaceMeasure
 import icu.nullptr.twifucker.ui.SettingsDialog
 import io.luckypray.dexkit.descriptor.member.DexMethodDescriptor
 
@@ -34,9 +35,9 @@ object SettingsHook : BaseHook() {
 
         if (onVersionClickMethod != null) {
             onVersionClickMethod.createHook {
-                replace { param ->
+                replaceMeasure(name) { param ->
                     SettingsDialog(param.thisObject as Activity)
-                    return@replace true
+                    return@replaceMeasure true
                 }
             }
         } else {
@@ -52,9 +53,9 @@ object SettingsHook : BaseHook() {
                     .first()
             MethodFinder.fromClass(onVersionClickListenerClass).filterByParamTypes(preferenceClass)
                 .first().createHook {
-                    replace { param ->
+                    replaceMeasure(name) { param ->
                         SettingsDialog(activityField.get(param.thisObject) as Activity)
-                        return@replace true
+                        return@replaceMeasure true
                     }
                 }
         }

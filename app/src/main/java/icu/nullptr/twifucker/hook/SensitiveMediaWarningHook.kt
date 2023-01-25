@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.modulePrefs
 
 object SensitiveMediaWarningHook : BaseHook() {
@@ -24,8 +25,8 @@ object SensitiveMediaWarningHook : BaseHook() {
 
         MethodFinder.fromClass(jsonSensitiveMediaWarningMapperClass).filterByName("_parse")
             .filterByReturnType(jsonSensitiveMediaWarningClass).first().createHook {
-                after { param ->
-                    param.result ?: return@after
+                afterMeasure(name) { param ->
+                    param.result ?: return@afterMeasure
                     var count = 0
                     warningFields.forEach { field ->
                         field.get(param.result).let { value ->

@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.modulePrefs
 
 object JsonTimelineUserHook : BaseHook() {
@@ -33,9 +34,9 @@ object JsonTimelineUserHook : BaseHook() {
 
         MethodFinder.fromClass(jsonTimelineUserMapperClass).filterByName("_parse")
             .filterByReturnType(jsonTimelineUserClass).first().createHook {
-                after { param ->
-                    param.result ?: return@after
-                    jsonPromotedContentUrtField.get(param.result) ?: return@after
+                afterMeasure(name) { param ->
+                    param.result ?: return@afterMeasure
+                    jsonPromotedContentUrtField.get(param.result) ?: return@afterMeasure
                     jsonUserResultsField.set(param.result, null)
                     Log.d("Removed promoted user")
                 }

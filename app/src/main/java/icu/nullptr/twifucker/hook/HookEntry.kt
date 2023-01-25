@@ -12,6 +12,7 @@ import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import icu.nullptr.twifucker.beforeMeasure
 import icu.nullptr.twifucker.hook.activity.MainActivityHook
 import icu.nullptr.twifucker.hook.activity.SettingsHook
 import icu.nullptr.twifucker.logFile

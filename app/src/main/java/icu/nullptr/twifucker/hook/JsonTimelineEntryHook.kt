@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.isEntryNeedsRemove
 
 object JsonTimelineEntryHook : BaseHook() {
@@ -24,8 +25,8 @@ object JsonTimelineEntryHook : BaseHook() {
 
         MethodFinder.fromClass(jsonTimelineEntryMapperClass).filterByName("_parse")
             .filterByReturnType(jsonTimelineEntryClass).first().createHook {
-                after { param ->
-                    param.result ?: return@after
+                afterMeasure(name) { param ->
+                    param.result ?: return@afterMeasure
                     val entryId = entryIdField.get(param.result) as String
                     if (isEntryNeedsRemove(entryId)) {
                         contentField.set(param.result, null)

@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.reGenericClass
 
@@ -31,9 +32,9 @@ object JsonTimelineTrendHook : BaseHook() {
 
         MethodFinder.fromClass(jsonTimelineTrendMapperClass).filterByName("_parse")
             .filterByReturnType(jsonTimelineTrendClass).first().createHook {
-                after { param ->
-                    param.result ?: return@after
-                    jsonPromotedTrendMetadataField.get(param.result) ?: return@after
+                afterMeasure(name) { param ->
+                    param.result ?: return@afterMeasure
+                    jsonPromotedTrendMetadataField.get(param.result) ?: return@afterMeasure
                     param.result = null
                     Log.d("Remove promoted trend item")
                 }

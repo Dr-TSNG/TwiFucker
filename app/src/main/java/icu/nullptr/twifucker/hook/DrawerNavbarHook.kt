@@ -11,6 +11,7 @@ import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import com.github.kyuubiran.ezxhelper.misc.Utils.getAllClassesList
 import de.robv.android.xposed.XposedHelpers
+import icu.nullptr.twifucker.beforeMeasure
 import icu.nullptr.twifucker.data.TwitterItem
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
@@ -56,7 +57,7 @@ object DrawerNavbarHook : BaseHook() {
         }
 
         ConstructorFinder.fromClass(loadClass(bottomNavbarClassName)).first().createHook {
-            before { param ->
+            beforeMeasure(name) { param ->
                 val hiddenItems =
                     modulePrefs.getStringSet(PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS, mutableSetOf())
                 val map = param.args[2] as Map<*, *>
@@ -89,7 +90,7 @@ object DrawerNavbarHook : BaseHook() {
         }
 
         ConstructorFinder.fromClass(loadClass(drawerItemsClassName)).first().createHook {
-            before { param ->
+            beforeMeasure(name) { param ->
                 val hiddenItems = modulePrefs.getStringSet(PREF_HIDDEN_DRAWER_ITEMS, mutableSetOf())
                 val drawerItemMap = XposedHelpers.callMethod(param.args[0], "get") as Map<*, *>
                 drawerItems.clear()

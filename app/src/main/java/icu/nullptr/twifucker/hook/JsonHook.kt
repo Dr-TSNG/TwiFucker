@@ -6,10 +6,7 @@ import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.XC_MethodHook
-import icu.nullptr.twifucker.forEach
-import icu.nullptr.twifucker.forEachIndexed
-import icu.nullptr.twifucker.modulePrefs
-import icu.nullptr.twifucker.writeJsonLog
+import icu.nullptr.twifucker.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -34,7 +31,7 @@ object JsonHook : BaseHook() {
                     .first()
             Log.d("Located json method ${jsonMethod.name}")
             jsonMethod.createHook {
-                before { param ->
+                beforeMeasure(name) { param ->
                     try {
                         handleJson(param)
                     } catch (t: Throwable) {

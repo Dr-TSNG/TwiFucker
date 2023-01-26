@@ -14,7 +14,6 @@ import icu.nullptr.twifucker.*
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
-import java.lang.reflect.Modifier
 
 object CustomTabsHook : BaseHook() {
     override val name: String
@@ -110,13 +109,13 @@ object CustomTabsHook : BaseHook() {
 
 
         val customTabsGetMethod =
-            MethodFinder.fromClass(customTabsClass).filterByModifiers { Modifier.isStatic(it) }
+            MethodFinder.fromClass(customTabsClass).filterStatic()
                 .filterByParamCount(0).filterByReturnType(customTabsClass).first()
-        val customTabsLaunchUrlMethod = MethodFinder.fromClass(customTabsClass).filterByModifiers {
-            !Modifier.isStatic(it) && Modifier.isPublic(it) && Modifier.isFinal(it)
-        }.filterByParamCount(3)
-            .filterByParamTypes { it[0] == Activity::class.java && it[1] == String::class.java }
-            .first()
+        val customTabsLaunchUrlMethod =
+            MethodFinder.fromClass(customTabsClass).filterNonStatic().filterPublic().filterFinal()
+                .filterByParamCount(3)
+                .filterByParamTypes { it[0] == Activity::class.java && it[1] == String::class.java }
+                .first()
 
         customTabsClassName = customTabsClass.name
         customTabsGetMethodName = customTabsGetMethod.name

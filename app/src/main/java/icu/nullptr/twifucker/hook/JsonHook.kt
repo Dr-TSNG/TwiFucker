@@ -4,7 +4,7 @@ import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
 import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
-import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import com.github.kyuubiran.ezxhelper.finders.MethodFinder.`-Static`.methodFinder
 import de.robv.android.xposed.XC_MethodHook
 import icu.nullptr.twifucker.*
 import org.json.JSONArray
@@ -12,7 +12,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStream
-import java.lang.reflect.Modifier
 
 object JsonHook : BaseHook() {
     override val name: String
@@ -20,25 +19,23 @@ object JsonHook : BaseHook() {
 
     override fun init() {
         try {
-            val jsonClass =
-                FieldFinder.fromClass(loadClass("com.bluelinelabs.logansquare.LoganSquare"))
-                    .filterByName("JSON_FACTORY").first().type
-            Log.d("Located json class ${jsonClass.simpleName}")
-            // com.fasterxml.jackson.core.JsonFactory
-            val jsonMethod =
-                MethodFinder.fromClass(jsonClass).filterByModifiers { Modifier.isFinal(it) }
-                    .filterByParamTypes { it.isNotEmpty() && it[0] == InputStream::class.java }
-                    .first()
-            Log.d("Located json method ${jsonMethod.name}")
-            jsonMethod.createHook {
-                beforeMeasure(name) { param ->
-                    try {
-                        handleJson(param)
-                    } catch (t: Throwable) {
-                        Log.e(t)
+            FieldFinder.fromClass(loadClass("com.bluelinelabs.logansquare.LoganSquare"))
+                .filterByName("JSON_FACTORY").first().type.apply {
+                    // com.fasterxml.jackson.core.JsonFactory
+                    Log.d("Located json class $name")
+                }.methodFinder().filterFinal()
+                .filterByParamTypes { it.isNotEmpty() && it[0] == InputStream::class.java }.first()
+                .apply {
+                    Log.d("Located json method $name")
+                }.createHook {
+                    beforeMeasure(name) { param ->
+                        try {
+                            handleJson(param)
+                        } catch (t: Throwable) {
+                            Log.e(t)
+                        }
                     }
                 }
-            }
         } catch (e: NoSuchFieldException) {
             Log.d("Failed to relocate json field", e)
         } catch (e: NoSuchMethodException) {

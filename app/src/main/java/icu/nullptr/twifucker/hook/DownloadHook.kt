@@ -22,7 +22,6 @@ import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
 import icu.nullptr.twifucker.ui.DownloadDialog
-import java.lang.reflect.Modifier
 
 
 object DownloadHook : BaseHook() {
@@ -396,17 +395,17 @@ object DownloadHook : BaseHook() {
             .firstOrNull { it.parameterTypes.size == 2 && it.parameterTypes[1] == Bundle::class.java }?.declaringClass
             ?: throw ClassNotFoundException()
 
-        val tweetShareShowMethod = MethodFinder.fromClass(tweetShareClass)
-            .filterByModifiers { Modifier.isPublic(it) && Modifier.isFinal(it) }
-            .filterByParamCount(1).filterByReturnType(Void.TYPE).first()
-        val tweetShareShareListField = FieldFinder.fromClass(tweetShareClass)
-            .filterByModifiers { Modifier.isPublic(it) && Modifier.isFinal(it) }
-            .filterByType(List::class.java).first()
+        val tweetShareShowMethod =
+            MethodFinder.fromClass(tweetShareClass).filterPublic().filterFinal()
+                .filterByParamCount(1).filterByReturnType(Void.TYPE).first()
+        val tweetShareShareListField =
+            FieldFinder.fromClass(tweetShareClass).filterPublic().filterFinal()
+                .filterByType(List::class.java).first()
 
-        val actionEnumWrappedClassRefMethod = MethodFinder.fromClass(tweetShareClass)
-            .filterByModifiers { Modifier.isPublic(it) && Modifier.isFinal(it) }
-            .filterByParamTypes { it.size == 4 && it[1] == String::class.java && it[2] == Boolean::class.java && it[3] == String::class.java }
-            .first()
+        val actionEnumWrappedClassRefMethod =
+            MethodFinder.fromClass(tweetShareClass).filterPublic().filterFinal()
+                .filterByParamTypes { it.size == 4 && it[1] == String::class.java && it[2] == Boolean::class.java && it[3] == String::class.java }
+                .first()
         val actionEnumWrappedClass = actionEnumWrappedClassRefMethod.returnType
         val actionEnumWrappedInnerClass = actionEnumWrappedClass.constructors[0].parameterTypes[0]
         val actionEnumClass = actionEnumWrappedClassRefMethod.parameterTypes[0]
@@ -466,9 +465,8 @@ object DownloadHook : BaseHook() {
             } == true
         } ?: throw ClassNotFoundException()
         val actionItemViewDataField =
-            FieldFinder.fromClass(shareTweetItemAdapterClass).filterByModifiers {
-                Modifier.isPublic(it) && !Modifier.isStatic(it) && !Modifier.isFinal(it)
-            }.first()
+            FieldFinder.fromClass(shareTweetItemAdapterClass).filterPublic().filterNonStatic()
+                .filterNonFinal().first()
 
         shareTweetOnClickListenerClassName = shareTweetOnClickListenerClass.name
         shareTweetItemAdapterFieldName = shareTweetItemAdapterField.name
@@ -488,9 +486,8 @@ object DownloadHook : BaseHook() {
         }.firstNotNullOfOrNull {
             it.value.firstOrNull()?.getConstructorInstance(EzXHelper.classLoader)?.declaringClass
         } ?: throw ClassNotFoundException()
-        val protectedShareTweetItemAdapterClass =
-            MethodFinder.fromClass(refClass).filterByModifiers { Modifier.isPublic(it) }
-                .filterByParamTypes(ViewGroup::class.java, Int::class.java).first().returnType
+        val protectedShareTweetItemAdapterClass = MethodFinder.fromClass(refClass).filterPublic()
+            .filterByParamTypes(ViewGroup::class.java, Int::class.java).first().returnType
         val protectedShareTweetItemAdapterClassTitleField =
             FieldFinder.fromClass(protectedShareTweetItemAdapterClass)
                 .filterByType(TextView::class.java).first()
@@ -510,10 +507,11 @@ object DownloadHook : BaseHook() {
         val shareMenuMethod = MethodFinder.fromClass(shareMenuClass).filterByReturnType(Void.TYPE)
             .filterByParamTypes { it.size == 4 && it[0] == String::class.java && it[1] == String::class.java }
             .first()
-        val tweetResultField = FieldFinder.fromClass(shareMenuMethod.parameterTypes[2])
-            .filterByModifiers { Modifier.isPublic(it) && Modifier.isFinal(it) }.filter {
-                type.declaredFields.any { it.type == loadClass("com.twitter.model.vibe.Vibe") }
-            }.first()
+        val tweetResultField =
+            FieldFinder.fromClass(shareMenuMethod.parameterTypes[2]).filterPublic().filterFinal()
+                .filter {
+                    type.declaredFields.any { it.type == loadClass("com.twitter.model.vibe.Vibe") }
+                }.first()
         val resultField = tweetResultField.type.declaredFields.groupBy { it.type }
             .filter { it.value.size == 2 && it.key.declaredFields.size == 3 }.map { it.value[1] }[0]
             ?: throw NoSuchFieldError()
@@ -536,8 +534,8 @@ object DownloadHook : BaseHook() {
             perMediaClass.declaredFields.firstOrNull { it.type == mediaTypeEnumClass }
                 ?: throw NoSuchFieldError()
         val mediaUrlHttpsField =
-            FieldFinder.fromClass(perMediaClass).filterByModifiers { !Modifier.isStatic(it) }
-                .filterByType(String::class.java).first()
+            FieldFinder.fromClass(perMediaClass).filterNonStatic().filterByType(String::class.java)
+                .first()
         val mediaInfoField = FieldFinder.fromClass(perMediaClass).filter {
             type.declaredFields.size == 4 && type.declaredFields.filter { f2 -> f2.type == Float::class.java }.size == 2 && type.declaredFields.filter { f2 -> f2.type == List::class.java }.size == 1
         }.first()

@@ -13,6 +13,7 @@
     <string name="settings_experimental">Experimental</string>
     <string name="settings_logging">Logging</string>
 
+    <string name="version_title">Version</string>
     <string name="about_title">TwiFucker by Nullptr</string>
     <string name="show_toast_title">Show Toast on Start</string>
     <string name="use_legacy_hook">Use legacy hook</string>

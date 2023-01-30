@@ -2,6 +2,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/settings_general">
         <Preference
+            android:key="version"
+            android:title="@string/version_title" />
+        <Preference
             android:key="about"
             android:summary="@string/about_summary"
             android:title="@string/about_title" />

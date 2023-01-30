@@ -22,4 +22,3 @@ pluginManagement {
 rootProject.name = "TwiFucker"
 
 include(":app")
-include("EzXHelper:EzXHelper")

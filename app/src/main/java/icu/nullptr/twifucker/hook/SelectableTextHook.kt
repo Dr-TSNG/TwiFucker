@@ -12,7 +12,7 @@ object SelectableTextHook : BaseHook() {
 
     override fun init() {
         val notSelectableText = listOf(
-            "name",
+//            "name", // breaks followers and followings text
             "user_name",
             "user_bio",
             "profile_header_location",

@@ -5,6 +5,9 @@
     <string name="reset">reset</string>
     <string name="save_restart">save and restart</string>
     <string name="add">add</string>
+    <string name="msg_yes_no">Are you sure?</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 
     <string name="settings_dismiss">dismiss</string>
     <string name="settings_general">General</string>

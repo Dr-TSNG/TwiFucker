@@ -10,7 +10,7 @@ import icu.nullptr.twifucker.modulePrefs
 import org.json.JSONArray
 import org.json.JSONObject
 
-class KeyValueDialog(context: Context) : AlertDialog.Builder(context) {
+class KeyValueDialog(context: Context, onChange: (JSONArray) -> Unit) : AlertDialog.Builder(context) {
     lateinit var keyEditText: EditText
     lateinit var valueSwitch: Switch
 
@@ -60,6 +60,7 @@ class KeyValueDialog(context: Context) : AlertDialog.Builder(context) {
             val arr = JSONArray(featureSwitch)
             arr.put(JSONObject().put("key", keyEditText.text).put("value", valueSwitch.isChecked))
             modulePrefs.edit().putString("feature_switch", arr.toString()).apply()
+            onChange(arr)
         }
 
         show()

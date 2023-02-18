@@ -141,7 +141,7 @@ object DownloadHook : BaseHook() {
                             currentActivity.get()?.let { act ->
                                 DownloadDialog(act, downloadUrls) {
                                     downloadUrls = listOf()
-                                }.show()
+                                }
                             }
                         } catch (t: Throwable) {
                             Log.e(t)
@@ -166,7 +166,7 @@ object DownloadHook : BaseHook() {
                         currentActivity.get()?.let { act ->
                             DownloadDialog(act, downloadUrls) {
                                 downloadUrls = listOf()
-                            }.show()
+                            }
                         }
                     } catch (t: Throwable) {
                         Log.e(t)

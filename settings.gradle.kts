@@ -15,7 +15,7 @@ pluginManagement {
         mavenCentral()
     }
     plugins {
-        id("org.jetbrains.kotlin.android") version "1.7.22"
+        id("org.jetbrains.kotlin.android") version "1.8.10"
     }
 }
 

@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.SwitchPreference
+import com.github.kyuubiran.ezxhelper.AndroidLogger
 import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.misc.Utils.restartHostApp
@@ -64,7 +65,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
             }
         }
         if (count > 0) {
-            Log.toast(context.getString(R.string.deleted_n_promoted_tweet, count))
+            AndroidLogger.toast(context.getString(R.string.deleted_n_promoted_tweet, count))
         }
     }
 
@@ -176,7 +177,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                 }
             }
             if (count > 0) {
-                Log.toast(context.getString(R.string.deleted_n_database, count))
+                AndroidLogger.toast(context.getString(R.string.deleted_n_database, count))
             }
         }
 

@@ -117,8 +117,8 @@ afterEvaluate {
 dependencies {
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     compileOnly("de.robv.android.xposed:api:82")
-    implementation("org.luckypray:DexKit:1.1.0")
-    implementation("com.github.kyuubiran:EzXHelper:2.0.0-RC5")
+    implementation("org.luckypray:DexKit:1.1.2")
+    implementation("com.github.kyuubiran:EzXHelper:2.0.0-RC7")
 }
 
 val adbExecutable: String = androidComponents.sdkComponents.adb.get().asFile.absolutePath

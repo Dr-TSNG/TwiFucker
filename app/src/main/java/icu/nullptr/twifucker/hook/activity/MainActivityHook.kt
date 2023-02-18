@@ -1,6 +1,7 @@
 package icu.nullptr.twifucker.hook.activity
 
 import android.app.Activity
+import com.github.kyuubiran.ezxhelper.AndroidLogger
 import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
 import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
@@ -28,7 +29,7 @@ object MainActivityHook : BaseHook() {
                         modulePrefs.edit().putBoolean("first_run", false).apply()
                     }
                     if (modulePrefs.getBoolean("show_toast", true)) {
-                        Log.toast("TwiFucker version ${BuildConfig.VERSION_NAME}")
+                        AndroidLogger.toast("TwiFucker version ${BuildConfig.VERSION_NAME}")
                     }
                     theHook.unhook()
                 }

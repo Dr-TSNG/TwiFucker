@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageButton
 import android.widget.TextView
+import com.github.kyuubiran.ezxhelper.AndroidLogger
 import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
 import com.github.kyuubiran.ezxhelper.Log
@@ -98,7 +99,7 @@ class DownloadDialog(
                     onDownloadCompleted?.invoke()
                 } catch (t: Throwable) {
                     Log.e(t)
-                    Log.toast(appContext.getString(R.string.download_failed))
+                    AndroidLogger.toast(appContext.getString(R.string.download_failed))
                 }
                 progressDialog.cancel()
             }.start()
@@ -109,7 +110,7 @@ class DownloadDialog(
                 appContext.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("label", text)
             clipboardManager.setPrimaryClip(clip)
-            Log.toast(appContext.getString(R.string.download_link_copied))
+            AndroidLogger.toast(appContext.getString(R.string.download_link_copied))
         }
     }
 
@@ -138,7 +139,7 @@ class DownloadDialog(
                     }
                     findViewById<ImageButton>(R.id.download_item_download).setOnClickListener {
                         download(context, urls[position]) {
-                            Log.toast(context.getString(R.string.download_completed))
+                            AndroidLogger.toast(context.getString(R.string.download_completed))
                         }
                     }
                 }
@@ -157,7 +158,7 @@ class DownloadDialog(
             downloadUrls.forEachIndexed { i, j ->
                 download(context, j) {
                     if (i == downloadUrls.size - 1) {
-                        Log.toast(context.getString(R.string.download_completed))
+                        AndroidLogger.toast(context.getString(R.string.download_completed))
                     }
                 }
             }

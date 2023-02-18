@@ -71,4 +71,6 @@
     <string name="deleted_n_promoted_tweet">Deleted %1$d promoted tweet(s) from app database</string>
     <string name="deleted_n_database">Deleted %1$d database(s)</string>
 
+    <string name="feature_switch_key_hint">feature_flag</string>
+    <string name="feature_switch_value_boolean">Boolean</string>
 </resources>

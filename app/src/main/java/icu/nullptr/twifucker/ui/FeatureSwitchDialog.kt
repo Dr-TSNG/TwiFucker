@@ -3,7 +3,6 @@ package icu.nullptr.twifucker.ui
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
@@ -20,19 +19,10 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
 
     class FeatureSwitchAdapter(private var arr: JSONArray) :
         RecyclerView.Adapter<FeatureSwitchAdapter.ViewHolder>() {
-        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val linearLayout = itemView as LinearLayout
-            var keyView: TextView
-            var valueView: TextView
-
-            init {
-                itemView.findViewById<TextView>(R.id.feature_switch_key_view).let {
-                    keyView = it
-                }
-                itemView.findViewById<TextView>(R.id.feature_switch_value_view).let {
-                    valueView = it
-                }
-            }
+        class ViewHolder(itemView: FeatureSwitchItem) : RecyclerView.ViewHolder(itemView) {
+            val featureSwitchItem = itemView
+            val keyView = itemView.keyTextView
+            var valueView = itemView.valueTextView
         }
 
         fun reloadAddedData(arr: JSONArray) {
@@ -47,19 +37,7 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LinearLayout(parent.context).let {
-                it.orientation = LinearLayout.VERTICAL
-                it.setPadding(16, 16, 16, 16)
-                val keyView = TextView(parent.context)
-                keyView.id = R.id.feature_switch_key_view
-                keyView.textSize = 18f
-                val valueView = TextView(parent.context)
-                valueView.id = R.id.feature_switch_value_view
-                valueView.textSize = 14f
-                it.addView(keyView)
-                it.addView(valueView)
-                it
-            }
+            val view = FeatureSwitchItem(parent.context)
             return ViewHolder(view)
         }
 
@@ -67,13 +45,13 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
             holder.keyView.text = arr.getJSONObject(position).optString("key")
             holder.valueView.text = arr.getJSONObject(position).optBoolean("value").toString()
 
-            holder.linearLayout.setOnClickListener { _ ->
+            holder.featureSwitchItem.setOnClickListener { _ ->
                 val bool = !arr.getJSONObject(position).optBoolean("value")
                 holder.valueView.text = bool.toString()
                 arr.getJSONObject(position).put("value", bool)
                 modulePrefs.edit().putString("feature_switch", arr.toString()).apply()
             }
-            holder.linearLayout.setOnLongClickListener { _ ->
+            holder.featureSwitchItem.setOnLongClickListener { _ ->
                 arr.remove(position)
                 modulePrefs.edit().putString("feature_switch", arr.toString()).apply()
                 notifyItemChanged(position)
@@ -82,8 +60,6 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
         }
 
         override fun getItemCount(): Int = arr.length()
-
-
     }
 
     init {
@@ -94,7 +70,7 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
         val featureSwitchAdapter = FeatureSwitchAdapter(arr)
 
         val titleView = TextView(context)
-        titleView.setPadding(32, 32, 32, 32)
+        titleView.setPadding(64, 32, 64, 32)
         titleView.textSize = 24f
         titleView.text = context.getString(R.string.feature_switch)
 
@@ -146,7 +122,6 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
             LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
         val linearLayout = LinearLayout(context)
-        linearLayout.setPadding(16, 16, 16, 16)
         linearLayout.orientation = LinearLayout.VERTICAL
         linearLayout.layoutParams = linearLayoutParams
 
@@ -156,5 +131,8 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
 
         setContentView(linearLayout)
         show()
+        window?.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
     }
 }

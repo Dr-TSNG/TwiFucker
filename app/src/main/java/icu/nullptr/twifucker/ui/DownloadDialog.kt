@@ -10,12 +10,9 @@ import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.media.MediaScannerConnection
 import android.os.Environment
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.ImageButton
-import android.widget.TextView
 import com.github.kyuubiran.ezxhelper.AndroidLogger
 import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
@@ -130,22 +127,19 @@ class DownloadDialog(
         }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view = convertView ?: LayoutInflater.from(context)
-                .inflate(R.layout.download_item, parent, false).apply {
-                    findViewById<TextView>(R.id.download_item_text).text =
-                        context.getString(R.string.download_media, position + 1)
-                    findViewById<ImageButton>(R.id.download_item_copy).setOnClickListener {
-                        toClipboard(urls[position])
-                    }
-                    findViewById<ImageButton>(R.id.download_item_download).setOnClickListener {
-                        download(context, urls[position]) {
-                            AndroidLogger.toast(context.getString(R.string.download_completed))
-                        }
+            val view = convertView ?: DownloadItem(context).apply {
+                setTitle(context.getString(R.string.download_media, position + 1))
+                setOnCopy {
+                    toClipboard(urls[position])
+                }
+                setOnDownload {
+                    download(context, urls[position]) {
+                        AndroidLogger.toast(context.getString(R.string.download_completed))
                     }
                 }
+            }
             return view
         }
-
     }
 
     init {

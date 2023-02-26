@@ -114,7 +114,7 @@ android {
 }
 
 dependencies {
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("com.android.support:recyclerview-v7:28.0.0")
     compileOnly("de.robv.android.xposed:api:82")
     implementation("org.luckypray:DexKit:1.1.2")
     implementation("com.github.kyuubiran:EzXHelper:2.0.0-RC7")

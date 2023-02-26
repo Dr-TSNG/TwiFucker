@@ -71,10 +71,9 @@ class DownloadItem(context: Context) : CustomLayout(context) {
             (itemTextWidth + btnCopy.measuredWidthWithMargins + btnDownload.measuredWidthWithMargins).coerceAtLeast(
                 measuredWidth
             )
-        val maxHeight =
-            (itemText.measuredHeight + itemText.marginTop + itemText.marginBottom).coerceAtLeast(
-                btnCopy.measuredHeightWithMargins
-            )
+        val maxHeight = (itemText.measuredHeightWithMargins).coerceAtLeast(
+            btnCopy.measuredHeightWithMargins
+        )
         setMeasuredDimension(maxWidth, maxHeight)
     }
 

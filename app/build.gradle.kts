@@ -7,6 +7,7 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     kotlin("android")
+    alias(libs.plugins.lsplugin.apktransform)
 }
 
 val properties = Properties()
@@ -16,10 +17,6 @@ project.rootProject.file("local.properties").let {
     }
 }
 
-val verName = "1.9"
-val gitCommitCount = "git rev-list HEAD --count".execute().toInt()
-val gitCommitHash = "git rev-parse --verify --short HEAD".execute()
-
 fun String.execute(currentWorkingDir: File = file("./")): String {
     val byteOut = ByteArrayOutputStream()
     project.exec {
@@ -28,6 +25,20 @@ fun String.execute(currentWorkingDir: File = file("./")): String {
         standardOutput = byteOut
     }
     return String(byteOut.toByteArray()).trim()
+}
+
+val verName = "1.9"
+val gitCommitCount = "git rev-list HEAD --count".execute().toInt()
+val gitCommitHash = "git rev-parse --verify --short HEAD".execute()
+
+apktransform {
+    copy { variant ->
+        var suffix = ""
+        if (properties.getProperty("buildWithGitSuffix").toBoolean()) {
+            suffix += ".r${gitCommitCount}.${gitCommitHash}"
+        }
+        file("${variant.name}/TwiFucker-V${verName}${suffix}-${variant.name}.apk")
+    }
 }
 
 fun findInPath(executable: String): String? {
@@ -82,7 +93,11 @@ android {
         }
     }
 
-    androidResources.additionalParameters("--allow-reserved-package-id", "--package-id", "0x64")
+    androidResources.additionalParameters += listOf(
+        "--allow-reserved-package-id",
+        "--package-id",
+        "0x64"
+    )
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -132,6 +147,11 @@ afterEvaluate {
                 rename(".*\\.apk", "TwiFucker-V${variant.versionName}-${variant.name}.apk")
             }
         }
+
+    }
+
+    tasks.named("assemble") {
+
     }
 
     tasks.named("installDebug") {

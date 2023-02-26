@@ -41,31 +41,26 @@ jobs:
           echo 'android.native.buildOutput=verbose' >> gradle.properties
           chmod +x ./gradlew
 
-      - name: Build release
-        id: buildRelease
+      - name: Build
+        id: build
         run: |
-          ./gradlew :app:buildRelease --no-daemon
-          echo "releaseName=`ls app/build/outputs/apk/release/TwiFucker-*.apk | awk -F '(/|.apk)' '{print $6}'`" >> $GITHUB_OUTPUT
-
-      - name: Build debug
-        id: buildDebug
-        run: |
-          ./gradlew :app:buildDebug --no-daemon
-          echo "debugName=`ls app/build/outputs/apk/debug/TwiFucker-*.apk | awk -F '(/|.apk)' '{print $6}'`" >> $GITHUB_OUTPUT
+          ./gradlew :app:assemble --no-daemon
+          echo "releaseName=`ls app/release/TwiFucker-*.apk | awk -F '(/|.apk)' '{print $3}'`" >> $GITHUB_OUTPUT
+          echo "debugName=`ls app/debug/TwiFucker-*.apk | awk -F '(/|.apk)' '{print $3}'`" >> $GITHUB_OUTPUT
 
       - name: Upload release
         if: success()
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.buildRelease.outputs.releaseName }}
-          path: "app/build/outputs/apk/release/*.apk"
+          name: ${{ steps.build.outputs.releaseName }}
+          path: "app/release/*.apk"
 
       - name: Upload debug
         if: success()
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.buildDebug.outputs.debugName }}
-          path: "app/build/outputs/apk/debug/*.apk"
+          name: ${{ steps.build.outputs.debugName }}
+          path: "app/debug/*.apk"
 
       - name: Upload mappings
         uses: actions/upload-artifact@v3
@@ -84,8 +79,8 @@ jobs:
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           OUTPUT="app/build/outputs/apk/"
-          export release=$(find $OUTPUT -name "TwiFucker-*-release.apk")
-          export debug=$(find $OUTPUT -name "TwiFucker-*-debug.apk")
+          export release=$(find "app/release" -name "TwiFucker-*-release.apk")
+          export debug=$(find "app/debug" -name "TwiFucker-*-debug.apk")
           ESCAPED=`python3 -c 'import json,os,urllib.parse; msg = json.dumps(os.environ["COMMIT_MESSAGE"]); print(urllib.parse.quote(msg if len(msg) <= 1024 else json.dumps(os.environ["COMMIT_URL"])))'`
           curl -v "https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup?chat_id=${CHANNEL_ID}&media=%5B%7B%22type%22:%22document%22,%20%22media%22:%22attach://release%22%7D,%7B%22type%22:%22document%22,%20%22media%22:%22attach://debug%22,%22caption%22:${ESCAPED}%7D%5D"  -F release="@$release" -F debug="@$debug"
           curl -v "https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup?chat_id=${GROUP_ID}&message_thread_id=${TOPIC_ID}&media=%5B%7B%22type%22:%22document%22,%20%22media%22:%22attach://release%22%7D,%7B%22type%22:%22document%22,%20%22media%22:%22attach://debug%22,%22caption%22:${ESCAPED}%7D%5D"  -F release="@$release" -F debug="@$debug"

@@ -4,7 +4,11 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://api.xposed.info/")
-        maven("https://jitpack.io")
+    }
+    versionCatalogs {
+        create("libs") {
+            plugin("lsplugin-apktransform", "org.lsposed.lsplugin.apktransform").version("1.2")
+        }
     }
 }
 

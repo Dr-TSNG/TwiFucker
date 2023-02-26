@@ -1,2 +1,4 @@
 /build
 /.cxx
+/debug
+/release

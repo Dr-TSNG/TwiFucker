@@ -131,29 +131,6 @@ val restartTwitter = task("restartTwitter").doLast {
 }
 
 afterEvaluate {
-    android.applicationVariants.forEach { variant ->
-        val variantCapped = variant.name.replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(
-                Locale.getDefault()
-            ) else it.toString()
-        }
-        val packageTask = tasks["package$variantCapped"]
-
-        task<Sync>("build$variantCapped") {
-            dependsOn(packageTask)
-            into("$buildDir/outputs/apk/${variant.name}")
-            from(packageTask.outputs) {
-                include("*.apk")
-                rename(".*\\.apk", "TwiFucker-V${variant.versionName}-${variant.name}.apk")
-            }
-        }
-
-    }
-
-    tasks.named("assemble") {
-
-    }
-
     tasks.named("installDebug") {
         finalizedBy(restartTwitter)
     }

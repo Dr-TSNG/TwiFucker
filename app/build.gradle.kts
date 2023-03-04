@@ -5,6 +5,7 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
+    id("org.lsposed.lsparanoid")
     id("org.lsposed.lsplugin.apktransform")
     kotlin("android")
 }
@@ -38,6 +39,11 @@ apktransform {
         }
         file("${variant.name}/TwiFucker-V${verName}${suffix}-${variant.name}.apk")
     }
+}
+
+lsparanoid {
+    global = true
+    includeDependencies = true
 }
 
 fun findInPath(executable: String): String? {

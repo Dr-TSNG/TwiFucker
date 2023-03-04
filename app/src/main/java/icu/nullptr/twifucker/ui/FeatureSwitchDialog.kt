@@ -5,6 +5,8 @@ import android.app.Dialog
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import icu.nullptr.twifucker.R
 import icu.nullptr.twifucker.modulePrefs
@@ -74,7 +76,7 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
 
         val featureSwitchView = FeatureSwitchView(context).apply {
             layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                MATCH_PARENT, WRAP_CONTENT
             )
         }
         featureSwitchView.setAdapter(featureSwitchAdapter)
@@ -98,8 +100,8 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
         }
         setContentView(featureSwitchView)
         show()
-//        window?.setLayout(
-//            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-//        )
+        window?.setLayout(
+            MATCH_PARENT, WRAP_CONTENT
+        )
     }
 }

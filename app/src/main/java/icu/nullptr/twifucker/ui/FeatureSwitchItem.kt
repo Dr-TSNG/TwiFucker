@@ -7,7 +7,7 @@ import android.widget.TextView
 
 class FeatureSwitchItem(context: Context) : CustomLayout(context) {
     val keyTextView = TextView(context).apply {
-        layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Medium)
         addView(this)
     }
@@ -18,18 +18,12 @@ class FeatureSwitchItem(context: Context) : CustomLayout(context) {
         addView(this)
     }
 
-    fun autoMeasure() {
-        valueTextView.autoMeasure()
-    }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         keyTextView.autoMeasure()
         valueTextView.autoMeasure()
-        val maxWidth =
-            keyTextView.measuredWidthWithMargins.coerceAtMost(valueTextView.measuredWidthWithMargins)
         setMeasuredDimension(
-            maxWidth,
+            measuredWidth,
             keyTextView.measuredHeightWithMargins + valueTextView.measuredHeightWithMargins
         )
     }

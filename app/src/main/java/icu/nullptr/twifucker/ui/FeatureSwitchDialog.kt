@@ -3,8 +3,8 @@ package icu.nullptr.twifucker.ui
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import icu.nullptr.twifucker.R
 import icu.nullptr.twifucker.modulePrefs

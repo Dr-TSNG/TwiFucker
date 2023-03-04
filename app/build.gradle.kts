@@ -1,13 +1,12 @@
 import org.gradle.internal.os.OperatingSystem
 import java.io.ByteArrayOutputStream
 import java.nio.file.Paths
-import java.util.Locale
 import java.util.Properties
 
 plugins {
     id("com.android.application")
+    id("org.lsposed.lsplugin.apktransform")
     kotlin("android")
-    alias(libs.plugins.lsplugin.apktransform)
 }
 
 val properties = Properties()
@@ -54,6 +53,7 @@ fun findInPath(executable: String): String? {
 android {
     namespace = "icu.nullptr.twifucker"
     compileSdk = 33
+    ndkVersion = "25.2.9519653"
     buildToolsVersion = "33.0.2"
 
     defaultConfig {
@@ -93,6 +93,14 @@ android {
         }
     }
 
+    buildFeatures {
+        prefab = true
+    }
+
+    externalNativeBuild.ndkBuild {
+        path("src/main/cpp/Android.mk")
+    }
+
     androidResources.additionalParameters += listOf(
         "--allow-reserved-package-id",
         "--package-id",
@@ -114,10 +122,13 @@ android {
 }
 
 dependencies {
-    implementation("com.android.support:recyclerview-v7:28.0.0")
     compileOnly("de.robv.android.xposed:api:82")
-    implementation("org.luckypray:DexKit:1.1.2")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("com.github.kyuubiran:EzXHelper:2.0.0-RC7")
+    implementation("com.tencent:mmkv:1.2.15")
+    implementation("dev.rikka.ndk.thirdparty:cxx:1.2.0")
+    implementation("dev.rikka.ndk.thirdparty:nativehelper:1.0.0")
+    implementation("org.luckypray:DexKit:1.1.2")
 }
 
 val adbExecutable: String = androidComponents.sdkComponents.adb.get().asFile.absolutePath
@@ -132,6 +143,9 @@ val restartTwitter = task("restartTwitter").doLast {
 
 afterEvaluate {
     tasks.named("installDebug") {
+        finalizedBy(restartTwitter)
+    }
+    tasks.named("installRelease") {
         finalizedBy(restartTwitter)
     }
 }

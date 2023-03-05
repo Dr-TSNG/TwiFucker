@@ -65,6 +65,8 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
+        System.loadLibrary("twifucker")
+
         EzXHelper.initZygote(startupParam)
         EzXHelper.setLogTag(TAG)
         EzXHelper.setToastTag(TAG)
@@ -79,7 +81,9 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
         MethodFinder.fromClass(Application::class.java).filterByName("attach")
             .filterByParamTypes(Context::class.java).first().createHook {
                 before { param ->
-                    EzXHelper.initAppContext(param.args[0] as Context)
+                    val context = param.args[0] as Context
+                    EzXHelper.initAppContext(context)
+                    nativeInit(context, EzXHelper.modulePath)
 
                     if (!lpparam.processName.contains(":")) {
                         startLog()
@@ -132,4 +136,6 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }.logexIfThrow("Failed init hook: ${it.name}")
         }
     }
+
+    private external fun nativeInit(context: Context, modulePath: String)
 }

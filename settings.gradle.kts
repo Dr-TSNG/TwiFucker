@@ -5,11 +5,6 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://api.xposed.info/")
     }
-    versionCatalogs {
-        create("libs") {
-            plugin("lsplugin-apktransform", "org.lsposed.lsplugin.apktransform").version("1.2")
-        }
-    }
 }
 
 pluginManagement {
@@ -20,6 +15,8 @@ pluginManagement {
     }
     plugins {
         id("org.jetbrains.kotlin.android") version "1.8.10"
+        id("org.lsposed.lsparanoid") version "0.5.1"
+        id("org.lsposed.lsplugin.apktransform") version "1.2"
     }
 }
 

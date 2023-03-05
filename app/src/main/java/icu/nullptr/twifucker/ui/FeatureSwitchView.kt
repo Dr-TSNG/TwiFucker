@@ -2,12 +2,12 @@ package icu.nullptr.twifucker.ui
 
 import android.content.Context
 import android.graphics.Color
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Button
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import icu.nullptr.twifucker.R
 
 class FeatureSwitchView(context: Context) : CustomLayout(context) {

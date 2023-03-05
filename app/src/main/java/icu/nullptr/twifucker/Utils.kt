@@ -7,6 +7,7 @@ import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
 import com.github.kyuubiran.ezxhelper.EzXHelper.modulePath
 import com.github.kyuubiran.ezxhelper.HookFactory
 import com.github.kyuubiran.ezxhelper.Log
+import com.tencent.mmkv.MMKV
 import de.robv.android.xposed.XC_MethodHook
 import icu.nullptr.twifucker.ui.SettingsDialog
 import org.json.JSONArray
@@ -32,11 +33,8 @@ val moduleLastModify by lazy {
     File(modulePath).lastModified()
 }
 
-@Suppress("DEPRECATION")
-val modulePrefs: SharedPreferences by lazy {
-    appContext.getSharedPreferences(
-        SettingsDialog.PREFS_NAME, Context.MODE_MULTI_PROCESS
-    )
+val modulePrefs: MMKV by lazy {
+    nativeLoadPrefs()
 }
 
 @Suppress("DEPRECATION")
@@ -52,6 +50,8 @@ fun getId(name: String, defType: String): Int {
         name, defType, appContext.packageName
     )
 }
+
+external fun nativeLoadPrefs(): MMKV
 
 fun writeJsonLog(content: String) {
     try {

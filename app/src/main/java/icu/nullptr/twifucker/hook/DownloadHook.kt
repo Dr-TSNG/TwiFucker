@@ -16,11 +16,18 @@ import com.github.kyuubiran.ezxhelper.MemberExtensions.isPublic
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.XposedHelpers
-import icu.nullptr.twifucker.*
+import icu.nullptr.twifucker.R
+import icu.nullptr.twifucker.beforeMeasure
+import icu.nullptr.twifucker.clearUrlQueries
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
+import icu.nullptr.twifucker.genOrigUrl
+import icu.nullptr.twifucker.getId
 import icu.nullptr.twifucker.hook.HookEntry.Companion.currentActivity
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
+import icu.nullptr.twifucker.hostAppLastUpdate
+import icu.nullptr.twifucker.moduleLastModify
+import icu.nullptr.twifucker.modulePrefs
 import icu.nullptr.twifucker.ui.DownloadDialog
 
 
@@ -249,6 +256,7 @@ object DownloadHook : BaseHook() {
                                 ) as String
                                 urls.add(genOrigUrl(mediaUrlHttps))
                             }
+
                             "VIDEO", "ANIMATED_GIF" -> {
                                 val mediaInfo = XposedHelpers.getObjectField(m, mediaInfoFieldName)
                                 val variants = XposedHelpers.getObjectField(
@@ -338,7 +346,7 @@ object DownloadHook : BaseHook() {
     }
 
     private fun saveHookInfo() {
-        modulePrefs.edit().let {
+        modulePrefs.let {
             // tweet share download button
             it.putString(HOOK_TWEET_SHARE_CLASS, tweetShareClassName)
             it.putString(HOOK_TWEET_SHARE_SHOW_METHOD, tweetShareShowMethodName)
@@ -381,7 +389,7 @@ object DownloadHook : BaseHook() {
             it.putString(HOOK_MEDIA_URL_HTTPS_FIELD, mediaUrlHttpsFieldName)
             it.putString(HOOK_MEDIA_INFO_FIELD, mediaInfoFieldName)
             it.putString(HOOK_VARIANTS_FIELD, variantsFieldName)
-        }.apply()
+        }
     }
 
 
@@ -570,8 +578,8 @@ object DownloadHook : BaseHook() {
             searchHook()
             Log.d("Download Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()
-            modulePrefs.edit().putLong("hook_download_last_update", System.currentTimeMillis())
-                .apply()
+            modulePrefs.putLong("hook_download_last_update", System.currentTimeMillis())
+
         }
     }
 }

@@ -26,7 +26,7 @@ object MainActivityHook : BaseHook() {
                     Log.d("MainActivity onResume")
                     if (BuildConfig.DEBUG || modulePrefs.getBoolean("first_run", true)) {
                         SettingsDialog(param.thisObject as Activity)
-                        modulePrefs.edit().putBoolean("first_run", false).apply()
+                        modulePrefs.putBoolean("first_run", false)
                     }
                     if (modulePrefs.getBoolean("show_toast", true)) {
                         AndroidLogger.toast("TwiFucker version ${BuildConfig.VERSION_NAME}")

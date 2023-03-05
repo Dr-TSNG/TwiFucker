@@ -24,7 +24,7 @@ class KeyValueDialog(context: Context, onChange: (JSONArray) -> Unit) :
                 JSONObject().put("key", keyValueView.editText.text)
                     .put("value", keyValueView.switch.isChecked)
             )
-            modulePrefs.edit().putString("feature_switch", arr.toString()).apply()
+            modulePrefs.putString("feature_switch", arr.toString())
             onChange(arr)
         }
 

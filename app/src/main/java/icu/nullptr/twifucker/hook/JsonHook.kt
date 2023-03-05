@@ -6,7 +6,11 @@ import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder.`-Static`.methodFinder
 import de.robv.android.xposed.XC_MethodHook
-import icu.nullptr.twifucker.*
+import icu.nullptr.twifucker.beforeMeasure
+import icu.nullptr.twifucker.forEach
+import icu.nullptr.twifucker.forEachIndexed
+import icu.nullptr.twifucker.modulePrefs
+import icu.nullptr.twifucker.writeJsonLog
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -160,9 +164,11 @@ object JsonHook : BaseHook() {
             has("content") -> {
                 optJSONObject("content")
             }
+
             has("item") -> {
                 optJSONObject("item")
             }
+
             else -> return null
         }
         return temp?.optJSONObject("content")?.optJSONObject("tweetResult")?.optJSONObject("result")

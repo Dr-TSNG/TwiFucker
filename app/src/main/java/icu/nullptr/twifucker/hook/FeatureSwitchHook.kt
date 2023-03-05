@@ -5,10 +5,14 @@ import com.github.kyuubiran.ezxhelper.EzXHelper
 import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
-import icu.nullptr.twifucker.*
+import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
+import icu.nullptr.twifucker.forEach
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
+import icu.nullptr.twifucker.hostAppLastUpdate
+import icu.nullptr.twifucker.moduleLastModify
+import icu.nullptr.twifucker.modulePrefs
 import org.json.JSONArray
 import org.json.JSONException
 
@@ -65,10 +69,10 @@ object FeatureSwitchHook : BaseHook() {
     }
 
     private fun saveHookInfo() {
-        modulePrefs.edit().let {
+        modulePrefs.let {
             it.putString(HOOK_FEATURE_SWITCH_GET_BOOL_CLASS, featureSwitchGetBoolClassName)
             it.putString(HOOK_FEATURE_SWITCH_GET_BOOL_METHOD, featureSwitchGetBoolMethodName)
-        }.apply()
+        }
     }
 
     private fun searchHook() {
@@ -99,8 +103,8 @@ object FeatureSwitchHook : BaseHook() {
             searchHook()
             Log.d("Feature Switch Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()
-            modulePrefs.edit()
-                .putLong("hook_feature_switch_last_update", System.currentTimeMillis()).apply()
+            modulePrefs
+                .putLong("hook_feature_switch_last_update", System.currentTimeMillis())
         }
     }
 }

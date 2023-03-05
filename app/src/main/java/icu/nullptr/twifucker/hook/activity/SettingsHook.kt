@@ -68,9 +68,9 @@ object SettingsHook : BaseHook() {
     }
 
     private fun saveHookInfo() {
-        modulePrefs.edit().putString(
+        modulePrefs.putString(
             "hook_on_version_click_listener_class", onVersionClickListenerClassName
-        ).apply()
+        )
     }
 
     private fun searchHook() {
@@ -108,8 +108,8 @@ object SettingsHook : BaseHook() {
             searchHook()
             Log.d("Settings Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()
-            modulePrefs.edit().putLong("hook_settings_last_update", System.currentTimeMillis())
-                .apply()
+            modulePrefs.putLong("hook_settings_last_update", System.currentTimeMillis())
+
         }
     }
 }

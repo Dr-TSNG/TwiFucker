@@ -4,9 +4,9 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.recyclerview.widget.RecyclerView
 import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import icu.nullptr.twifucker.R
 import icu.nullptr.twifucker.modulePrefs
@@ -46,7 +46,7 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
                 val bool = !arr.getJSONObject(position).optBoolean("value")
                 holder.valueView.text = bool.toString()
                 arr.getJSONObject(position).put("value", bool)
-                modulePrefs.edit().putString("feature_switch", arr.toString()).apply()
+                modulePrefs.putString("feature_switch", arr.toString())
             }
             holder.featureSwitchItem.setOnLongClickListener { _ ->
                 addModuleAssetPath(context)
@@ -54,7 +54,7 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
                     it.setMessage(R.string.msg_yes_no)
                     it.setPositiveButton(R.string.yes) { _, _ ->
                         arr.remove(position)
-                        modulePrefs.edit().putString("feature_switch", arr.toString()).apply()
+                        modulePrefs.putString("feature_switch", arr.toString())
                         notifyItemChanged(position)
                     }
                     it.setNegativeButton(R.string.no, null)
@@ -86,7 +86,7 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
                 it.setMessage(R.string.msg_yes_no)
                 it.setPositiveButton(R.string.yes) { _, _ ->
                     arr = JSONArray()
-                    modulePrefs.edit().putString("feature_switch", "[]").apply()
+                    modulePrefs.putString("feature_switch", "[]")
                     featureSwitchAdapter.reset()
                 }
                 it.setNegativeButton(R.string.no, null)

@@ -10,10 +10,14 @@ import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.XposedHelpers
-import icu.nullptr.twifucker.*
+import icu.nullptr.twifucker.beforeMeasure
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
+import icu.nullptr.twifucker.hostAppLastUpdate
+import icu.nullptr.twifucker.hostPrefs
+import icu.nullptr.twifucker.moduleLastModify
+import icu.nullptr.twifucker.modulePrefs
 
 object CustomTabsHook : BaseHook() {
     override val name: String
@@ -92,11 +96,11 @@ object CustomTabsHook : BaseHook() {
     }
 
     private fun saveHookInfo() {
-        modulePrefs.edit().let {
+        modulePrefs.let {
             it.putString(HOOK_CUSTOM_TABS_CLASS, customTabsClassName)
             it.putString(HOOK_CUSTOM_TABS_GET_METHOD, customTabsGetMethodName)
             it.putString(HOOK_CUSTOM_TABS_LAUNCH_URL_METHOD, customTabsLaunchUrlMethodName)
-        }.apply()
+        }
     }
 
     private fun searchHook() {
@@ -137,8 +141,8 @@ object CustomTabsHook : BaseHook() {
             searchHook()
             Log.d("Custom Tabs Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()
-            modulePrefs.edit().putLong("hook_custom_tabs_last_update", System.currentTimeMillis())
-                .apply()
+            modulePrefs.putLong("hook_custom_tabs_last_update", System.currentTimeMillis())
+
         }
     }
 }

@@ -145,7 +145,7 @@ object DrawerNavbarHook : BaseHook() {
     }
 
     private fun saveHookInfo() {
-        modulePrefs.edit().let {
+        modulePrefs.let {
             it.putString(HOOK_DRAWER_ITEMS_CLASS, drawerItemsClassName)
             it.putString(HOOK_BOOL_FALSE_CLASS, boolFalseClassName)
             it.putString(HOOK_BOTTOM_NAVBAR_CLASS, bottomNavbarClassName)
@@ -158,7 +158,7 @@ object DrawerNavbarHook : BaseHook() {
             it.putString(
                 HOOK_CUSTOM_MAP_INNER_GET_METHOD, customMapInnerGetMethodName
             )
-        }.apply()
+        }
     }
 
     private fun searchHook() {
@@ -271,8 +271,8 @@ object DrawerNavbarHook : BaseHook() {
             searchHook()
             Log.d("Drawer Hook search time: ${System.currentTimeMillis() - timeStart} ms")
             saveHookInfo()
-            modulePrefs.edit().putLong("hook_drawer_last_update", System.currentTimeMillis())
-                .apply()
+            modulePrefs.putLong("hook_drawer_last_update", System.currentTimeMillis())
+
         }
     }
 }

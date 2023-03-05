@@ -127,6 +127,10 @@ android {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += listOf("-Xstring-concat=inline")
+}
+
 dependencies {
     compileOnly("de.robv.android.xposed:api:82")
     implementation("androidx.recyclerview:recyclerview:1.2.1")

@@ -1,12 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<resources>
+﻿<resources>
     <string name="app_name">TwiFucker</string>
     <string name="twifucker_settings">TwiFuckerの設定</string>
     <string name="save">保存</string>
     <string name="reset">リセット</string>
     <string name="save_restart">保存をして再起動</string>
     <string name="add">追加</string>
-    <string name="settings_dismiss">無視</string>
+    <string name="settings_dismiss">破棄</string>
     <string name="settings_general">一般</string>
     <string name="settings_main">メイン</string>
     <string name="settings_extra">エクストラ</string>

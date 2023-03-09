@@ -1,59 +1,76 @@
-<resources>
+ <resources>
     <string name="app_name">TwiFucker</string>
     <string name="twifucker_settings">TwiFucker Ayarları</string>
-    <string name="save">Kaydet</string>
-    <string name="reset">Sıfırla</string>
-    <string name="save_restart">Kaydet ve Yeniden Başlat</string>
+    <string name="save">kaydet</string>
+    <string name="reset">sıfırla</string>
+    <string name="save_restart">kaydet ve yeniden başlat</string>
+    <string name="add">ekle</string>
+    <string name="msg_yes_no">Emin misin?</string>
+    <string name="yes">evet</string>
+    <string name="no">hayır</string>
 
-    <string name="settings_dismiss">Reddet</string>
+    <string name="settings_dismiss">reddet</string>
     <string name="settings_general">Genel</string>
-    <string name="settings_main">Main</string>
+    <string name="settings_main">Ana sayfa</string>
     <string name="settings_extra">Ekstra</string>
     <string name="settings_experimental">Deneysel</string>
-    <string name="settings_logging">Logging</string>
+    <string name="settings_logging">Giriş yapılıyor</string>
 
-    <string name="about_title">TwiFucker by Nullptr</string>
-    <string name="show_toast_title">Tost\'u Başlangıçta Göster</string>
+    <string name="version_title">Sürüm</string>
+    <string name="about_title">Nullptr tarafından TwiFucker</string>
+    <string name="show_toast_title">Başlangıçta Tostu Göster</string>
     <string name="use_legacy_hook">Eski kancayı kullan</string>
     <string name="disable_promoted_content_title">Tanıtılan İçeriği Devre Dışı Bırak</string>
     <string name="disable_promoted_user_title">Tanıtılan Kullanıcıları Devre Dışı Bırak</string>
     <string name="disable_promoted_trends_title">Tanıtılan Trendleri Devre Dışı Bırak</string>
     <string name="disable_sensitive_media_warning_title">Hassas Medya Uyarısını Devre Dışı Bırak</string>
-    <string name="disable_recommended_users">Önerilen Kullanıcıları Devre Dışı Bırak</string>
+    <string name="disable_recommended_users">Önerilen kullanıcıları devre dışı bırak</string>
     <string name="disable_who_to_follow_title">Kimin Takip Edileceğini Devre Dışı Bırak</string>
-    <string name="disable_topics_to_follow_title">Takip Edilecek Konuları Devre Dışı Bırakw</string>
+    <string name="disable_topics_to_follow_title">Takip Edilecek Konuları Devre Dışı Bırak</string>
+    <string name="disable_threads">Konuları Devre Dışı Bırak</string>
+    <string name="disable_tweet_detail_related_tweets">Tweet Ayrıntısı İlgili Tweetleri Devre Dışı Bırak</string>
+    <string name="disable_video_carousel">Video Döngüsünü Devre Dışı Bırak</string>
     <string name="enable_download_hook">İndirme Kancasını Etkinleştir</string>
-    <string name="disable_url_redirect">URL Yönlendirmeyi Devre Dışı Bırak</string>
-    <string name="hide_drawer_items">Çekmece öğelerini gizle</string>
-    <string name="hide_bottom_navbar_items">Alt gezinme çubuğu öğelerini gizle</string>
-    <string name="enable_log">Log Kayıtlarını Etkinleştir</string>
-    <string name="export_log">Log Kayıtlarını Dışa Aktar</string>
-    <string name="export_json_log">JSON Log Kayıtlarını Dışa Aktar</string>
-    <string name="clear_log">Log Kayıtlarını Temizle</string>
+    <string name="disable_url_redirect">URL Yönlendirmesini Devre Dışı Bırak</string>
+    <string name="hide_drawer_items">Çekmece ögelerini gizle</string>
+    <string name="hide_bottom_navbar_items">Alt gezinti çubuğu ögelerini gizle</string>
+    <string name="feature_switch">Özellik anahtarı</string>
+    <string name="enable_log">Günlüğü etkinleştir</string>
+    <string name="export_log">Günlüğü dışa aktar</string>
+    <string name="export_json_log">JSON günlüğünü dışa aktar</string>
+    <string name="clear_log">Günlüğü temizle</string>
+    <string name="delete_databases">Veritabanlarını sil</string>
 
     <string name="about_summary">Daha fazla destek için GitHub sayfasını ziyaret edin</string>
     <string name="show_toast_summary">Bu sayfayı ayarlar/ek/sürüm aracılığıyla bulabilirsiniz.</string>
+    <string name="use_legacy_hook_summary">Eski kanca, JSON dizesini doğrudan işler</string>
     <string name="disable_promoted_content_summary">ana sayfa/profil/arama zaman çizelgesi</string>
     <string name="disable_promoted_user_summary">ana sayfa/profil/arama zaman çizelgesi</string>
     <string name="disable_promoted_trends_summary">ara</string>
     <string name="disable_sensitive_media_warning_summary">ana sayfa/profil zaman çizelgesi ve tweet ayrıntıları</string>
     <string name="disable_recommended_users_summary">Birini takip ettikten sonra önerilen kullanıcıları gösterme</string>
-    <string name="enable_download_hook_summary">[Share -> İndir veya Kopyala] İndirmek için dokunun, bağlantıyı kopyalamak için düğmeyi basılı tutun</string>
+    <string name="disable_threads_summary">Zaman çizelgesinin üstündeki canlı içeriği kaldırın</string>
+    <string name="disable_video_carousel_summary">Keşfet sekmesindeki video döngüsünü kaldırın</string>
+    <string name="enable_download_hook_summary">[Paylaş -> İndir veya Kopyala] İndirmek için dokunun, bağlantıyı kopyalamak için düğmeyi basılı tutun</string>
     <string name="disable_url_redirect_summary">t.co url yönlendirmesini durdur</string>
-    <string name="hide_drawer_items_summary">Gizlenecek çekmece öğelerini seçin</string>
-    <string name="hide_bottom_navbar_items_summary">Gizlenecek alt gezinme çubuğu öğelerini seçin</string>
-    <string name="enable_log_summary">Daha fazla günlük kaydı için eski kancayı etkinleştirin.  Günlük, Android/data/com.twitter.android/cache/twifucker_log\'a kaydedilir</string>
-    <string name="export_json_log_summary">Etkinleştirilmesi için eski kanca gerekli</string>
+    <string name="hide_drawer_items_summary">Gizlenecek çekmece ögelerini seçin</string>
+    <string name="hide_bottom_navbar_items_summary">Gizlenecek alt gezinme çubuğu ögelerini seçin</string>
+    <string name="feature_switch_summary">Twitter sunucusu tarafından verilen özellik bayrağını değiştirin (RİSKİ KENDİNİZE AİT OLARAK KULLANIN!)</string>
+    <string name="enable_log_summary">Daha fazla günlük kaydı için eski kancayı etkinleştirin. Günlük, Android/data/com.twitter.android/cache/twifucker_log konumuna kaydedilir</string>
+    <string name="export_json_log_summary">Eski kancanın etkinleştirilmesi gerekiyor</string>
+    <string name="delete_databases_summary">Yalnızca hata ayıklama</string>
 
-    <string name="download_or_copy">İndir veya Kopyala</string>
+    <string name="download_or_copy">İndirin veya Kopyalayın</string>
     <string name="download_media">Medya %1$d</string>
-    <string name="download_link_copied">İndirme linki kopyalandı!</string>
+    <string name="download_link_copied">İndirme bağlantısı kopyalandı!</string>
     <string name="downloading">İndiriliyor…</string>
-    <string name="download_failed">İndirme işlemi başarısız</string>
-    <string name="download_completed">İndirme işlemi tamamlandı</string>
-    <string name="download_all">Tümünü İndir</string>
+    <string name="download_failed">İndirme başarısız</string>
+    <string name="download_completed">İndirme tamamlandı</string>
+    <string name="download_all">Hepsini indir</string>
 
-    <string name="deleted_n_promoted_tweet">Uygulama veritabanından %1$d tanıtılan tweet silindi</string>
-    <string name="use_legacy_hook_summary">Legacy hook processes JSON string directly</string>
+    <string name="deleted_n_promoted_tweet">Uygulama veritabanından tanıtılan %1$d tweet silindi</string>
+    <string name="deleted_n_database">%1$d veritabanı silindi</string>
 
+    <string name="feature_switch_key_hint">feature_flag</string>
+    <string name="feature_switch_value_boolean">Boolean</string>
 </resources>

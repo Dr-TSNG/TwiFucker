@@ -1,0 +1,76 @@
+<resources>
+    <string name="app_name">TwiFucker</string>
+    <string name="twifucker_settings">TwiFucker إعدادات</string>
+    <string name="save">حفظ</string>
+    <string name="reset">إعادة تعيين</string>
+    <string name="save_restart">حفظ وإعادة التشغيل</string>
+    <string name="add">إضافة</string>
+    <string name="msg_yes_no">هل أنت متأكد؟</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
+
+    <string name="settings_dismiss">استبعاد</string>
+    <string name="settings_general">عامة</string>
+    <string name="settings_main">رئيسية</string>
+    <string name="settings_extra">إضافية</string>
+    <string name="settings_experimental">تجريبية</string>
+    <string name="settings_logging">Logging</string>
+
+    <string name="version_title">الإصدار</string>
+    <string name="about_title">TwiFucker by Nullptr</string>
+    <string name="show_toast_title">عرض إشعار عند البدء</string>
+    <string name="use_legacy_hook">Use legacy hook</string>
+    <string name="disable_promoted_content_title">تعطيل المحتوى المُروَّج</string>
+    <string name="disable_promoted_user_title">تعطيل الحسابات المُروَّجة</string>
+    <string name="disable_promoted_trends_title">تعطيل محتوى الترند المُروَّج</string>
+    <string name="disable_sensitive_media_warning_title">تعطيل تحذير المحتوى الحساس</string>
+    <string name="disable_recommended_users">تعطيل الحسابات الموصى بها</string>
+    <string name="disable_who_to_follow_title">تعطيل اقتراحات متابعة الحسابات</string>
+    <string name="disable_topics_to_follow_title">تعطيل اقتراحات متابعة المواضيع</string>
+    <string name="disable_threads">تعطيل سلسلة التغريدات</string>
+    <string name="disable_tweet_detail_related_tweets">تعطيل التغريدات ذات الصلة بتفاصيل التغريدات</string>
+    <string name="disable_video_carousel">تعطيل مكتبة الفيديو</string>
+    <string name="enable_download_hook">تمكين زر التنزيل</string>
+    <string name="disable_url_redirect">تعطيل إعادة توجيه URL</string>
+    <string name="hide_drawer_items">إخفاء عناصر الدرج</string>
+    <string name="hide_bottom_navbar_items">إخفاء عناصر شريط التنقل السفلي</string>
+    <string name="feature_switch">Feature switch</string>
+    <string name="enable_log">تمكين السجل</string>
+    <string name="export_log">تصدير السجل</string>
+    <string name="export_json_log">تصدير سجل JSON</string>
+    <string name="clear_log">محو السجل</string>
+    <string name="delete_databases">حذف قواعد البيانات</string>
+
+    <string name="about_summary">قم بزيارة صفحة GitHub للحصول على مزيد من الدعم</string>
+    <string name="show_toast_summary">يمكنك العثور على هذه الصفحة من خلال الإعدادات/موارد إضافية/الإصدار</string>
+    <string name="use_legacy_hook_summary">Legacy hook processes JSON string directly</string>
+    <string name="disable_promoted_content_summary">القائمة الرئيسية/الملف الشخصي/الخط الزمني</string>
+    <string name="disable_promoted_user_summary">القائمة الرئيسية/الملف الشخصي/الخط الزمني</string>
+    <string name="disable_promoted_trends_summary">البحث</string>
+    <string name="disable_sensitive_media_warning_summary">القائمة الرئيسية/الخط الزمني للملف الشخصي وتفاصيل التغريدات</string>
+    <string name="disable_recommended_users_summary">لا تعرض الحسابات الموصى بهم بعد متابعتك لشخص ما</string>
+    <string name="disable_threads_summary">إزالة المحتوى المباشر أعلى الخط الزمني</string>
+    <string name="disable_video_carousel_summary">قم بإزالة مكتبة الفيديو في الترند</string>
+    <string name="enable_download_hook_summary">[مشاركة -> تنزيل أو نسخ] انقر للتنزيل، واضغط باستمرار لنسخ الرابط</string>
+    <string name="disable_url_redirect_summary">إيقاف إعادة توجيه t.co url</string>
+    <string name="hide_drawer_items_summary">حدد عنصر (عناصر) الدرج لإخفائها</string>
+    <string name="hide_bottom_navbar_items_summary">حدد عنصر (عناصر) شريط التنقل السفلي لإخفائها</string>
+    <string name="feature_switch_summary">قم بتعديل feature flag التي قدمها خادم Twitter (استخدمه على مسؤوليتك الخاصة!)</string>
+    <string name="enable_log_summary">Enable legacy hook for more logging. Log is saved to Android/data/com.twitter.android/cache/twifucker_log</string>
+    <string name="export_json_log_summary">Legacy hook is required to be enabled</string>
+    <string name="delete_databases_summary">Debug only</string>
+
+    <string name="download_or_copy">تنزيل أو نسخ</string>
+    <string name="download_media">وسائط %1$d</string>
+    <string name="download_link_copied">تم نسخ رابط التنزيل!</string>
+    <string name="downloading">جارٍ التنزيل…</string>
+    <string name="download_failed">التنزيل فشل</string>
+    <string name="download_completed">اكتمل التحميل</string>
+    <string name="download_all">تنزيل الكل</string>
+
+    <string name="deleted_n_promoted_tweet">تم حذف %1$d تغريدة (تغريدات) مروّجة من قاعدة بيانات التطبيق</string>
+    <string name="deleted_n_database">تم حذف %1$d قاعدة بيانات</string>
+
+    <string name="feature_switch_key_hint">feature_flag</string>
+    <string name="feature_switch_value_boolean">Boolean</string>
+</resources>

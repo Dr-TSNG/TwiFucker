@@ -84,11 +84,11 @@ class DownloadItem(context: Context) : CustomLayout(context) {
                     x = it.marginStart, y = (this.measuredHeight / 2) - (it.measuredHeight / 2)
                 )
             }
-            btnDownload.let {
-                it.layout(x = it.marginEnd, y = 0, fromRight = true)
-            }
             btnCopy.let {
-                it.layout(x = it.marginEnd + btnDownload.left, y = 0, fromRight = true)
+                it.layout(x = itemText.right + it.marginStart, y = 0)
+            }
+            btnDownload.let {
+                it.layout(x = btnCopy.right + it.marginStart, y = 0)
             }
         } else {
             itemText.let {

@@ -50,7 +50,7 @@
     <string name="disable_sensitive_media_warning_summary">accueil/profil chronologique et détails de tweet</string>
     <string name="disable_recommended_users_summary">Ne pas afficher les utilisateurs recommandés après avoir suivi quelqu\’un</string>
     <string name="disable_threads_summary">Supprimer les contenus en direct sur la partie suppérieure de la chronologie</string>
-    <string name="disable_video_carousel_summary">Supprimer la ssuccession de vidéo dans l'onglet Explorer</string>
+    <string name="disable_video_carousel_summary">Supprimer la ssuccession de vidéo dans l\’onglet Explorer</string>
     <string name="enable_download_hook_summary">[Partager -> Télécharger ou Copier] Appuyer sur télécharger, boutton maintenu pour copier le lien</string>
     <string name="disable_url_redirect_summary">Mettre fin aux URL de redirections t.co</string>
     <string name="hide_drawer_items_summary">Sélectionner les élément(s) du fil à masquer</string>

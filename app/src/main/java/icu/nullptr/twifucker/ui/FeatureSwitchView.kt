@@ -74,7 +74,7 @@ class FeatureSwitchView(context: Context) : CustomLayout(context) {
         titleView.autoMeasure()
         buttonReset.autoMeasure()
         buttonAdd.autoMeasure()
-        val maxWidth = measuredWidth - recyclerView.marginLeft - recyclerView.marginRight
+        val maxWidth = measuredWidth - recyclerView.marginStart - recyclerView.marginEnd
         recyclerView.let {
             it.measure(maxWidth.toExactlyMeasureSpec(), it.defaultHeightMeasureSpec(this))
         }
@@ -86,22 +86,42 @@ class FeatureSwitchView(context: Context) : CustomLayout(context) {
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        titleView.let {
-            it.layout(it.marginLeft, it.marginTop)
-        }
-        recyclerView.let {
-            it.layout(it.marginLeft, titleView.bottom)
-            // TODO check if this is necessary
-            if (!isRecyclerViewAdded) {
-                addView(it)
-                isRecyclerViewAdded = true
+        if (!isRTL) {
+            titleView.let {
+                it.layout(it.marginStart, it.marginTop)
             }
-        }
-        buttonReset.let {
-            it.layout(it.marginLeft, recyclerView.bottom)
-        }
-        buttonAdd.let {
-            it.layout(it.marginRight, recyclerView.bottom, fromRight = true)
+            recyclerView.let {
+                it.layout(it.marginStart, titleView.bottom)
+                // TODO check if this is necessary
+                if (!isRecyclerViewAdded) {
+                    addView(it)
+                    isRecyclerViewAdded = true
+                }
+            }
+            buttonReset.let {
+                it.layout(it.marginStart, recyclerView.bottom)
+            }
+            buttonAdd.let {
+                it.layout(it.marginEnd, recyclerView.bottom, fromRight = true)
+            }
+        } else {
+            titleView.let {
+                it.layout(it.marginEnd, it.marginTop, fromRight = true)
+            }
+            recyclerView.let {
+                it.layout(it.marginEnd, titleView.bottom, fromRight = true)
+                // TODO check if this is necessary
+                if (!isRecyclerViewAdded) {
+                    addView(it)
+                    isRecyclerViewAdded = true
+                }
+            }
+            buttonReset.let {
+                it.layout(it.marginEnd, recyclerView.bottom, fromRight = true)
+            }
+            buttonAdd.let {
+                it.layout(it.marginStart, recyclerView.bottom, fromRight = false)
+            }
         }
     }
 }

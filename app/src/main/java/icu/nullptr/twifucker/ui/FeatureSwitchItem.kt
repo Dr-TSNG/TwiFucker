@@ -29,7 +29,12 @@ class FeatureSwitchItem(context: Context) : CustomLayout(context) {
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        keyTextView.let { it.layout(x = 0, y = 0) }
-        valueTextView.let { it.layout(x = 0, y = keyTextView.bottom) }
+        if (!isRTL) {
+            keyTextView.let { it.layout(x = 0, y = 0) }
+            valueTextView.let { it.layout(x = 0, y = keyTextView.bottom) }
+        } else {
+            keyTextView.let { it.layout(x = 0, y = 0, fromRight = true) }
+            valueTextView.let { it.layout(x = 0, y = keyTextView.bottom, fromRight = true) }
+        }
     }
 }

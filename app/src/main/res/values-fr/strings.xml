@@ -55,5 +55,34 @@
 
     <string name="deleted_n_promoted_tweet">Suppression de %1$d tweet(s) promotionnel(s) de la base de donnée de l\’application</string>
     <string name="use_legacy_hook_summary">La méthode traditionnelle traite directement la chaine JSON</string>
+    <string name="disable_promoted_content_summary">Chronologie accueil/profile/recherche</string>
+    <string name="disable_promoted_user_summary">Chronologie accueil/profile/recherche</string>
+    <string name="disable_promoted_trends_summary">Rechercher</string>
+    <string name="disable_sensitive_media_warning_summary">Chronologie et détails de tweet accueil/profile</string>
+    <string name="disable_recommended_users_summary">Ne pas afficher les utilisateurs recommandés après que vous ayez suivi quelqu\’un</string>
+    <string name="disable_threads_summary">Supprimer les contenus en direct sur la partie suppérieure de la chronologie</string>
+    <string name="disable_video_carousel_summary">Supprimer le carousel des vidéos dans l\’onglet explorer</string>
+    <string name="enable_download_hook_summary">[Partager -> Télécharger ou Copier] Appuyer sur télécharger, boutton maintenu pour copier le lien</string>
+    <string name="disable_url_redirect_summary">Mettre fin aux URL de redirections t.co</string>
+    <string name="hide_drawer_items_summary">Sélectionner les éléments compartimentés à masquer</string>
+    <string name="hide_bottom_navbar_items_summary">Sélectionner les élément(s) de la barre de navigation inférieure à masquer</string>
+    <string name="feature_switch_summary">Altérer les commutateurs à fonctionnalité transmis par le serveur Twitter (A UTILISER A VOS RISQUES ET PÉRILS!)</string>
+    <string name="enable_log_summary">Activer l'ancien ancrage pour plus de tracabilité. Le journal est enregistré dans Android/data/com.twitter.android/cache/twifucker_log</string>
+    <string name="export_json_log_summary">L'ancien ancrage est requis pour être activé</string>
+    <string name="delete_databases_summary">Debuggage uniquement</string>
+
+    <string name="download_or_copy">Télécharger ou Copier</string>
+    <string name="download_media">Media %1$d</string>
+    <string name="download_link_copied">Lien de téléchargement copié!</string>
+    <string name="downloading">Téléchargement…</string>
+    <string name="download_failed">Échec du téléchargement</string>
+    <string name="download_completed">Téléchargement terminé</string>
+    <string name="download_all">Tout télécharger</string>
+
+    <string name="deleted_n_promoted_tweet">%1$d tweet(s) promotionnel(s) supprimé(s) de la base de donnée de l\’application</string>
+    <string name="deleted_n_database">%1$d base(s) de donnée(s) supprimée(s)</string>
+
+    <string name="feature_switch_key_hint">commutateur_fonctionnalité</string>
+    <string name="feature_switch_value_boolean">Boléenne</string>
 
 </resources>

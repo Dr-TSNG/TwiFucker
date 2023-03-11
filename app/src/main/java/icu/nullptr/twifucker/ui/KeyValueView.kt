@@ -32,7 +32,7 @@ class KeyValueView(context: Context) : CustomLayout(context) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val maxWidth = measuredWidth - editText.marginLeft - editText.marginRight
+        val maxWidth = measuredWidth - editText.marginStart - editText.marginEnd
         editText.measure(
             maxWidth.toExactlyMeasureSpec(), editText.defaultHeightMeasureSpec(this)
         )
@@ -47,7 +47,16 @@ class KeyValueView(context: Context) : CustomLayout(context) {
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        editText.let { it.layout(x = it.marginLeft, y = 0) }
-        switch.let { it.layout(x = it.marginLeft, y = editText.measuredHeightWithMargins) }
+        if (!isRTL) {
+            editText.let { it.layout(x = it.marginStart, y = 0) }
+            switch.let { it.layout(x = it.marginStart, y = editText.measuredHeightWithMargins) }
+        } else {
+            editText.let { it.layout(x = it.marginEnd, y = 0, fromRight = true) }
+            switch.let {
+                it.layout(
+                    x = it.marginEnd, y = editText.measuredHeightWithMargins, fromRight = true
+                )
+            }
+        }
     }
 }

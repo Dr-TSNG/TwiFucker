@@ -23,7 +23,7 @@ abstract class CustomLayout(context: Context) : ViewGroup(context) {
         }
     }
 
-    protected val View.measuredWidthWithMargins get() = (measuredWidth + marginLeft + marginRight)
+    protected val View.measuredWidthWithMargins get() = (measuredWidth + marginStart + marginEnd)
 
     protected val View.measuredHeightWithMargins get() = (measuredHeight + marginTop + marginBottom)
 
@@ -58,12 +58,15 @@ abstract class CustomLayout(context: Context) : ViewGroup(context) {
     // Taken from
     // https://android.googlesource.com/platform/frameworks/support/+/android-room-release/core/ktx/src/main/java/androidx/core/view/View.kt
 
-    inline val View.marginLeft: Int
+    inline val View.marginStart: Int
         get() = (layoutParams as? MarginLayoutParams)?.leftMargin ?: 0
     inline val View.marginTop: Int
         get() = (layoutParams as? MarginLayoutParams)?.topMargin ?: 0
-    inline val View.marginRight: Int
+    inline val View.marginEnd: Int
         get() = (layoutParams as? MarginLayoutParams)?.rightMargin ?: 0
     inline val View.marginBottom: Int
         get() = (layoutParams as? MarginLayoutParams)?.bottomMargin ?: 0
+
+    inline val View.isRTL: Boolean
+        get() = context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
 }

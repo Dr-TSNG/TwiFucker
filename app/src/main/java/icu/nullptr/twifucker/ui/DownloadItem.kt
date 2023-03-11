@@ -62,7 +62,7 @@ class DownloadItem(context: Context) : CustomLayout(context) {
         btnDownload.autoMeasure()
 
         val itemTextWidth =
-            measuredWidth - itemText.marginLeft - itemText.paddingLeft - itemText.paddingRight - itemText.marginRight - btnCopy.measuredWidthWithMargins - btnDownload.measuredWidthWithMargins
+            measuredWidth - itemText.marginStart - itemText.paddingLeft - itemText.paddingRight - itemText.marginEnd - btnCopy.measuredWidthWithMargins - btnDownload.measuredWidthWithMargins
         itemText.measure(
             itemTextWidth.toExactlyMeasureSpec(), itemText.defaultHeightMeasureSpec(this)
         )
@@ -78,12 +78,34 @@ class DownloadItem(context: Context) : CustomLayout(context) {
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        itemText.let {
-            it.layout(
-                x = it.marginLeft, y = (this.measuredHeight / 2) - (it.measuredHeight / 2)
-            )
+        if (!isRTL) {
+            itemText.let {
+                it.layout(
+                    x = it.marginStart, y = (this.measuredHeight / 2) - (it.measuredHeight / 2)
+                )
+            }
+            btnCopy.let {
+                it.layout(x = itemText.right + it.marginStart, y = 0)
+            }
+            btnDownload.let {
+                it.layout(x = btnCopy.right + it.marginStart, y = 0)
+            }
+        } else {
+            itemText.let {
+                it.layout(
+                    x = it.marginEnd,
+                    y = (this.measuredHeight / 2) - (it.measuredHeight / 2),
+                    fromRight = true
+                )
+            }
+            btnDownload.let {
+                it.layout(x = it.marginStart, y = 0)
+            }
+            btnCopy.let {
+                it.layout(x = it.marginStart + btnDownload.right, y = 0)
+            }
         }
-        btnCopy.let { it.layout(x = itemText.right + it.marginLeft, y = 0) }
-        btnDownload.let { it.layout(x = btnCopy.right + it.marginLeft, y = 0) }
+
+
     }
 }

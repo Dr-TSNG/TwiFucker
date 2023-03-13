@@ -101,6 +101,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         CustomTabsHook,
                         DrawerNavbarHook,
                         FeatureSwitchHook,
+                        ViewHook,
                     )
 
                     if (modulePrefs.getBoolean("use_legacy_hook", false)) {

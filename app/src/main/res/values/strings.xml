@@ -30,6 +30,7 @@
     <string name="disable_threads">Disable Threads</string>
     <string name="disable_tweet_detail_related_tweets">Disable Tweet Detail Related Tweets</string>
     <string name="disable_video_carousel">Disable Video Carousel</string>
+    <string name="disable_banner_view">Disable Banner View</string>
     <string name="enable_download_hook">Enable Download Hook</string>
     <string name="disable_url_redirect">Disable URL Redirect</string>
     <string name="hide_drawer_items">Hide drawer items</string>
@@ -51,6 +52,7 @@
     <string name="disable_recommended_users_summary">Don\'t show recommended users after you follow someone</string>
     <string name="disable_threads_summary">Remove live content on top of timeline</string>
     <string name="disable_video_carousel_summary">Remove video carousel in explore tab</string>
+    <string name="disable_banner_view_summary">Prevent banner view from showing</string>
     <string name="enable_download_hook_summary">[Share -> Download or Copy] Tap to download, hold button to copy link</string>
     <string name="disable_url_redirect_summary">Stop t.co url redirection</string>
     <string name="hide_drawer_items_summary">Select drawer item(s) to be hidden</string>

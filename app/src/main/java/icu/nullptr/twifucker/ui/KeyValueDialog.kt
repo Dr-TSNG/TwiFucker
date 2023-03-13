@@ -27,7 +27,7 @@ class KeyValueDialog(context: Context, onChange: (JSONArray) -> Unit) :
             modulePrefs.putString("feature_switch", arr.toString())
             onChange(arr)
         }
-
+        keyValueView.focus()
         show()
     }
 }

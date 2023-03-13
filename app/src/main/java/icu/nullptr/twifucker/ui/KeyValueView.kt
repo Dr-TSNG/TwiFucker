@@ -3,6 +3,7 @@ package icu.nullptr.twifucker.ui
 import android.content.Context
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Switch
 import icu.nullptr.twifucker.R
@@ -28,6 +29,13 @@ class KeyValueView(context: Context) : CustomLayout(context) {
         }
         text = context.getString(R.string.feature_switch_value_boolean)
         addView(this)
+    }
+
+    fun focus() {
+        editText.requestFocus()
+        (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).showSoftInput(
+            editText, InputMethodManager.SHOW_IMPLICIT
+        )
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

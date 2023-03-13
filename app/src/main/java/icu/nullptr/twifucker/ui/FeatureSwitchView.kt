@@ -74,12 +74,15 @@ class FeatureSwitchView(context: Context) : CustomLayout(context) {
         titleView.autoMeasure()
         buttonReset.autoMeasure()
         buttonAdd.autoMeasure()
-        val maxWidth = measuredWidth - recyclerView.marginStart - recyclerView.marginEnd
-        recyclerView.let {
-            it.measure(maxWidth.toExactlyMeasureSpec(), it.defaultHeightMeasureSpec(this))
-        }
+        val maxWidth =
+            defaultWidthMeasureSpec(this).coerceAtMost((measuredWidth - recyclerView.marginStart - recyclerView.marginEnd).toExactlyMeasureSpec())
+        val recyclerViewMaxHeight =
+            defaultHeightMeasureSpec(this).coerceAtMost((measuredHeight - titleView.measuredHeightWithMargins - buttonReset.measuredHeightWithMargins).toExactlyMeasureSpec())
+        recyclerView.measure(maxWidth, recyclerViewMaxHeight)
         val maxHeight =
-            titleView.measuredHeightWithMargins + recyclerView.measuredHeightWithMargins + buttonReset.measuredHeightWithMargins
+            (titleView.measuredHeightWithMargins + recyclerView.measuredHeightWithMargins + buttonReset.measuredHeightWithMargins).coerceAtMost(
+                measuredHeight
+            )
         setMeasuredDimension(
             measuredWidth, maxHeight
         )

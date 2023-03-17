@@ -30,6 +30,7 @@
     <string name="disable_threads">تعطيل سلسلة التغريدات</string>
     <string name="disable_tweet_detail_related_tweets">تعطيل التغريدات ذات الصلة بتفاصيل التغريدات</string>
     <string name="disable_video_carousel">تعطيل مكتبة الفيديو</string>
+    <string name="disable_banner_view">تعطيل لافتة قاموا بالتغريد</string>
     <string name="enable_download_hook">تمكين زر التنزيل</string>
     <string name="disable_url_redirect">تعطيل إعادة توجيه URL</string>
     <string name="hide_drawer_items">إخفاء عناصر الدرج</string>
@@ -51,6 +52,7 @@
     <string name="disable_recommended_users_summary">لا تعرض الحسابات الموصى بهم بعد متابعتك لشخص ما</string>
     <string name="disable_threads_summary">إزالة المحتوى المباشر أعلى الخط الزمني</string>
     <string name="disable_video_carousel_summary">قم بإزالة مكتبة الفيديو في الترند</string>
+    <string name="disable_banner_view_summary">منع عرض لافتة قاموا بالتغريد من الظهور</string>
     <string name="enable_download_hook_summary">[مشاركة -> تنزيل أو نسخ] انقر للتنزيل، واضغط باستمرار لنسخ الرابط</string>
     <string name="disable_url_redirect_summary">إيقاف إعادة توجيه t.co url</string>
     <string name="hide_drawer_items_summary">حدد عنصر (عناصر) الدرج لإخفائها</string>

@@ -32,6 +32,7 @@
     <string name="disable_video_carousel">Nonaktifkan carousel video</string>
     <string name="disable_banner_view">Nonaktifkan tampilan banner</string>																   
     <string name="enable_download_hook">Aktifkan download hook</string>
+    <string name="download_directory">Pilih direktori download</string>																		
     <string name="disable_url_redirect">Nonaktifkan pengalihan URL</string>
     <string name="hide_drawer_items">Sembunyikan item drawer</string>
     <string name="hide_bottom_navbar_items">Sembunyikan item bar navigasi bawah</string>
@@ -74,5 +75,8 @@
     <string name="deleted_n_database">Database %1$d dihapus</string>
 
     <string name="feature_switch_key_hint">feature_flag</string>
+   <string name="feature_switch_value_decimal_hint">1.0</string>																 
     <string name="feature_switch_value_boolean">Boolean</string>
+    <string name="feature_switch_value_decimal">Desimal</string>																
+    <string name="feature_switch_bool_label">Paksa aktif</string>																
 </resources>

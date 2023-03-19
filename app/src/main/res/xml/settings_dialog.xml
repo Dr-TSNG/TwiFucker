@@ -74,6 +74,10 @@
             android:key="enable_download_hook"
             android:summary="@string/enable_download_hook_summary"
             android:title="@string/enable_download_hook" />
+        <Preference
+            android:dependency="enable_download_hook"
+            android:key="download_directory"
+            android:title="@string/download_directory" />
         <SwitchPreference
             android:key="disable_url_redirect"
             android:summary="@string/disable_url_redirect_summary"

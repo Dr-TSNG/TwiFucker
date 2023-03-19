@@ -18,12 +18,21 @@ class KeyValueDialog(context: Context, onChange: (JSONArray) -> Unit) :
         setView(keyValueView)
         setNeutralButton(R.string.settings_dismiss, null)
         setPositiveButton(R.string.save) { _, _ ->
+            if (keyValueView.editText.text.isBlank()) return@setPositiveButton
             val featureSwitch = modulePrefs.getString("feature_switch", "[]")
             val arr = JSONArray(featureSwitch)
-            arr.put(
-                JSONObject().put("key", keyValueView.editText.text)
-                    .put("value", keyValueView.switch.isChecked)
-            )
+            if (keyValueView.isBoolean) {
+                arr.put(
+                    JSONObject().put("key", keyValueView.editText.text)
+                        .put("value", keyValueView.switch.isChecked).put("type", "boolean")
+                )
+            } else {
+                if (keyValueView.inputDecimal.text.isBlank()) return@setPositiveButton
+                arr.put(
+                    JSONObject().put("key", keyValueView.editText.text)
+                        .put("value", keyValueView.inputDecimal.text).put("type", "decimal")
+                )
+            }
             modulePrefs.putString("feature_switch", arr.toString())
             onChange(arr)
         }

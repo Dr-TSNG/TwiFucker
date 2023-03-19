@@ -39,10 +39,20 @@ class FeatureSwitchDialog(context: Context) : Dialog(context) {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.keyView.text = arr.getJSONObject(position).optString("key")
-            holder.valueView.text = arr.getJSONObject(position).optBoolean("value").toString()
+            val isBoolean = arr.getJSONObject(position).optString("type", "boolean") == "boolean"
+            val key = arr.getJSONObject(position).optString("key")
+
+            holder.keyView.text = key
+            if (isBoolean) {
+                val bool = arr.getJSONObject(position).optBoolean("value")
+                holder.valueView.text = bool.toString()
+            } else {
+                val decimal = arr.getJSONObject(position).optString("value")
+                holder.valueView.text = decimal
+            }
 
             holder.featureSwitchItem.setOnClickListener { _ ->
+                if (!isBoolean) return@setOnClickListener
                 val bool = !arr.getJSONObject(position).optBoolean("value")
                 holder.valueView.text = bool.toString()
                 arr.getJSONObject(position).put("value", bool)

@@ -75,5 +75,8 @@
     <string name="deleted_n_database">Deleted %1$d database(s)</string>
 
     <string name="feature_switch_key_hint">feature_flag</string>
+    <string name="feature_switch_value_decimal_hint">1.0</string>
     <string name="feature_switch_value_boolean">Boolean</string>
+    <string name="feature_switch_value_decimal">Decimal</string>
+    <string name="feature_switch_bool_label">Force True</string>
 </resources>

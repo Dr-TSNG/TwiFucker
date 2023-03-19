@@ -129,6 +129,7 @@ android {
 
 dependencies {
     compileOnly("de.robv.android.xposed:api:82")
+    implementation("androidx.documentfile:documentfile:1.0.1")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("com.github.kyuubiran:EzXHelper:2.0.0-RC7")
     implementation("com.tencent:mmkv:1.2.15")

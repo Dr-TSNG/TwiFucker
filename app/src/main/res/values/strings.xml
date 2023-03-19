@@ -32,6 +32,7 @@
     <string name="disable_video_carousel">Disable Video Carousel</string>
     <string name="disable_banner_view">Disable Banner View</string>
     <string name="enable_download_hook">Enable Download Hook</string>
+    <string name="download_directory">Select Download Directory</string>
     <string name="disable_url_redirect">Disable URL Redirect</string>
     <string name="hide_drawer_items">Hide drawer items</string>
     <string name="hide_bottom_navbar_items">Hide bottom navigation bar items</string>

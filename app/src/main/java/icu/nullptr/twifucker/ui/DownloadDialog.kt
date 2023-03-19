@@ -9,15 +9,18 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Environment
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import androidx.documentfile.provider.DocumentFile
 import com.github.kyuubiran.ezxhelper.AndroidLogger
 import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
 import com.github.kyuubiran.ezxhelper.Log
 import icu.nullptr.twifucker.R
+import icu.nullptr.twifucker.modulePrefs
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
@@ -36,6 +39,18 @@ class DownloadDialog(
                 contentType.contains("application/x-mpegURL") -> ".m3u8"
                 else -> ""
             }
+        }
+
+        private fun copyFileUri(
+            context: Context, fileName: String, outputDirectory: String, contentType: String
+        ) {
+            DocumentFile.fromTreeUri(context, Uri.parse(outputDirectory))
+                ?.createFile(contentType, fileName)?.uri?.let { uri2 ->
+                    context.contentResolver.openOutputStream(uri2)?.use { out ->
+                        val inputStream = File(appContext.cacheDir, fileName).inputStream()
+                        inputStream.copyTo(out)
+                    }
+                }
         }
 
         private fun copyFile(fileName: String): String {
@@ -71,9 +86,10 @@ class DownloadDialog(
                     val buffer = ByteArray(1024)
                     var len = inputStream.read(buffer)
 
+                    val contentType = httpConnection.contentType
                     val file = File(
                         appContext.cacheDir,
-                        "" + System.currentTimeMillis() + contentTypeToExt(httpConnection.contentType)
+                        "" + System.currentTimeMillis() + contentTypeToExt(contentType)
                     )
 
                     val outputStream = FileOutputStream(file)
@@ -86,12 +102,16 @@ class DownloadDialog(
                     inputStream.close()
                     httpConnection.disconnect()
 
-                    val outputPath = copyFile(file.name)
+                    val downloadDirectory = modulePrefs.getString("download_directory", null) ?: ""
+                    if (downloadDirectory != "") {
+                        copyFileUri(context, file.name, downloadDirectory, contentType)
+                    } else {
+                        val outputPath = copyFile(file.name)
+                        MediaScannerConnection.scanFile(
+                            context, arrayOf(outputPath), null, null
+                        )
+                    }
                     file.delete()
-
-                    MediaScannerConnection.scanFile(
-                        context, arrayOf(outputPath), null, null
-                    )
 
                     onDownloadCompleted?.invoke()
                 } catch (t: Throwable) {

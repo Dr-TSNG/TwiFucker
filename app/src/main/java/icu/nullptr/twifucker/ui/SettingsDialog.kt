@@ -14,6 +14,7 @@ import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceGroup
 import android.preference.SwitchPreference
+import androidx.documentfile.provider.DocumentFile
 import com.github.kyuubiran.ezxhelper.AndroidLogger
 import com.github.kyuubiran.ezxhelper.EzXHelper.addModuleAssetPath
 import com.github.kyuubiran.ezxhelper.Log
@@ -34,6 +35,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
 
         const val REQUEST_EXPORT_LOG = 1001
         const val REQUEST_EXPORT_JSON_LOG = 1002
+        const val REQUEST_SET_DOWNLOAD_DIRECTORY = 1003
 
         const val PREF_DISABLE_PROMOTED_CONTENT = "disable_promoted_content"
         const val PREF_HIDE_DRAWER_ITEMS = "hide_drawer_items"
@@ -45,6 +47,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
         const val PREF_DELETE_DATABASES = "delete_databases"
         const val PREF_ABOUT = "about"
 
+        const val PREF_DOWNLOAD_DIRECTORY = "download_directory"
         const val PREF_HIDDEN_DRAWER_ITEMS = "hidden_drawer_items"
         const val PREF_HIDDEN_BOTTOM_NAVBAR_ITEMS = "hidden_bottom_navbar_items"
         const val PREF_FEATURE_SWITCH = "feature_switch"
@@ -104,11 +107,32 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                 }
             }
 
+            refreshDownloadDirectory()
+
             findPreference(PREF_VERSION).summary =
                 "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
 
             if (BuildConfig.DEBUG) {
                 findPreference(PREF_DELETE_DATABASES).isEnabled = true
+            }
+        }
+
+        private fun refreshDownloadDirectory() {
+            val downloadDirectory = modulePrefs.getString(
+                PREF_DOWNLOAD_DIRECTORY, null
+            )
+            if (downloadDirectory == null) {
+                findPreference(PREF_DOWNLOAD_DIRECTORY).summary = ""
+                return
+            }
+            Uri.parse(
+                downloadDirectory
+            )?.let { uri1 ->
+                DocumentFile.fromTreeUri(
+                    context, uri1
+                )?.uri?.let { uri2 ->
+                    findPreference(PREF_DOWNLOAD_DIRECTORY).summary = uri2.path?.split(":")?.last()
+                }
             }
         }
 
@@ -163,34 +187,61 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                 PREF_FEATURE_SWITCH -> {
                     FeatureSwitchDialog(context)
                 }
+
+                PREF_DOWNLOAD_DIRECTORY -> {
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                    startActivityForResult(intent, REQUEST_SET_DOWNLOAD_DIRECTORY)
+                }
             }
             return true
         }
 
         @Deprecated("Deprecated in Java")
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.data?.let { uri ->
-                    context.contentResolver.openOutputStream(uri)?.use { out ->
-                        when (requestCode) {
-                            REQUEST_EXPORT_LOG -> {
-                                logFile.inputStream().use { input ->
-                                    input.copyTo(out)
+            when (requestCode) {
+                REQUEST_EXPORT_LOG, REQUEST_EXPORT_JSON_LOG -> {
+                    if (resultCode != Activity.RESULT_OK) return
+                    data?.data?.let { uri ->
+                        context.contentResolver.openOutputStream(uri)?.use { out ->
+                            when (requestCode) {
+                                REQUEST_EXPORT_LOG -> {
+                                    logFile.inputStream().use { input ->
+                                        input.copyTo(out)
+                                    }
                                 }
-                            }
 
-                            REQUEST_EXPORT_JSON_LOG -> {
-                                logJsonFile.inputStream().use { input ->
-                                    input.copyTo(out)
+                                REQUEST_EXPORT_JSON_LOG -> {
+                                    logJsonFile.inputStream().use { input ->
+                                        input.copyTo(out)
+                                    }
                                 }
-                            }
 
-                            else -> {}
+                                else -> {}
+                            }
                         }
                     }
                 }
+
+                REQUEST_SET_DOWNLOAD_DIRECTORY -> {
+                    if (resultCode != Activity.RESULT_OK) {
+                        modulePrefs.remove(PREF_DOWNLOAD_DIRECTORY)
+                        refreshDownloadDirectory()
+                        return
+                    }
+                    data?.data?.let { uri ->
+                        context.contentResolver.takePersistableUriPermission(
+                            uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        )
+                        modulePrefs.putString(PREF_DOWNLOAD_DIRECTORY, uri.toString())
+                    }
+                    refreshDownloadDirectory()
+                }
+
+                else -> {
+                    super.onActivityResult(requestCode, resultCode, data)
+                }
             }
-            super.onActivityResult(requestCode, resultCode, data)
         }
 
         private fun deleteDatabases() {

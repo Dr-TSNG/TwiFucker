@@ -75,7 +75,14 @@ object CustomTabsHook : BaseHook() {
 
                     if (isInAppBrowserEnabled) {
                         XposedHelpers.callMethod(
-                            customTabsObj, customTabsLaunchUrlMethodName, activity, data, null
+                            customTabsObj,
+                            customTabsLaunchUrlMethodName,
+                            activity,
+                            data,
+                            null,
+                            false,
+                            true,
+                            null
                         )
                     } else {
                         val newIntent = Intent(Intent.ACTION_VIEW, uri)
@@ -113,12 +120,12 @@ object CustomTabsHook : BaseHook() {
 
 
         val customTabsGetMethod =
-            MethodFinder.fromClass(customTabsClass).filterStatic()
-                .filterByParamCount(0).filterByReturnType(customTabsClass).first()
+            MethodFinder.fromClass(customTabsClass).filterStatic().filterByParamCount(0)
+                .filterByReturnType(customTabsClass).first()
         val customTabsLaunchUrlMethod =
             MethodFinder.fromClass(customTabsClass).filterNonStatic().filterPublic().filterFinal()
-                .filterByParamCount(3)
-                .filterByParamTypes { it[0] == Activity::class.java && it[1] == String::class.java }
+                .filterByParamCount(6)
+                .filterByParamTypes { it[0] == Activity::class.java && it[1] == String::class.java && it[3] == Boolean::class.java && it[4] == Boolean::class.java && it[5] == String::class.java }
                 .first()
 
         customTabsClassName = customTabsClass.name

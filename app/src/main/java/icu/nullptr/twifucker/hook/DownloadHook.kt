@@ -13,6 +13,7 @@ import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.MemberExtensions.isNotFinal
 import com.github.kyuubiran.ezxhelper.MemberExtensions.isNotStatic
 import com.github.kyuubiran.ezxhelper.MemberExtensions.isPublic
+import com.github.kyuubiran.ezxhelper.finders.ConstructorFinder
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.XposedHelpers
@@ -201,14 +202,29 @@ object DownloadHook : BaseHook() {
                     )
                     // drawableRes, actionId, title
                     addModuleAssetPath(appContext)
-                    XposedHelpers.setObjectField(
-                        actionEnumWrapped, actionSheetItemFieldName,
-                        XposedHelpers.newInstance(
-                            actionSheetItemClass,
+                    val buttonConstructor =
+                        ConstructorFinder.fromClass(actionSheetItemClass).filterByParamCount(3)
+                            .filterByParamTypes {
+                                // IILjava/lang/String; or Ljava/lang/String;II
+                                (it[0] == Int::class.java && it[1] == Int::class.java && it[2] == String::class.java) || (it[0] == String::class.java && it[1] == Int::class.java && it[2] == Int::class.java)
+                            }.first()
+                    val dlButton = if (buttonConstructor.parameterTypes[0] == Int::class.java) {
+                        buttonConstructor.newInstance(
                             getId("ic_vector_incoming", "drawable"),
                             0,
                             appContext.getString(R.string.download_or_copy)
-                        ),
+                        )
+                    } else {
+                        buttonConstructor.newInstance(
+                            appContext.getString(R.string.download_or_copy),
+                            getId("ic_vector_incoming", "drawable"),
+                            0
+                        )
+                    }
+
+                    XposedHelpers.setObjectField(
+                        actionEnumWrapped, actionSheetItemFieldName,
+                        dlButton,
                     )
 
                     mutList.add(
@@ -403,16 +419,16 @@ object DownloadHook : BaseHook() {
             .firstOrNull { it.parameterTypes.size == 2 && it.parameterTypes[1] == Bundle::class.java }?.declaringClass
             ?: throw ClassNotFoundException()
 
+
         val tweetShareShowMethod =
             MethodFinder.fromClass(tweetShareClass).filterPublic().filterFinal()
                 .filterByParamCount(1).filterByReturnType(Void.TYPE).first()
         val tweetShareShareListField =
             FieldFinder.fromClass(tweetShareClass).filterPublic().filterFinal()
                 .filterByType(List::class.java).first()
-
         val actionEnumWrappedClassRefMethod =
             MethodFinder.fromClass(tweetShareClass).filterPublic().filterFinal()
-                .filterByParamTypes { it.size == 4 && it[1] == String::class.java && it[2] == Boolean::class.java && it[3] == String::class.java }
+                .filterByParamTypes { it.size >= 3 && it[1] == String::class.java && it[2] == Boolean::class.java }
                 .first()
         val actionEnumWrappedClass = actionEnumWrappedClassRefMethod.returnType
         val actionEnumWrappedInnerClass = actionEnumWrappedClass.constructors[0].parameterTypes[0]
@@ -432,12 +448,23 @@ object DownloadHook : BaseHook() {
         tweetShareShowMethodName = tweetShareShowMethod.name
         tweetShareShareListFieldName = tweetShareShareListField.name
 
+        Log.d("tweetShareClassName: $tweetShareClassName")
+        Log.d("tweetShareShowMethodName: $tweetShareShowMethodName")
+        Log.d("tweetShareShareListFieldName: $tweetShareShareListFieldName")
+
         actionEnumWrappedClassName = actionEnumWrappedClass.name
         actionEnumWrappedInnerClassName = actionEnumWrappedInnerClass.name
         actionEnumClassName = actionEnumClass.name
 
+        Log.d("actionEnumWrappedClassName: $actionEnumWrappedClassName")
+        Log.d("actionEnumWrappedInnerClassName: $actionEnumWrappedInnerClassName")
+        Log.d("actionEnumClassName: $actionEnumClassName")
+
         actionSheetItemClassName = actionSheetItemClass.name
         actionSheetItemFieldName = actionSheetItemField.name
+
+        Log.d("actionSheetItemClassName: $actionSheetItemClassName")
+        Log.d("actionSheetItemFieldName: $actionSheetItemFieldName")
 
         // tweet share onClick
         val shareTweetOnClickListenerRefMethodsDesc = dexKit.findMethodUsingString {
@@ -448,15 +475,17 @@ object DownloadHook : BaseHook() {
                 val result = dexKit.findMethodInvoking {
                     methodDescriptor = methodDesc.descriptor
                     beInvokedMethodName = "<init>"
-                    beInvokedMethodParameterTypes = arrayOf(
-                        Object::class.java.name, Object::class.java.name, Int::class.java.name
-                    )
+                    beInvokedMethodReturnType = Void.TYPE.name
                 }
-                result.values.firstOrNull()
-            }?.firstOrNull()
+                result.values.firstNotNullOfOrNull { l ->
+                    l.firstOrNull { desc ->
+                        desc.getConstructorInstance(EzXHelper.classLoader).parameterTypes.size == 3
+                    }
+                }
+            } ?: throw ClassNotFoundException()
 
         val shareTweetOnClickListenerClass =
-            shareTweetOnClickListenerConstructorDesc?.getConstructorInstance(EzXHelper.classLoader)?.declaringClass
+            shareTweetOnClickListenerConstructorDesc.getConstructorInstance(EzXHelper.classLoader).declaringClass
                 ?: throw ClassNotFoundException()
         val shareTweetItemAdapterField =
             FieldFinder.fromClass(shareTweetOnClickListenerClass).last()
@@ -480,22 +509,47 @@ object DownloadHook : BaseHook() {
         shareTweetItemAdapterFieldName = shareTweetItemAdapterField.name
         actionItemViewDataFieldName = actionItemViewDataField.name
 
+        Log.d("shareTweetOnClickListenerClassName: $shareTweetOnClickListenerClassName")
+        Log.d("shareTweetItemAdapterFieldName: $shareTweetItemAdapterFieldName")
+        Log.d("actionItemViewDataFieldName: $actionItemViewDataFieldName")
+
         // protected tweet share onClick
         val refMethodDescriptor = dexKit.findMethodUsingString {
-            usingString = "^bceHierarchyContext$"
+            usingString = "^night_mode_active_under_auto$"
+            methodName = "accept"
+            methodParamTypes = arrayOf(Object::class.java.name)
             methodReturnType = Void.TYPE.name
-        }.firstOrNull {
-            val clazz = it.getMethodInstance(EzXHelper.classLoader).declaringClass
-            clazz?.declaredFields?.any { f -> f.type == View::class.java } ?: false
-        } ?: throw NoSuchMethodError()
-        val refClass = dexKit.findMethodInvoking {
-            methodDescriptor = refMethodDescriptor.descriptor
-            beInvokedMethodName = "<init>"
-        }.firstNotNullOfOrNull {
-            it.value.firstOrNull()?.getConstructorInstance(EzXHelper.classLoader)?.declaringClass
-        } ?: throw ClassNotFoundException()
-        val protectedShareTweetItemAdapterClass = MethodFinder.fromClass(refClass).filterPublic()
-            .filterByParamTypes(ViewGroup::class.java, Int::class.java).first().returnType
+        }.first()
+        val protectedShareTweetItemAdapterClass = try {
+            // after or 9.81.0
+            dexKit.findMethodInvoking {
+                methodDescriptor = refMethodDescriptor.descriptor
+                beInvokedMethodName = "onClick"
+                beInvokedMethodParameterTypes = arrayOf(View::class.java.name)
+                beInvokedMethodReturnType = Void.TYPE.name
+            }.firstNotNullOfOrNull { it ->
+                it.value.firstOrNull { !it.declaringClassName.startsWith("android") }
+                    ?.getMethodInstance(EzXHelper.classLoader)?.declaringClass
+            } ?: throw ClassNotFoundException()
+        } catch (e: ClassNotFoundException) {
+            // before 9.81.0
+            val refMethodDescriptor = dexKit.findMethodUsingString {
+                usingString = "^bceHierarchyContext$"
+                methodReturnType = Void.TYPE.name
+            }.firstOrNull {
+                val clazz = it.getMethodInstance(EzXHelper.classLoader).declaringClass
+                clazz?.declaredFields?.any { f -> f.type == View::class.java } ?: false
+            } ?: throw NoSuchMethodError()
+            val refClass = dexKit.findMethodInvoking {
+                methodDescriptor = refMethodDescriptor.descriptor
+                beInvokedMethodName = "<init>"
+            }.firstNotNullOfOrNull {
+                it.value.firstOrNull()
+                    ?.getConstructorInstance(EzXHelper.classLoader)?.declaringClass
+            } ?: throw ClassNotFoundException()
+            MethodFinder.fromClass(refClass).filterPublic()
+                .filterByParamTypes(ViewGroup::class.java, Int::class.java).first().returnType
+        }
         val protectedShareTweetItemAdapterClassTitleField =
             FieldFinder.fromClass(protectedShareTweetItemAdapterClass)
                 .filterByType(TextView::class.java).first()
@@ -504,6 +558,9 @@ object DownloadHook : BaseHook() {
         protectedShareTweetItemAdapterClassName = protectedShareTweetItemAdapterClass.name
         protectedShareTweetItemAdapterClassTitleFieldName =
             protectedShareTweetItemAdapterClassTitleField.name
+
+        Log.d("protectedShareTweetItemAdapterClassName: $protectedShareTweetItemAdapterClassName")
+        Log.d("protectedShareTweetItemAdapterClassTitleFieldName: $protectedShareTweetItemAdapterClassTitleFieldName")
 
         // share menu
         val shareMenuClass = dexKit.findMethodUsingString {
@@ -552,6 +609,10 @@ object DownloadHook : BaseHook() {
 
         shareMenuClassName = shareMenuClass.name
         shareMenuMethodName = shareMenuMethod.name
+
+        Log.d("shareMenuClassName: $shareMenuClassName")
+        Log.d("shareMenuMethodName: $shareMenuMethodName")
+
         tweetResultFieldName = tweetResultField.name
         resultFieldName = resultField.name
         legacyFieldName = legacyField.name

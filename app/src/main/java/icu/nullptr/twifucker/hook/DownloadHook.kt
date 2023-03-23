@@ -448,23 +448,12 @@ object DownloadHook : BaseHook() {
         tweetShareShowMethodName = tweetShareShowMethod.name
         tweetShareShareListFieldName = tweetShareShareListField.name
 
-        Log.d("tweetShareClassName: $tweetShareClassName")
-        Log.d("tweetShareShowMethodName: $tweetShareShowMethodName")
-        Log.d("tweetShareShareListFieldName: $tweetShareShareListFieldName")
-
         actionEnumWrappedClassName = actionEnumWrappedClass.name
         actionEnumWrappedInnerClassName = actionEnumWrappedInnerClass.name
         actionEnumClassName = actionEnumClass.name
 
-        Log.d("actionEnumWrappedClassName: $actionEnumWrappedClassName")
-        Log.d("actionEnumWrappedInnerClassName: $actionEnumWrappedInnerClassName")
-        Log.d("actionEnumClassName: $actionEnumClassName")
-
         actionSheetItemClassName = actionSheetItemClass.name
         actionSheetItemFieldName = actionSheetItemField.name
-
-        Log.d("actionSheetItemClassName: $actionSheetItemClassName")
-        Log.d("actionSheetItemFieldName: $actionSheetItemFieldName")
 
         // tweet share onClick
         val shareTweetOnClickListenerRefMethodsDesc = dexKit.findMethodUsingString {
@@ -508,10 +497,6 @@ object DownloadHook : BaseHook() {
         shareTweetOnClickListenerClassName = shareTweetOnClickListenerClass.name
         shareTweetItemAdapterFieldName = shareTweetItemAdapterField.name
         actionItemViewDataFieldName = actionItemViewDataField.name
-
-        Log.d("shareTweetOnClickListenerClassName: $shareTweetOnClickListenerClassName")
-        Log.d("shareTweetItemAdapterFieldName: $shareTweetItemAdapterFieldName")
-        Log.d("actionItemViewDataFieldName: $actionItemViewDataFieldName")
 
         // protected tweet share onClick
         val refMethodDescriptor = dexKit.findMethodUsingString {
@@ -558,9 +543,6 @@ object DownloadHook : BaseHook() {
         protectedShareTweetItemAdapterClassName = protectedShareTweetItemAdapterClass.name
         protectedShareTweetItemAdapterClassTitleFieldName =
             protectedShareTweetItemAdapterClassTitleField.name
-
-        Log.d("protectedShareTweetItemAdapterClassName: $protectedShareTweetItemAdapterClassName")
-        Log.d("protectedShareTweetItemAdapterClassTitleFieldName: $protectedShareTweetItemAdapterClassTitleFieldName")
 
         // share menu
         val shareMenuClass = dexKit.findMethodUsingString {
@@ -609,9 +591,6 @@ object DownloadHook : BaseHook() {
 
         shareMenuClassName = shareMenuClass.name
         shareMenuMethodName = shareMenuMethod.name
-
-        Log.d("shareMenuClassName: $shareMenuClassName")
-        Log.d("shareMenuMethodName: $shareMenuMethodName")
 
         tweetResultFieldName = tweetResultField.name
         resultFieldName = resultField.name

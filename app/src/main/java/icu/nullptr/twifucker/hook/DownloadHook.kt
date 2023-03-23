@@ -518,7 +518,7 @@ object DownloadHook : BaseHook() {
             } ?: throw ClassNotFoundException()
         } catch (e: ClassNotFoundException) {
             // before 9.81.0
-            val refMethodDescriptor = dexKit.findMethodUsingString {
+            val oldRefMethodDescriptor = dexKit.findMethodUsingString {
                 usingString = "^bceHierarchyContext$"
                 methodReturnType = Void.TYPE.name
             }.firstOrNull {
@@ -526,7 +526,7 @@ object DownloadHook : BaseHook() {
                 clazz?.declaredFields?.any { f -> f.type == View::class.java } ?: false
             } ?: throw NoSuchMethodError()
             val refClass = dexKit.findMethodInvoking {
-                methodDescriptor = refMethodDescriptor.descriptor
+                methodDescriptor = oldRefMethodDescriptor.descriptor
                 beInvokedMethodName = "<init>"
             }.firstNotNullOfOrNull {
                 it.value.firstOrNull()

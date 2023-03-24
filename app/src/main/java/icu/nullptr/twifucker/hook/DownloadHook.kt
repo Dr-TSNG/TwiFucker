@@ -448,23 +448,12 @@ object DownloadHook : BaseHook() {
         tweetShareShowMethodName = tweetShareShowMethod.name
         tweetShareShareListFieldName = tweetShareShareListField.name
 
-        Log.d("tweetShareClassName: $tweetShareClassName")
-        Log.d("tweetShareShowMethodName: $tweetShareShowMethodName")
-        Log.d("tweetShareShareListFieldName: $tweetShareShareListFieldName")
-
         actionEnumWrappedClassName = actionEnumWrappedClass.name
         actionEnumWrappedInnerClassName = actionEnumWrappedInnerClass.name
         actionEnumClassName = actionEnumClass.name
 
-        Log.d("actionEnumWrappedClassName: $actionEnumWrappedClassName")
-        Log.d("actionEnumWrappedInnerClassName: $actionEnumWrappedInnerClassName")
-        Log.d("actionEnumClassName: $actionEnumClassName")
-
         actionSheetItemClassName = actionSheetItemClass.name
         actionSheetItemFieldName = actionSheetItemField.name
-
-        Log.d("actionSheetItemClassName: $actionSheetItemClassName")
-        Log.d("actionSheetItemFieldName: $actionSheetItemFieldName")
 
         // tweet share onClick
         val shareTweetOnClickListenerRefMethodsDesc = dexKit.findMethodUsingString {
@@ -509,10 +498,6 @@ object DownloadHook : BaseHook() {
         shareTweetItemAdapterFieldName = shareTweetItemAdapterField.name
         actionItemViewDataFieldName = actionItemViewDataField.name
 
-        Log.d("shareTweetOnClickListenerClassName: $shareTweetOnClickListenerClassName")
-        Log.d("shareTweetItemAdapterFieldName: $shareTweetItemAdapterFieldName")
-        Log.d("actionItemViewDataFieldName: $actionItemViewDataFieldName")
-
         // protected tweet share onClick
         val refMethodDescriptor = dexKit.findMethodUsingString {
             usingString = "^night_mode_active_under_auto$"
@@ -533,7 +518,7 @@ object DownloadHook : BaseHook() {
             } ?: throw ClassNotFoundException()
         } catch (e: ClassNotFoundException) {
             // before 9.81.0
-            val refMethodDescriptor = dexKit.findMethodUsingString {
+            val oldRefMethodDescriptor = dexKit.findMethodUsingString {
                 usingString = "^bceHierarchyContext$"
                 methodReturnType = Void.TYPE.name
             }.firstOrNull {
@@ -541,7 +526,7 @@ object DownloadHook : BaseHook() {
                 clazz?.declaredFields?.any { f -> f.type == View::class.java } ?: false
             } ?: throw NoSuchMethodError()
             val refClass = dexKit.findMethodInvoking {
-                methodDescriptor = refMethodDescriptor.descriptor
+                methodDescriptor = oldRefMethodDescriptor.descriptor
                 beInvokedMethodName = "<init>"
             }.firstNotNullOfOrNull {
                 it.value.firstOrNull()
@@ -558,9 +543,6 @@ object DownloadHook : BaseHook() {
         protectedShareTweetItemAdapterClassName = protectedShareTweetItemAdapterClass.name
         protectedShareTweetItemAdapterClassTitleFieldName =
             protectedShareTweetItemAdapterClassTitleField.name
-
-        Log.d("protectedShareTweetItemAdapterClassName: $protectedShareTweetItemAdapterClassName")
-        Log.d("protectedShareTweetItemAdapterClassTitleFieldName: $protectedShareTweetItemAdapterClassTitleFieldName")
 
         // share menu
         val shareMenuClass = dexKit.findMethodUsingString {
@@ -609,9 +591,6 @@ object DownloadHook : BaseHook() {
 
         shareMenuClassName = shareMenuClass.name
         shareMenuMethodName = shareMenuMethod.name
-
-        Log.d("shareMenuClassName: $shareMenuClassName")
-        Log.d("shareMenuMethodName: $shareMenuMethodName")
 
         tweetResultFieldName = tweetResultField.name
         resultFieldName = resultField.name

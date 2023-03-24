@@ -5,6 +5,7 @@ import com.github.kyuubiran.ezxhelper.EzXHelper
 import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import de.robv.android.xposed.XC_MethodHook
 import icu.nullptr.twifucker.afterMeasure
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
 import icu.nullptr.twifucker.forEach
@@ -35,6 +36,8 @@ object FeatureSwitchHook : BaseHook() {
     private lateinit var featureSwitchGetLongMethodName: String
     private lateinit var featureSwitchGetIntMethodName: String
 
+    private var featureSwitchHashMap = HashMap<String, Void?>()
+
     override fun init() {
         val featureSwitch = modulePrefs.getString("feature_switch", "[]")
         val arr = try {
@@ -55,12 +58,13 @@ object FeatureSwitchHook : BaseHook() {
             featureSwitchGetBoolMethodName
         ).first().createHook {
             afterMeasure(name) { param ->
-                val paramKey = param.args[0] as String
+                val paramKV = getParamKeyValue(param)
                 arr.forEach { obj ->
                     if (obj.optString("type", "boolean") != "boolean") return@forEach
                     val replaceKey = obj.optString("key")
                     val replaceValue = obj.optBoolean("value")
-                    if (paramKey == replaceKey) {
+                    if (paramKV.first == replaceKey) {
+                        logParamKeyResultOnce(paramKV.first, param.result, replaceValue)
                         param.result = replaceValue
                         return@forEach
                     }
@@ -71,13 +75,14 @@ object FeatureSwitchHook : BaseHook() {
             featureSwitchGetDoubleMethodName
         ).first().createHook {
             afterMeasure(name) { param ->
-                val paramKey = param.args[0] as String
+                val paramKV = getParamKeyValue(param)
                 arr.forEach { obj ->
                     if (obj.optString("type", "") != "decimal") return@forEach
                     val replaceKey = obj.optString("key")
                     val replaceValue = obj.optString("value")
-                    if (paramKey == replaceKey) {
-                        param.result = replaceValue.toDouble()
+                    if (paramKV.first == replaceKey) {
+                        logParamKeyResultOnce(paramKV.first, param.result, replaceValue)
+                        param.result = replaceValue
                         return@forEach
                     }
                 }
@@ -87,13 +92,14 @@ object FeatureSwitchHook : BaseHook() {
             featureSwitchGetFloatMethodName
         ).first().createHook {
             afterMeasure(name) { param ->
-                val paramKey = param.args[0] as String
+                val paramKV = getParamKeyValue(param)
                 arr.forEach { obj ->
                     if (obj.optString("type", "") != "decimal") return@forEach
                     val replaceKey = obj.optString("key")
                     val replaceValue = obj.optString("value")
-                    if (paramKey == replaceKey) {
-                        param.result = replaceValue.toFloat()
+                    if (paramKV.first == replaceKey) {
+                        logParamKeyResultOnce(paramKV.first, param.result, replaceValue)
+                        param.result = replaceValue
                         return@forEach
                     }
                 }
@@ -103,13 +109,14 @@ object FeatureSwitchHook : BaseHook() {
             featureSwitchGetLongMethodName
         ).first().createHook {
             afterMeasure(name) { param ->
-                val paramKey = param.args[0] as String
+                val paramKV = getParamKeyValue(param)
                 arr.forEach { obj ->
                     if (obj.optString("type", "") != "decimal") return@forEach
                     val replaceKey = obj.optString("key")
                     val replaceValue = obj.optString("value")
-                    if (paramKey == replaceKey) {
-                        param.result = replaceValue.toLong()
+                    if (paramKV.first == replaceKey) {
+                        logParamKeyResultOnce(paramKV.first, param.result, replaceValue)
+                        param.result = replaceValue
                         return@forEach
                     }
                 }
@@ -119,13 +126,14 @@ object FeatureSwitchHook : BaseHook() {
             featureSwitchGetIntMethodName
         ).first().createHook {
             afterMeasure(name) { param ->
-                val paramKey = param.args[0] as String
+                val paramKV = getParamKeyValue(param)
                 arr.forEach { obj ->
                     if (obj.optString("type", "") != "decimal") return@forEach
                     val replaceKey = obj.optString("key")
                     val replaceValue = obj.optString("value")
-                    if (paramKey == replaceKey) {
-                        param.result = replaceValue.toInt()
+                    if (paramKV.first == replaceKey) {
+                        logParamKeyResultOnce(paramKV.first, param.result, replaceValue)
+                        param.result = replaceValue
                         return@forEach
                     }
                 }
@@ -169,20 +177,21 @@ object FeatureSwitchHook : BaseHook() {
             usingString = "^feature_switches_configs_crashlytics_enabled$"
         }.firstOrNull()?.getMethodInstance(EzXHelper.classLoader)?.declaringClass
             ?: throw ClassNotFoundException()
+
         val featureSwitchGetBoolMethod = MethodFinder.fromClass(featureSwitchClass)
-            .filterByParamTypes(String::class.java, Boolean::class.java)
+            .filterByParamCount(2) // Ljava/lang/String;Z or Z;Ljava/lang/String;
             .filterByReturnType(Boolean::class.java).first()
         val featureSwitchGetDoubleMethod = MethodFinder.fromClass(featureSwitchClass)
-            .filterByParamTypes(String::class.java, Double::class.java)
+            .filterByParamCount(2) // Ljava/lang/String;D or D;Ljava/lang/String;
             .filterByReturnType(Double::class.java).first()
         val featureSwitchGetFloatMethod = MethodFinder.fromClass(featureSwitchClass)
-            .filterByParamTypes(String::class.java, Float::class.java)
+            .filterByParamCount(2) // Ljava/lang/String;F or F;Ljava/lang/String;
             .filterByReturnType(Float::class.java).first()
         val featureSwitchGetLongMethod = MethodFinder.fromClass(featureSwitchClass)
-            .filterByParamTypes(String::class.java, Long::class.java)
+            .filterByParamCount(2) // Ljava/lang/String;J or J;Ljava/lang/String;
             .filterByReturnType(Long::class.java).first()
         val featureSwitchGetIntMethod = MethodFinder.fromClass(featureSwitchClass)
-            .filterByParamTypes(String::class.java, Int::class.java)
+            .filterByParamCount(2) // Ljava/lang/String;I or I;Ljava/lang/String;
             .filterByReturnType(Int::class.java).first()
 
         featureSwitchClassName = featureSwitchClass.name
@@ -210,5 +219,19 @@ object FeatureSwitchHook : BaseHook() {
             saveHookInfo()
             modulePrefs.putLong("hook_feature_switch_last_update", System.currentTimeMillis())
         }
+    }
+
+    private fun getParamKeyValue(param: XC_MethodHook.MethodHookParam): Pair<String, Any> {
+        return if (param.args[0].javaClass == String::class.java) {
+            param.args[0] as String to param.args[1]
+        } else {
+            param.args[1] as String to param.args[0]
+        }
+    }
+
+    private fun logParamKeyResultOnce(key: String, originalResult: Any, replacedResult: Any) {
+        if (featureSwitchHashMap.containsKey(key)) return
+        Log.d("Replace $key from $originalResult to $replacedResult")
+        featureSwitchHashMap[key] = null
     }
 }

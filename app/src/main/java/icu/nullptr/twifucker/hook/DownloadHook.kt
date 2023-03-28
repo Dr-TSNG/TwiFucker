@@ -2,7 +2,6 @@ package icu.nullptr.twifucker.hook
 
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
 import com.github.kyuubiran.ezxhelper.EzXHelper
@@ -16,6 +15,7 @@ import com.github.kyuubiran.ezxhelper.MemberExtensions.isPublic
 import com.github.kyuubiran.ezxhelper.finders.ConstructorFinder
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
+import dalvik.bytecode.Opcodes
 import de.robv.android.xposed.XposedHelpers
 import icu.nullptr.twifucker.R
 import icu.nullptr.twifucker.beforeMeasure
@@ -499,42 +499,19 @@ object DownloadHook : BaseHook() {
         actionItemViewDataFieldName = actionItemViewDataField.name
 
         // protected tweet share onClick
-        val refMethodDescriptor = dexKit.findMethodUsingString {
-            usingString = "^night_mode_active_under_auto$"
-            methodName = "accept"
-            methodParamTypes = arrayOf(Object::class.java.name)
+        val protectedShareTweetItemAdapterClass = dexKit.findMethodUsingOpPrefixSeq {
+            opSeq = intArrayOf(
+                Opcodes.OP_IGET_OBJECT,
+                Opcodes.OP_IF_EQZ,
+                Opcodes.OP_INVOKE_VIRTUAL,
+                Opcodes.OP_MOVE_RESULT,
+                Opcodes.OP_INVOKE_INTERFACE,
+                Opcodes.OP_RETURN_VOID
+            )
+            methodName = "onClick"
+            methodParamTypes = arrayOf(View::class.java.name)
             methodReturnType = Void.TYPE.name
-        }.first()
-        val protectedShareTweetItemAdapterClass = try {
-            // after or 9.81.0
-            dexKit.findMethodInvoking {
-                methodDescriptor = refMethodDescriptor.descriptor
-                beInvokedMethodName = "onClick"
-                beInvokedMethodParameterTypes = arrayOf(View::class.java.name)
-                beInvokedMethodReturnType = Void.TYPE.name
-            }.firstNotNullOfOrNull { it ->
-                it.value.firstOrNull { !it.declaringClassName.startsWith("android") }
-                    ?.getMethodInstance(EzXHelper.classLoader)?.declaringClass
-            } ?: throw ClassNotFoundException()
-        } catch (e: ClassNotFoundException) {
-            // before 9.81.0
-            val oldRefMethodDescriptor = dexKit.findMethodUsingString {
-                usingString = "^bceHierarchyContext$"
-                methodReturnType = Void.TYPE.name
-            }.firstOrNull {
-                val clazz = it.getMethodInstance(EzXHelper.classLoader).declaringClass
-                clazz?.declaredFields?.any { f -> f.type == View::class.java } ?: false
-            } ?: throw NoSuchMethodError()
-            val refClass = dexKit.findMethodInvoking {
-                methodDescriptor = oldRefMethodDescriptor.descriptor
-                beInvokedMethodName = "<init>"
-            }.firstNotNullOfOrNull {
-                it.value.firstOrNull()
-                    ?.getConstructorInstance(EzXHelper.classLoader)?.declaringClass
-            } ?: throw ClassNotFoundException()
-            MethodFinder.fromClass(refClass).filterPublic()
-                .filterByParamTypes(ViewGroup::class.java, Int::class.java).first().returnType
-        }
+        }.first().getMethodInstance(EzXHelper.classLoader).declaringClass
         val protectedShareTweetItemAdapterClassTitleField =
             FieldFinder.fromClass(protectedShareTweetItemAdapterClass)
                 .filterByType(TextView::class.java).first()

@@ -1,13 +1,16 @@
 package icu.nullptr.twifucker.hook.activity
 
 import android.app.Activity
+import android.widget.ImageView
 import com.github.kyuubiran.ezxhelper.ClassUtils.loadClass
 import com.github.kyuubiran.ezxhelper.EzXHelper
 import com.github.kyuubiran.ezxhelper.HookFactory.`-Static`.createHook
 import com.github.kyuubiran.ezxhelper.Log
+import com.github.kyuubiran.ezxhelper.finders.ConstructorFinder
 import com.github.kyuubiran.ezxhelper.finders.FieldFinder
 import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import icu.nullptr.twifucker.exceptions.CachedHookNotFound
+import icu.nullptr.twifucker.getId
 import icu.nullptr.twifucker.hook.BaseHook
 import icu.nullptr.twifucker.hook.HookEntry.Companion.dexKit
 import icu.nullptr.twifucker.hook.HookEntry.Companion.loadDexKit
@@ -29,6 +32,26 @@ object SettingsHook : BaseHook() {
     private lateinit var onVersionClickMethodName: String
 
     override fun init() {
+
+        try {
+            val logoId = getId("logo", "id")
+            ConstructorFinder.fromClass(ImageView::class.java).forEach { cons ->
+                cons.createHook {
+                    after { param ->
+                        val view = param.thisObject as ImageView
+                        val mId = view.id
+                        if (logoId != mId) return@after
+                        view.setOnLongClickListener {
+                            SettingsDialog(view.context)
+                            true
+                        }
+                    }
+                }
+            }
+        } catch (t: Throwable) {
+            Log.e(t)
+        }
+
         val onVersionClickMethod =
             MethodFinder.fromClass(aboutActivityClass).filterByParamTypes(preferenceClass)
                 .firstOrNull()

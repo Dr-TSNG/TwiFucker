@@ -28,7 +28,7 @@
     <string name="disable_threads">スレッド表示を無効化</string>
     <string name="disable_tweet_detail_related_tweets">ツイート詳細の関連ツイートを無効化</string>
     <string name="disable_video_carousel">動画カルーセルを無効化</string>
-    <string name="disable_banner_view">バナー表示を無効化</string>
+    <string name="disable_banner_view">バナービューを無効化</string>
     <string name="enable_download_hook">ダウンロードフックを有効化</string>
    <string name="download_directory">ダウンロード先のディレクトリを選択</string>
     <string name="disable_url_redirect">URLのリダイレクトを無効化</string>

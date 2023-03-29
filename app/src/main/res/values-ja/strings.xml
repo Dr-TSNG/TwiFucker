@@ -30,7 +30,7 @@
     <string name="disable_video_carousel">動画カルーセルを無効化</string>
     <string name="disable_banner_view">バナービューを無効化</string>
     <string name="enable_download_hook">ダウンロードフックを有効化</string>
-   <string name="download_directory">ダウンロード先のディレクトリを選択</string>
+    <string name="download_directory">ダウンロード先のディレクトリを選択</string>
     <string name="disable_url_redirect">URLのリダイレクトを無効化</string>
     <string name="hide_drawer_items">ドロワーの項目を非表示</string>
     <string name="hide_bottom_navbar_items">ナビゲーションバー下部の項目を非表示</string>

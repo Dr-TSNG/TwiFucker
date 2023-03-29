@@ -44,3 +44,7 @@ Prevent Twitter redirect from `t.co` to target link when clicking on a link in T
 
 ## Feature switch
 Force enable/disable Twitter experimental feature.
+
+## Disable banner view
+<img alt="disable banner view" src="./images/disable_banner_view.webp" width="256" />
+

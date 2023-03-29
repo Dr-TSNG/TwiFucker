@@ -12,6 +12,7 @@ You can find Beta version / Rootless integration (automatically embed latest Twi
 
 ## Usage
 
+- Long tap Twitter logo at top of the Twitter home screen OR
 - `Settings and privacy` > `Additional resources` > Tap version
 
 

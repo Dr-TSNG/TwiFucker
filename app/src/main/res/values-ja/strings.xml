@@ -30,7 +30,7 @@
     <string name="disable_video_carousel">動画カルーセルを無効化</string>
     <string name="disable_banner_view">バナービューを無効化</string>
     <string name="enable_download_hook">ダウンロードフックを有効化</string>
-   <string name="download_directory">ダウンロード先のディレクトリを選択</string>
+    <string name="download_directory">ダウンロード先のディレクトリを選択</string>
     <string name="disable_url_redirect">URLのリダイレクトを無効化</string>
     <string name="hide_drawer_items">ドロワーの項目を非表示</string>
     <string name="hide_bottom_navbar_items">ナビゲーションバー下部の項目を非表示</string>
@@ -50,6 +50,7 @@
     <string name="disable_recommended_users_summary">フォロー後におすすめユーザーを表示しない</string>
     <string name="disable_threads_summary">タイムライン上部のライブコンテンツを削除します</string>
     <string name="disable_video_carousel_summary">検索の項目から動画カルーセルを削除します</string>
+    <string name="disable_banner_view_summary">バナービューを非表示にします</string>
     <string name="enable_download_hook_summary">「共有 -&gt; ダウンロードまたはコピー」をタップでダウンロード、長押しでリンクをコピーをします</string>
     <string name="disable_url_redirect_summary">t.coのURLのリダイレクトを無効化します</string>
     <string name="hide_drawer_items_summary">非表示にするドロワーの項目を選択します</string>

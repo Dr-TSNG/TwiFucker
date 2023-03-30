@@ -13,11 +13,6 @@ pluginManagement {
         google()
         mavenCentral()
     }
-    plugins {
-        id("org.jetbrains.kotlin.android") version "1.8.10"
-        id("org.lsposed.lsparanoid") version "0.5.2"
-        id("org.lsposed.lsplugin.apktransform") version "1.2"
-    }
 }
 
 rootProject.name = "TwiFucker"

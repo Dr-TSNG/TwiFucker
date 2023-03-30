@@ -4,10 +4,10 @@ import java.nio.file.Paths
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("org.lsposed.lsparanoid")
-    id("org.lsposed.lsplugin.apktransform")
-    kotlin("android")
+    alias(libs.plugins.agp.app)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.lsparanoid)
+    alias(libs.plugins.lsplugin.apktransform)
 }
 
 val properties = Properties()
@@ -27,7 +27,7 @@ fun String.execute(currentWorkingDir: File = file("./")): String {
     return String(byteOut.toByteArray()).trim()
 }
 
-val verName = "1.9"
+val verName = "2.0"
 val gitCommitCount = "git rev-list HEAD --count".execute().toInt()
 val gitCommitHash = "git rev-parse --verify --short HEAD".execute()
 
@@ -128,14 +128,14 @@ android {
 }
 
 dependencies {
-    compileOnly("de.robv.android.xposed:api:82")
-    implementation("androidx.documentfile:documentfile:1.0.1")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("com.github.kyuubiran:EzXHelper:2.0.0-RC7")
-    implementation("com.tencent:mmkv:1.2.15")
-    implementation("dev.rikka.ndk.thirdparty:cxx:1.2.0")
-    implementation("dev.rikka.ndk.thirdparty:nativehelper:1.0.0")
-    implementation("org.luckypray:DexKit:1.1.2")
+    compileOnly(libs.legacy.xposed.api)
+    implementation(libs.androidx.documentfile)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.dexkit)
+    implementation(libs.ezxhelper)
+    implementation(libs.mmkv)
+    implementation(libs.ndk.cxx)
+    implementation(libs.ndk.nativehelper)
 }
 
 val adbExecutable: String = androidComponents.sdkComponents.adb.get().asFile.absolutePath

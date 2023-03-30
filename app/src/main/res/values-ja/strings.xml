@@ -5,12 +5,16 @@
     <string name="reset">リセット</string>
     <string name="save_restart">保存をして再起動</string>
     <string name="add">追加</string>
+    <string name="msg_yes_no">この項目を消去しますか?</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
     <string name="settings_dismiss">破棄</string>
     <string name="settings_general">一般</string>
     <string name="settings_main">メイン</string>
     <string name="settings_extra">エクストラ</string>
     <string name="settings_experimental">試験的</string>
     <string name="settings_logging">ログの取得</string>
+    <string name="version_title">バージョン</string>
     <string name="about_title">TwiFucker by Nullptr</string>
     <string name="show_toast_title">起動時にトースト通知を表示</string>
     <string name="use_legacy_hook">レガシーフックを有効化</string>
@@ -24,7 +28,9 @@
     <string name="disable_threads">スレッド表示を無効化</string>
     <string name="disable_tweet_detail_related_tweets">ツイート詳細の関連ツイートを無効化</string>
     <string name="disable_video_carousel">動画カルーセルを無効化</string>
+    <string name="disable_banner_view">バナービューを無効化</string>
     <string name="enable_download_hook">ダウンロードフックを有効化</string>
+    <string name="download_directory">ダウンロード先のディレクトリを選択</string>
     <string name="disable_url_redirect">URLのリダイレクトを無効化</string>
     <string name="hide_drawer_items">ドロワーの項目を非表示</string>
     <string name="hide_bottom_navbar_items">ナビゲーションバー下部の項目を非表示</string>
@@ -44,6 +50,7 @@
     <string name="disable_recommended_users_summary">フォロー後におすすめユーザーを表示しない</string>
     <string name="disable_threads_summary">タイムライン上部のライブコンテンツを削除します</string>
     <string name="disable_video_carousel_summary">検索の項目から動画カルーセルを削除します</string>
+    <string name="disable_banner_view_summary">バナービューを非表示にします</string>
     <string name="enable_download_hook_summary">「共有 -&gt; ダウンロードまたはコピー」をタップでダウンロード、長押しでリンクをコピーをします</string>
     <string name="disable_url_redirect_summary">t.coのURLのリダイレクトを無効化します</string>
     <string name="hide_drawer_items_summary">非表示にするドロワーの項目を選択します</string>
@@ -61,4 +68,9 @@
     <string name="download_all">すべてダウンロード</string>
     <string name="deleted_n_promoted_tweet">アプリのデータベースから%1$d件のプロモーションツイートを削除しました</string>
     <string name="deleted_n_database">%1$d件のデータベースを削除しました</string>
+    <string name="feature_switch_key_hint">feature_flag</string>
+    <string name="feature_switch_value_decimal_hint">1.0</string>
+    <string name="feature_switch_value_boolean">真偽値</string>
+    <string name="feature_switch_value_decimal">10進数</string>
+    <string name="feature_switch_bool_label">強制的にTrueにする</string>
 </resources>

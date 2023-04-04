@@ -531,11 +531,28 @@ object DownloadHook : BaseHook() {
         val shareMenuMethod = MethodFinder.fromClass(shareMenuClass).filterByReturnType(Void.TYPE)
             .filterByParamTypes { it.size == 4 && it[0] == String::class.java && it[1] == String::class.java }
             .first()
+        val tweetResultClass = dexKit.findMethodUsingOpPrefixSeq {
+            methodName = "<init>"
+            methodReturnType = Void.TYPE.name
+            opSeq = intArrayOf(
+                Opcodes.OP_INVOKE_DIRECT,
+                Opcodes.OP_IGET_WIDE,
+                Opcodes.OP_IPUT_WIDE,
+                Opcodes.OP_IGET_OBJECT,
+                Opcodes.OP_IPUT_OBJECT,
+                Opcodes.OP_IGET_WIDE,
+                Opcodes.OP_IPUT_WIDE,
+                Opcodes.OP_IGET_WIDE,
+                Opcodes.OP_IPUT_WIDE,
+                Opcodes.OP_IGET_WIDE,
+                Opcodes.OP_IPUT_WIDE,
+                Opcodes.OP_IGET_OBJECT,
+                Opcodes.OP_IPUT_OBJECT,
+            )
+        }.first().getConstructorInstance(EzXHelper.classLoader).declaringClass
         val tweetResultField =
-            FieldFinder.fromClass(shareMenuMethod.parameterTypes[2]).filterPublic().filterFinal()
-                .filter {
-                    type.declaredFields.any { it.type == loadClass("com.twitter.model.vibe.Vibe") }
-                }.first()
+            FieldFinder.fromClass(shareMenuMethod.parameterTypes[2]).filterByType(tweetResultClass)
+                .first()
         val resultField = tweetResultField.type.declaredFields.groupBy { it.type }
             .filter { it.value.size == 2 && it.key.declaredFields.size == 3 }.map { it.value[1] }[0]
             ?: throw NoSuchFieldError()

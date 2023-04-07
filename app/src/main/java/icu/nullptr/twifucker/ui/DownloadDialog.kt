@@ -85,6 +85,8 @@ class DownloadDialog(
                 try {
                     val downloadUrl = URL(url)
                     val httpConnection = downloadUrl.openConnection() as HttpURLConnection
+                    httpConnection.connectTimeout = 15000
+                    httpConnection.readTimeout = 15000
                     httpConnection.connect()
                     val inputStream = httpConnection.inputStream
                     val buffer = ByteArray(1024)

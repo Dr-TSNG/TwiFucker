@@ -27,7 +27,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class DownloadDialog(
-    context: Context, downloadUrls: List<String>, onDismiss: () -> Unit,
+    context: Context, private val tweetId: Long, downloadUrls: List<String>, onDismiss: () -> Unit,
 ) : AlertDialog.Builder(context) {
     companion object {
         private fun contentTypeToExt(contentType: String): String {
@@ -70,7 +70,11 @@ class DownloadDialog(
         }
 
         private fun download(
-            context: Context, url: String, onDownloadCompleted: (() -> Unit)? = null
+            context: Context,
+            tweetId: Long,
+            index: Int,
+            url: String,
+            onDownloadCompleted: (() -> Unit)? = null
         ) {
             val progressDialog = ProgressDialog(context)
             progressDialog.setTitle(R.string.downloading)
@@ -89,7 +93,7 @@ class DownloadDialog(
                     val contentType = httpConnection.contentType
                     val file = File(
                         appContext.cacheDir,
-                        "" + System.currentTimeMillis() + contentTypeToExt(contentType)
+                        "" + tweetId + "_" + index + contentTypeToExt(contentType)
                     )
 
                     val outputStream = FileOutputStream(file)
@@ -131,8 +135,11 @@ class DownloadDialog(
         }
     }
 
-    private class DownloadMediaAdapter(val context: Context, val urls: List<String>) :
-        BaseAdapter() {
+    private class DownloadMediaAdapter(
+        val context: Context,
+        val tweetId: Long,
+        val urls: List<String>
+    ) : BaseAdapter() {
 
         override fun getCount(): Int {
             return urls.size
@@ -153,7 +160,7 @@ class DownloadDialog(
                     toClipboard(urls[position])
                 }
                 setOnDownload {
-                    download(context, urls[position]) {
+                    download(context, tweetId, position + 1, urls[position]) {
                         AndroidLogger.toast(context.getString(R.string.download_completed))
                     }
                 }
@@ -165,12 +172,12 @@ class DownloadDialog(
     init {
         addModuleAssetPath(context)
 
-        val adapter = DownloadMediaAdapter(context, downloadUrls)
+        val adapter = DownloadMediaAdapter(context, tweetId, downloadUrls)
         setAdapter(adapter, null)
 
         setNeutralButton(R.string.download_all) { _, _ ->
             downloadUrls.forEachIndexed { i, j ->
-                download(context, j) {
+                download(context, tweetId, i + 1, j) {
                     if (i == downloadUrls.size - 1) {
                         AndroidLogger.toast(context.getString(R.string.download_completed))
                     }

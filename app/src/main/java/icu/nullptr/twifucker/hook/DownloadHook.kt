@@ -36,7 +36,8 @@ object DownloadHook : BaseHook() {
     override val name: String
         get() = "DownloadHook"
 
-    private var downloadUrls: List<String> = listOf()
+    private var cachedTweetId = 0L
+    private var cachedDownloadUrls: List<String> = listOf()
 
     // tweet share download button
     private const val HOOK_TWEET_SHARE_CLASS = "hook_tweet_share_class"
@@ -68,6 +69,7 @@ object DownloadHook : BaseHook() {
 
     // tweet object
     private const val HOOK_TWEET_RESULT_FIELD = "hook_tweet_result_field"
+    private const val HOOK_TWEET_ID_FIELD = "hook_tweet_id_field"
     private const val HOOK_RESULT_FIELD = "hook_result_field"
     private const val HOOK_LEGACY_FIELD = "hook_legacy_field"
     private const val HOOK_EXTENDED_ENTITIES_FIELD = "hook_extended_entities_field"
@@ -104,6 +106,7 @@ object DownloadHook : BaseHook() {
 
     // tweet object
     private lateinit var tweetResultFieldName: String
+    private lateinit var tweetIdFieldName: String
     private lateinit var resultFieldName: String
     private lateinit var legacyFieldName: String
     private lateinit var extendedEntitiesFieldName: String
@@ -130,7 +133,7 @@ object DownloadHook : BaseHook() {
             MethodFinder.fromClass(loadClass(className)).filterByName("onClick").first()
                 .createHook {
                     beforeMeasure(name) { param ->
-                        if (downloadUrls.isEmpty()) return@beforeMeasure
+                        if (cachedTweetId == 0L || cachedDownloadUrls.isEmpty()) return@beforeMeasure
                         val actionItemViewData = XposedHelpers.getObjectField(
                             XposedHelpers.getObjectField(
                                 param.thisObject, shareTweetItemAdapterFieldName
@@ -147,8 +150,9 @@ object DownloadHook : BaseHook() {
 
                         try {
                             currentActivity.get()?.let { act ->
-                                DownloadDialog(act, downloadUrls) {
-                                    downloadUrls = listOf()
+                                DownloadDialog(act, cachedTweetId, cachedDownloadUrls) {
+                                    cachedTweetId = 0L
+                                    cachedDownloadUrls = listOf()
                                 }
                             }
                         } catch (t: Throwable) {
@@ -162,7 +166,7 @@ object DownloadHook : BaseHook() {
         MethodFinder.fromClass(loadClass(protectedShareTweetItemAdapterClassName))
             .filterByName("onClick").first().createHook {
                 beforeMeasure(name) { param ->
-                    if (downloadUrls.isEmpty()) return@beforeMeasure
+                    if (cachedTweetId == 0L || cachedDownloadUrls.isEmpty()) return@beforeMeasure
 
                     val protectedShareTweetItemAdapterTitleTextView = XposedHelpers.getObjectField(
                         param.thisObject, protectedShareTweetItemAdapterClassTitleFieldName
@@ -172,8 +176,9 @@ object DownloadHook : BaseHook() {
 
                     try {
                         currentActivity.get()?.let { act ->
-                            DownloadDialog(act, downloadUrls) {
-                                downloadUrls = listOf()
+                            DownloadDialog(act, cachedTweetId, cachedDownloadUrls) {
+                                cachedTweetId = 0L
+                                cachedDownloadUrls = listOf()
                             }
                         }
                     } catch (t: Throwable) {
@@ -247,7 +252,8 @@ object DownloadHook : BaseHook() {
                     // share_menu_click
                     // share_menu_cancel
                     if (event == "share_menu_cancel") {
-                        downloadUrls = listOf()
+                        cachedTweetId = 0L
+                        cachedDownloadUrls = listOf()
                         return@beforeMeasure
                     }
                     if (event != "share_menu_click") return@beforeMeasure
@@ -255,6 +261,11 @@ object DownloadHook : BaseHook() {
 
                     val tweetResult =
                         XposedHelpers.getObjectField(tweetResults, tweetResultFieldName)
+                    tweetResult.javaClass.declaredFields.forEach { f ->
+                        // k3
+                        f.get(tweetResult)?.let { Log.d("${f.name} = $it") }
+                    }
+                    val tweetId = XposedHelpers.getLongField(tweetResult, tweetIdFieldName)
                     val result = XposedHelpers.getObjectField(tweetResult, resultFieldName)
                     val legacy = XposedHelpers.getObjectField(result, legacyFieldName)
                     val extendedEntities =
@@ -290,7 +301,8 @@ object DownloadHook : BaseHook() {
                             }
                         }
                     }
-                    downloadUrls = urls
+                    cachedTweetId = tweetId
+                    cachedDownloadUrls = urls
                 }
             }
     }
@@ -344,6 +356,8 @@ object DownloadHook : BaseHook() {
         // tweet object
         tweetResultFieldName =
             modulePrefs.getString(HOOK_TWEET_RESULT_FIELD, null) ?: throw CachedHookNotFound()
+        tweetIdFieldName =
+            modulePrefs.getString(HOOK_TWEET_ID_FIELD, null) ?: throw CachedHookNotFound()
         resultFieldName =
             modulePrefs.getString(HOOK_RESULT_FIELD, null) ?: throw CachedHookNotFound()
         legacyFieldName =
@@ -397,6 +411,7 @@ object DownloadHook : BaseHook() {
 
             // tweet object
             it.putString(HOOK_TWEET_RESULT_FIELD, tweetResultFieldName)
+            it.putString(HOOK_TWEET_ID_FIELD, tweetIdFieldName)
             it.putString(HOOK_RESULT_FIELD, resultFieldName)
             it.putString(HOOK_LEGACY_FIELD, legacyFieldName)
             it.putString(HOOK_EXTENDED_ENTITIES_FIELD, extendedEntitiesFieldName)
@@ -553,6 +568,8 @@ object DownloadHook : BaseHook() {
         val tweetResultField =
             FieldFinder.fromClass(shareMenuMethod.parameterTypes[2]).filterByType(tweetResultClass)
                 .first()
+        val tweetIdField =
+            tweetResultField.type.declaredFields.first { it.type == Long::class.java }
         val resultField = tweetResultField.type.declaredFields.groupBy { it.type }
             .filter { it.value.size == 2 && it.key.declaredFields.size == 3 }.map { it.value[1] }[0]
             ?: throw NoSuchFieldError()
@@ -587,6 +604,7 @@ object DownloadHook : BaseHook() {
         shareMenuMethodName = shareMenuMethod.name
 
         tweetResultFieldName = tweetResultField.name
+        tweetIdFieldName = tweetIdField.name
         resultFieldName = resultField.name
         legacyFieldName = legacyField.name
         extendedEntitiesFieldName = extendedEntitiesField.name

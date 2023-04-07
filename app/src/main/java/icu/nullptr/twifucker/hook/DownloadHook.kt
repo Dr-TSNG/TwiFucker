@@ -261,10 +261,6 @@ object DownloadHook : BaseHook() {
 
                     val tweetResult =
                         XposedHelpers.getObjectField(tweetResults, tweetResultFieldName)
-                    tweetResult.javaClass.declaredFields.forEach { f ->
-                        // k3
-                        f.get(tweetResult)?.let { Log.d("${f.name} = $it") }
-                    }
                     val tweetId = XposedHelpers.getLongField(tweetResult, tweetIdFieldName)
                     val result = XposedHelpers.getObjectField(tweetResult, resultFieldName)
                     val legacy = XposedHelpers.getObjectField(result, legacyFieldName)

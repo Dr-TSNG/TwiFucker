@@ -30,7 +30,9 @@
     <string name="disable_threads">Konuları Devre Dışı Bırak</string>
     <string name="disable_tweet_detail_related_tweets">Tweet Ayrıntısı İlgili Tweetleri Devre Dışı Bırak</string>
     <string name="disable_video_carousel">Video Döngüsünü Devre Dışı Bırak</string>
+    <string name="disable_banner_view">Afiş Görünümünü Devre Dışı Bırak</string>
     <string name="enable_download_hook">İndirme Kancasını Etkinleştir</string>
+    <string name="download_directory">İndirme Dizinini Seçin</string>
     <string name="disable_url_redirect">URL Yönlendirmesini Devre Dışı Bırak</string>
     <string name="hide_drawer_items">Çekmece ögelerini gizle</string>
     <string name="hide_bottom_navbar_items">Alt gezinti çubuğu ögelerini gizle</string>
@@ -51,6 +53,7 @@
     <string name="disable_recommended_users_summary">Birini takip ettikten sonra önerilen kullanıcıları gösterme</string>
     <string name="disable_threads_summary">Zaman çizelgesinin üstündeki canlı içeriği kaldırın</string>
     <string name="disable_video_carousel_summary">Keşfet sekmesindeki video döngüsünü kaldırın</string>
+    <string name="disable_banner_view_summary">Afiş görünümünün gösterilmesini engelle</string>
     <string name="enable_download_hook_summary">[Paylaş -> İndir veya Kopyala] İndirmek için dokunun, bağlantıyı kopyalamak için düğmeyi basılı tutun</string>
     <string name="disable_url_redirect_summary">t.co url yönlendirmesini durdur</string>
     <string name="hide_drawer_items_summary">Gizlenecek çekmece ögelerini seçin</string>
@@ -72,5 +75,8 @@
     <string name="deleted_n_database">%1$d veritabanı silindi</string>
 
     <string name="feature_switch_key_hint">feature_flag</string>
+    <string name="feature_switch_value_decimal_hint">1.0</string>
     <string name="feature_switch_value_boolean">Boolean</string>
+    <string name="feature_switch_value_decimal">Ondalık</string>
+    <string name="feature_switch_bool_label">True Zorla</string>
 </resources>

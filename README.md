@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./src/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="150">
+    <img src=".app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="150">
 </p>
 
 <h1 align="center">TwiFucker</h1>

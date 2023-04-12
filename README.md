@@ -94,7 +94,6 @@ Force enable/disable Twitter experimental feature.
 - Long tap Twitter logo at top of the Twitter home screen OR
 - `Settings and privacy` > `Additional resources` > Tap version
 
-
 ## 🚀 Stargazers over time
 
 [![Stargazers over time](https://starchart.cc/Dr-TSNG/TwiFucker.svg)](https://starchart.cc/Dr-TSNG/TwiFucker)

@@ -94,7 +94,6 @@ Memaksa mengaktifkan/menonaktifkan fitur eksperimental Twitter
 - Tahan lama logo Twitter di bagian atas layar beranda Twitter ATAU
 - `Pengaturan dan privasi` > `Sumber daya tambahan` > Ketuk versi
 
-    
 ## 🚀 Stargazers sepanjang waktu
 
 [![Stargazers sepanjang waktu](https://starchart.cc/Dr-TSNG/TwiFucker.svg)](https://starchart.cc/Dr-TSNG/TwiFucker)

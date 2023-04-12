@@ -38,12 +38,13 @@ You can find Beta version / Rootless integration (automatically embed latest Twi
 <details>
    <summary><h2>Features</h2></summary>
 
+<div align="center">
+    
 ## Remove promoted content
 <img alt="promoted tweet" src="./images/promoted_tweet.webp" width="256" />
 
 ## Remove promoted users
 <img alt="who to follow" src="./images/who_to_follow.webp" width="256" /> <img alt="who to follow in explore" src="./images/who_to_follow_explore.webp" width="256" />
-
 
 ## Remove promoted trends
 <img alt="promoted trends" src="./images/promoted_trends.webp" width="256" />
@@ -85,6 +86,7 @@ Force enable/disable Twitter experimental feature.
 
 ## Disable banner view
 <img alt="disable banner view" src="./images/disable_banner_view.webp" width="256" />
+    
 </details>
 
 ## Usage

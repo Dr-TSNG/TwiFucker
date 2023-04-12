@@ -1,0 +1,82 @@
+<resources>
+    <string name="app_name">TwiFucker</string>
+    <string name="twifucker_settings">Настройки TwiFucker</string>
+    <string name="save">сохранить</string>
+    <string name="reset">сбросить</string>
+    <string name="save_restart">сохранить и перезапустить</string>
+    <string name="add">добавить</string>
+    <string name="msg_yes_no">Вы уверены?</string>
+    <string name="yes">да</string>
+    <string name="no">нет</string>
+
+    <string name="settings_dismiss">отменить</string>
+    <string name="settings_general">Базовое</string>
+    <string name="settings_main">Основное</string>
+    <string name="settings_extra">Дополнительное</string>
+    <string name="settings_experimental">Экспериментальное</string>
+    <string name="settings_logging">Логи</string>
+
+    <string name="version_title">Версия</string>
+    <string name="about_title">TwiFucker by Nullptr</string>
+    <string name="show_toast_title">Показывать сообщение при запуске</string>
+    <string name="use_legacy_hook">Использовать Legacy hook</string>
+    <string name="disable_promoted_content_title">Отключить продвигаемый контент</string>
+    <string name="disable_promoted_user_title">Отключить продвигаемых пользователей</string>
+    <string name="disable_promoted_trends_title">Отключить продвигаемые тренды</string>
+    <string name="disable_sensitive_media_warning_title">Отключить предупреждение о деликатном контенте</string>
+    <string name="disable_recommended_users">Отключить рекомендуемых пользователей</string>
+    <string name="disable_who_to_follow_title">Отключить панель Кого читать</string>
+    <string name="disable_topics_to_follow_title">Отключить рекомендуемые темы</string>
+    <string name="disable_threads">Отключить треды</string>
+    <string name="disable_tweet_detail_related_tweets">Отключить похожие твиты</string>
+    <string name="disable_video_carousel">Отключить карусельки</string>
+    <string name="disable_banner_view">Отключить баннер Твитнули</string>
+    <string name="enable_download_hook">Скачивание медиа</string>
+    <string name="download_directory">Выбрать место хранения</string>
+    <string name="disable_url_redirect">Отключить URL-переадресацию</string>
+    <string name="hide_drawer_items">Скрытие кнопок боковой панели</string>
+    <string name="hide_bottom_navbar_items">Скрытие кнопок нижней панели</string>
+    <string name="feature_switch">Переключение функций</string>
+    <string name="enable_log">Включить логгирование</string>
+    <string name="export_log">Экспортировать лог</string>
+    <string name="export_json_log">Экспортировать JSON-лог</string>
+    <string name="clear_log">Очистить лог</string>
+    <string name="delete_databases">Удалить базу данных</string>
+
+    <string name="about_summary">Перейти на страницу в GitHub для информации</string>
+    <string name="show_toast_summary">Это меню доступно по нажатию на номер версии приложения в настройках</string>
+    <string name="use_legacy_hook_summary">Legacy hook обрабатывает JSON-код напрямую</string>
+    <string name="disable_promoted_content_summary">home/profile/search timeline</string>
+    <string name="disable_promoted_user_summary">лента/профиль/поиск</string>
+    <string name="disable_promoted_trends_summary">поиск</string>
+    <string name="disable_sensitive_media_warning_summary">лента/профиль и похожие твиты</string>
+    <string name="disable_recommended_users_summary">Не показывать рекомендуемых пользователей после нажатия на кнопку Читать</string>
+    <string name="disable_threads_summary">Скрывать треды в прямом эфире, отображающиеся поверх ленты</string>
+    <string name="disable_video_carousel_summary">Скрывать короткие видео на вкладке трендов</string>
+    <string name="disable_banner_view_summary">Баннер перестанет появляться во время прокрутки ленты</string>
+    <string name="enable_download_hook_summary">[Поделиться -> Скачать или Скопировать] Нажмите для скачивания, зажмите кнопку для копирования ссылки</string>
+    <string name="disable_url_redirect_summary">Отключает переадресацию по t.co</string>
+    <string name="hide_drawer_items_summary">Выбрать элементы боковой панели для скрытия</string>
+    <string name="hide_bottom_navbar_items_summary">Выбрать элементы нижней панели для скрытия</string>
+    <string name="feature_switch_summary">Изменение параметров функций, обрабатываемых серверами Twitter (ИСПОЛЬЗОВАТЬ НА СВОЙ СТРАХ И РИСК!)</string>
+    <string name="enable_log_summary">Активируйте legacy hook для подробных логов. Лог сохраняется по пути Android/data/com.twitter.android/cache/twifucker_log</string>
+    <string name="export_json_log_summary">Для работы необходимо активировать Legacy hook</string>
+    <string name="delete_databases_summary">Только в режиме Debug</string>
+
+    <string name="download_or_copy">Скачать или Скопировать</string>
+    <string name="download_media">Медиа %1$d</string>
+    <string name="download_link_copied">Ссылка скопирована!</string>
+    <string name="downloading">Скачивание…</string>
+    <string name="download_failed">Ошибка при скачивании</string>
+    <string name="download_completed">Скачивание завершено</string>
+    <string name="download_all">Скачать все</string>
+
+    <string name="deleted_n_promoted_tweet">Удалено %1$d продвигаемых твитов из базы данных приложения</string>
+    <string name="deleted_n_database">Удалено %1$d баз данных</string>
+
+    <string name="feature_switch_key_hint">feature_flag</string>
+    <string name="feature_switch_value_decimal_hint">1.0</string>
+    <string name="feature_switch_value_boolean">Boolean</string>
+    <string name="feature_switch_value_decimal">Decimal</string>
+    <string name="feature_switch_bool_label">Force True</string>
+</resources>

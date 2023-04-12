@@ -61,4 +61,40 @@ Anda dapat menemukan versi Beta / Integrasi Tanpa Root (secara otomatis menyemat
 ## Menu unduh media
 <img alt="download menu share" src="./images/download_menu_share.webp" width="256" /> <img alt="download menu" src="./images/download_menu.webp" width="256" />
 
-## Menyembun
+## Sembunyikan item-item di dalam laci
+<img alt="sembunyikan item-item di dalam laci" src="./images/hide_drawer_items.webp" width="256" />
+
+Sedikit rusak karena tata letak laci baru Twitter.
+
+## Sembunyikan item-item di bar navigasi
+<img alt="sembunyikan item-item di bar navigasi" src="./images/hide_navigation_bar_items.webp" width="256" />
+
+## Nonaktifkan pengalihan URL
+Mencegah pengalihan Twitter dari `t.co` ke tautan tujuan ketika mengklik tautan di Twitter.
+
+## Nonaktifkan Threads (konten langsung)
+<img alt="nonaktifkan Threads" src="./images/disable_threads.webp" width="256" />
+
+## Nonaktifkan Tweet Detail Related Tweets
+<img alt="nonaktifkan tweet detail related tweets" src="./images/disable_tweet_detail_related_tweets.webp" width="256" />
+
+## Hapus carousel video
+<img alt="hapus carousel video" src="./images/video_carousel.webp" width="256" />
+
+## Fitur pengalihan
+Memaksa mengaktifkan/menonaktifkan fitur eksperimental Twitter.
+
+## Nonaktifkan tampilan banner
+<img alt="nonaktifkan tampilan banner" src="./images/disable_banner_view.webp" width="256" />
+
+</details>
+
+## 🛠️ Penggunaan
+
+- Tahan lama logo Twitter di bagian atas layar beranda Twitter ATAU
+- `Pengaturan dan privasi` > `Sumber daya tambahan` > Ketuk versi
+
+
+## 🚀 Stargazers sepanjang waktu
+
+[![Stargazers sepanjang waktu](https://starchart.cc/Dr-TSNG/TwiFucker.svg)](https://starchart.cc/Dr-TSNG/TwiFucker)

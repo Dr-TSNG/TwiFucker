@@ -20,7 +20,7 @@
 
 ⚠️ Ini adalah modul Xposed. Dukungan hanya untuk API 93+ ⚠️ 
 
-Anda dapat menemukan versi Beta / Integrasi Tanpa Root (secara otomatis menyematkan Twitter terbaru dengan [LSPatch](https://github.com/LSPosed/LSPatch)) di saluran Telegram kami.
+Anda dapat menemukan versi Beta / Integrasi Tanpa Root (secara otomatis menyematkan Twitter terbaru dengan [LSPatch](https://github.com/LSPosed/LSPatch)) di saluran Telegram kami
     
 [author-image]: https://img.shields.io/badge/author-Nullptr-blue.svg
 [author-url]: https://github.com/Dr-TSNG

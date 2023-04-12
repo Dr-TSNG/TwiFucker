@@ -43,7 +43,7 @@
     <string name="clear_log">Очистить лог</string>
     <string name="delete_databases">Удалить базу данных</string>
 
-    <string name="about_summary">Перейти на страницу в GitHub для получения информации</string>
+    <string name="about_summary">Перейти на страницу в GitHub для информации</string>
     <string name="show_toast_summary">Это меню доступно по нажатию на номер версии приложения в настройках</string>
     <string name="use_legacy_hook_summary">Legacy hook обрабатывает JSON-код напрямую</string>
     <string name="disable_promoted_content_summary">home/profile/search timeline</string>

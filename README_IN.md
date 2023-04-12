@@ -64,7 +64,7 @@ Anda dapat menemukan versi Beta / Integrasi Tanpa Root (secara otomatis menyemat
 ## Sembunyikan item-item di dalam laci
 <img alt="sembunyikan item-item di dalam laci" src="./images/hide_drawer_items.webp" width="256" />
 
-Sedikit rusak karena tata letak laci baru Twitter.
+Sedikit rusak karena tata letak laci baru Twitter
 
 ## Sembunyikan item-item di bar navigasi
 <img alt="sembunyikan item-item di bar navigasi" src="./images/hide_navigation_bar_items.webp" width="256" />
@@ -82,7 +82,7 @@ Mencegah pengalihan Twitter dari `t.co` ke tautan tujuan ketika mengklik tautan 
 <img alt="hapus carousel video" src="./images/video_carousel.webp" width="256" />
 
 ## Fitur pengalihan
-Memaksa mengaktifkan/menonaktifkan fitur eksperimental Twitter.
+Memaksa mengaktifkan/menonaktifkan fitur eksperimental Twitter
 
 ## Nonaktifkan tampilan banner
 <img alt="nonaktifkan tampilan banner" src="./images/disable_banner_view.webp" width="256" />
@@ -93,7 +93,6 @@ Memaksa mengaktifkan/menonaktifkan fitur eksperimental Twitter.
 
 - Tahan lama logo Twitter di bagian atas layar beranda Twitter ATAU
 - `Pengaturan dan privasi` > `Sumber daya tambahan` > Ketuk versi
-
 
 ## 🚀 Stargazers sepanjang waktu
 

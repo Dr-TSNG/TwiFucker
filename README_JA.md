@@ -20,7 +20,7 @@
 
 ⚠️このアプリは Xposed モジュールです。API 93以降のみ対応をしています ⚠️
 
-Beta 版または非root向け統合版はこちらで探せます。 (Telegram のチャンネルで最新版の Twitter アプリに[LSPatch](https://github.com/LSPosed/LSPatch)で自動的にパッチをした物がダウンロード可能です)
+Beta 版または非root向け統合版はこちらで探せます。(Telegram のチャンネルで最新版の Twitter アプリに[LSPatch](https://github.com/LSPosed/LSPatch)で自動的にパッチをした物がダウンロード可能です)
     
 [author-image]: https://img.shields.io/badge/author-Nullptr-blue.svg
 [author-url]: https://github.com/Dr-TSNG

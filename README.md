@@ -20,7 +20,7 @@ English &nbsp;&nbsp;|&nbsp;&nbsp; [Indonesia](README_IN.md) &nbsp;&nbsp;|&nbsp;&
 
 ⚠️ This is an Xposed module. Support only API 93+ ⚠️ 
 
-You can find Beta version / Rootless integration (automatically embed latest Twitter with [LSPatch](https://github.com/LSPosed/LSPatch)) at our Telegram channel.
+You can find Beta version / Rootless integration (automatically embed latest Twitter with [LSPatch](https://github.com/LSPosed/LSPatch)) at our Telegram channel
     
 [author-image]: https://img.shields.io/badge/author-Nullptr-blue.svg
 [author-url]: https://github.com/Dr-TSNG

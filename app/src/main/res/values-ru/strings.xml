@@ -28,7 +28,7 @@
     <string name="disable_who_to_follow_title">Выкл. панель Кого читать</string>
     <string name="disable_topics_to_follow_title">Выкл. рекомендуемые темы</string>
     <string name="disable_threads">Выкл. треды</string>
-    <string name="disable_tweet_detail_related_tweets">Выкл. Похожие твиты</string>
+    <string name="disable_tweet_detail_related_tweets">Выкл. панель Похожие твиты</string>
     <string name="disable_video_carousel">Выкл. карусельки</string>
     <string name="disable_banner_view">Выкл. баннер Твитнули</string>
     <string name="enable_download_hook">Скачивание медиа</string>

@@ -20,17 +20,17 @@
     <string name="about_title">TwiFucker by Nullptr</string>
     <string name="show_toast_title">Сообщение при запуске</string>
     <string name="use_legacy_hook">Использовать Legacy hook</string>
-    <string name="disable_promoted_content_title">Выкл. продвигаемый контент</string>
-    <string name="disable_promoted_user_title">Выкл. продвигаемых пользователей</string>
-    <string name="disable_promoted_trends_title">Выкл. продвигаемые тренды</string>
-    <string name="disable_sensitive_media_warning_title">Выкл. предупреждение о деликатном контенте</string>
-    <string name="disable_recommended_users">Выкл. рекомендуемых пользователей</string>
-    <string name="disable_who_to_follow_title">Выкл. панель Кого читать</string>
-    <string name="disable_topics_to_follow_title">Выкл. рекомендуемые темы</string>
-    <string name="disable_threads">Выкл. треды</string>
-    <string name="disable_tweet_detail_related_tweets">Выкл. панель Похожие твиты</string>
-    <string name="disable_video_carousel">Выкл. карусельки</string>
-    <string name="disable_banner_view">Выкл. баннер Твитнули</string>
+    <string name="disable_promoted_content_title">Откл. продвигаемый контент</string>
+    <string name="disable_promoted_user_title">Откл. продвигаемых пользователей</string>
+    <string name="disable_promoted_trends_title">Откл. продвигаемые тренды</string>
+    <string name="disable_sensitive_media_warning_title">Откл. предупр. о деликатном контенте</string>
+    <string name="disable_recommended_users">Откл. рекомендуемых пользователей</string>
+    <string name="disable_who_to_follow_title">Откл. панель Кого читать</string>
+    <string name="disable_topics_to_follow_title">Откл. рекомендуемые темы</string>
+    <string name="disable_threads">Откл. треды в прямом эфире</string>
+    <string name="disable_tweet_detail_related_tweets">Откл. панель Похожие твиты</string>
+    <string name="disable_video_carousel">Отключить карусельки</string>
+    <string name="disable_banner_view">Отключить баннер Твитнули</string>
     <string name="enable_download_hook">Скачивание медиа</string>
     <string name="download_directory">Выбрать место хранения</string>
     <string name="disable_url_redirect">Отключить URL-переадресацию</string>
@@ -44,7 +44,7 @@
     <string name="delete_databases">Удалить базу данных</string>
 
     <string name="about_summary">Перейти на страницу в GitHub для информации</string>
-    <string name="show_toast_summary">Это меню доступно по нажатию на номер версии приложения в настройках</string>
+    <string name="show_toast_summary">Это меню доступно по нажатию на версию приложения в настройках</string>
     <string name="use_legacy_hook_summary">Legacy hook обрабатывает JSON-код напрямую</string>
     <string name="disable_promoted_content_summary">лента/профиль/поиск</string>
     <string name="disable_promoted_user_summary">лента/профиль/поиск</string>
@@ -54,7 +54,7 @@
     <string name="disable_threads_summary">Скрывать треды в прямом эфире, отображающиеся поверх ленты</string>
     <string name="disable_video_carousel_summary">Скрывать короткие видео на вкладке трендов</string>
     <string name="disable_banner_view_summary">Баннер перестанет появляться во время прокрутки ленты</string>
-    <string name="enable_download_hook_summary">[Поделиться -> Скачать или Скопировать] Нажмите для скачивания, зажмите кнопку для копирования ссылки</string>
+    <string name="enable_download_hook_summary">[Поделиться -> Скачать или Скопировать] Нажмите для скачивания, зажмите для копирования ссылки</string>
     <string name="disable_url_redirect_summary">Отключает переадресацию по t.co</string>
     <string name="hide_drawer_items_summary">Выбрать элементы боковой панели для скрытия</string>
     <string name="hide_bottom_navbar_items_summary">Выбрать элементы нижней панели для скрытия</string>

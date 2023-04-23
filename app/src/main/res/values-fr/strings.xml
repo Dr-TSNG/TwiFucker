@@ -77,6 +77,6 @@
     <string name="feature_switch_key_hint">commutateur_fonctionnalité</string>
     <string name="feature_switch_value_decimal_hint">1.0</string>
     <string name="feature_switch_value_boolean">Booléenne</string>
-    <string name="feature_switch_value_decimal">Decimal</string>
-    <string name="feature_switch_bool_label">Force True</string>
+    <string name="feature_switch_value_decimal">Décimale</string>
+    <string name="feature_switch_bool_label">Forcer état Actif</string>
 </resources>

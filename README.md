@@ -18,8 +18,6 @@ English &nbsp;&nbsp;|&nbsp;&nbsp; [Indonesia](README_IN.md) &nbsp;&nbsp;|&nbsp;&
 
 <a href="https://t.me/TwiFucker"><img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Join TwiFucker Telegram Group"></a>
 
-</div>
-
 ⚠️ This is an Xposed module. Support only API 93+ ⚠️ 
 
 You can find Beta version / Rootless integration (automatically embed latest Twitter with [LSPatch](https://github.com/LSPosed/LSPatch)) at our Telegram channel
@@ -32,6 +30,8 @@ You can find Beta version / Rootless integration (automatically embed latest Twi
    
 [last-commit-image]: https://img.shields.io/github/last-commit/Dr-TSNG/TwiFucker?label=last%20commit
 [last-commit-url]: https://github.com/Dr-TSNG/TwiFucker/commits
+
+</div>
 
 ##
 

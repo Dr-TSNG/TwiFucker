@@ -64,7 +64,7 @@ android {
 
     defaultConfig {
         applicationId = "icu.nullptr.twifucker"
-        minSdk = 24
+        minSdk = 27
         targetSdk = 33
         versionCode = gitCommitCount
         versionName = verName

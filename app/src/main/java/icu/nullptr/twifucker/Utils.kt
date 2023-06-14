@@ -3,6 +3,8 @@ package icu.nullptr.twifucker
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageInfo
+import android.os.Build
 import com.github.kyuubiran.ezxhelper.EzXHelper.appContext
 import com.github.kyuubiran.ezxhelper.EzXHelper.modulePath
 import com.github.kyuubiran.ezxhelper.HookFactory
@@ -23,10 +25,24 @@ val logFile by lazy { File(logFileDir, "log.txt") }
 val logJsonFile by lazy { File(logFileDir, "log_json.txt") }
 
 @Suppress("DEPRECATION")
-val hostAppLastUpdate by lazy {
+val packageInfo: PackageInfo by lazy {
     appContext.packageManager.getPackageInfo(
         appContext.packageName, 0
-    ).lastUpdateTime
+    )
+}
+val hostVersionName: String by lazy {
+    packageInfo.versionName
+}
+@Suppress("DEPRECATION")
+val hostVersionCode by lazy {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        packageInfo.longVersionCode
+    } else {
+        packageInfo.versionCode
+    }
+}
+val hostAppLastUpdate by lazy {
+    packageInfo.lastUpdateTime
 }
 val moduleLastModify by lazy {
     File(modulePath).lastModified()

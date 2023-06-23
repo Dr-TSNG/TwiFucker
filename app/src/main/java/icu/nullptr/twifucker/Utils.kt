@@ -95,6 +95,10 @@ fun isEntryNeedsRemove(entryId: String): Boolean {
     ) {
         return true
     }
+    // who to subscribe (a.k.a. Creators for you) module
+    if (entryId.startsWith("who-to-subscribe-") && modulePrefs.getBoolean("disable_who_to_subscribe", false)) {
+        return true
+    }
     // topics to follow module
     if (entryId.startsWith("TopicsModule-") && modulePrefs.getBoolean(
             "disable_topics_to_follow", false

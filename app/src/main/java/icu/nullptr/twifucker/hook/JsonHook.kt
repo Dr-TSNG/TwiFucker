@@ -137,7 +137,9 @@ object JsonHook : BaseHook() {
             ?.optJSONObject("tweet")
             ?.has("promotedMetadata") == true || optJSONObject("content")?.optJSONObject("content")
             ?.has("tweetPromotedMetadata") == true || optJSONObject("item")?.optJSONObject("content")
-            ?.has("tweetPromotedMetadata") == true
+            ?.has("tweetPromotedMetadata") == true || optJSONObject("content")?.optJSONObject("item")
+            ?.optJSONObject("content")?.optJSONObject("eventSummary")
+            ?.has("promotedMetadata") == true
 
     private fun JSONObject.entryIsWhoToFollow(): Boolean = optString("entryId").let {
         it.startsWith("whoToFollow-") || it.startsWith("who-to-follow-") || it.startsWith("connect-module-")

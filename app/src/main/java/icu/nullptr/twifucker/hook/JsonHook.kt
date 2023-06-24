@@ -93,6 +93,8 @@ object JsonHook : BaseHook() {
             ?.optJSONObject("timeline_response")?.optJSONObject("timeline")
             ?: optJSONObject("timeline_response")?.optJSONObject("timeline")
             ?: optJSONObject("timeline_response")
+            ?: optJSONObject("search")?.optJSONObject("timeline_response")
+            ?.optJSONObject("timeline")
         return timeline?.optJSONArray("instructions")
     }
 

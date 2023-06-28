@@ -27,6 +27,7 @@
     <string name="disable_recommended_users">Wyłącz polecanych użytkowników</string>
     <string name="disable_who_to_follow_title">Wyłącz "Warci obserwowania"</string>
     <string name="disable_topics_to_follow_title">Wyłącz "Tematy do obserwowania"</string>
+    <string name="disable_who_to_subscribe_title">Wyłącz "Twórcy dla Ciebie"</string>
     <string name="disable_threads">Wyłącz wątki</string>
     <string name="disable_tweet_detail_related_tweets">Wyłącz szczegóły tweetów</string>
     <string name="disable_video_carousel">Wyłącz promowane filmy</string>

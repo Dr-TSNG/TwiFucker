@@ -24,6 +24,7 @@
     <string name="disable_sensitive_media_warning_title">センシティブなメディアの警告を無効化</string>
     <string name="disable_recommended_users">おすすめユーザーを無効化</string>
     <string name="disable_who_to_follow_title">ユーザーのフォローを無効化</string>
+    <string name="disable_who_to_subscribe_title">クリエイターを無効化</string>
     <string name="disable_topics_to_follow_title">おすすめトピックを無効化</string>
     <string name="disable_threads">スレッド表示を無効化</string>
     <string name="disable_tweet_detail_related_tweets">ツイート詳細の関連ツイートを無効化</string>

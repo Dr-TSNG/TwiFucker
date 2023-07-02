@@ -50,6 +50,9 @@
             android:key="disable_who_to_follow"
             android:title="@string/disable_who_to_follow_title" />
         <SwitchPreference
+            android:key="disable_who_to_subscribe"
+            android:title="@string/disable_who_to_subscribe_title" />
+        <SwitchPreference
             android:key="disable_topics_to_follow"
             android:title="@string/disable_topics_to_follow_title" />
         <SwitchPreference

@@ -6,21 +6,21 @@
 
 <div align="center">
 
-### Yet Another Adkiller for Twitter
+### Twitter の新たなる広告キラーアプリ
     
 [![author][author-image]][author-url]
 [![release][release-image]][release-url]
 [![last commit][last-commit-image]][last-commit-url]    
     
-English &nbsp;&nbsp;|&nbsp;&nbsp; [Indonesia](README_IN.md) &nbsp;&nbsp;|&nbsp;&nbsp; [日本語](README_JA.md)
+[English](README.md) &nbsp;&nbsp;|&nbsp;&nbsp; [Indonesia](README_IN.md) &nbsp;&nbsp;|&nbsp;&nbsp; 日本語
     
 ##
 
 <a href="https://t.me/TwiFucker"><img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Join TwiFucker Telegram Group"></a>
 
-⚠️ This is an Xposed module. Support only API 93+ ⚠️ 
+⚠️このアプリは Xposed モジュールです。API 93以降のみ対応をしています ⚠️
 
-You can find Beta version / Rootless integration (automatically embed latest Twitter with [LSPatch](https://github.com/LSPosed/LSPatch)) at our Telegram channel
+Beta 版または非root向け統合版はこちらで探せます。(Telegram のチャンネルで最新版の Twitter アプリに[LSPatch](https://github.com/LSPosed/LSPatch)で自動的にパッチをした物がダウンロード可能です)
     
 [author-image]: https://img.shields.io/badge/author-Nullptr-blue.svg
 [author-url]: https://github.com/Dr-TSNG
@@ -36,64 +36,64 @@ You can find Beta version / Rootless integration (automatically embed latest Twi
 ##
 
 <details>
-   <summary><h2>✨ Features</h2></summary>
+   <summary><h2>✨ 特徴</h2></summary>
 
 <div align="center">
-    
-## Remove promoted content
+
+## プロモーションコンテンツの削除
 <img alt="promoted tweet" src="./images/promoted_tweet.webp" width="256" />
 
-## Remove promoted users
+## プロモーションユーザーの削除
 <img alt="who to follow" src="./images/who_to_follow.webp" width="256" /> <img alt="who to follow in explore" src="./images/who_to_follow_explore.webp" width="256" />
 
-## Remove promoted trends
+## プロモーショントレンドを削除
 <img alt="promoted trends" src="./images/promoted_trends.webp" width="256" />
 
-## Remove sensitive media warning
+## センシティブなメディアの警告を無効化
 <img alt="sensitive media warning" src="./images/sensitive_media_warning.webp" width="256" />
 
-## Disable recommended users
+## おすすめユーザーを無効化
 <img alt="recommended users" src="./images/recommended_users.webp" width="256" />
 
-## Copyable alt text
+## コピー可能な代替テキスト
 <img alt="copyable alt text" src="./images/copyable_alt_text.webp" width="256" />
 
-## Download media menu
+## メディアのダウンロードメニュー
 <img alt="download menu share" src="./images/download_menu_share.webp" width="256" /> <img alt="download menu" src="./images/download_menu.webp" width="256" />
 
-## Hide drawer items
+## ドロワーの項目を非表示
 <img alt="hide drawer items" src="./images/hide_drawer_items.webp" width="256" />
 
-Slightly broken due to Twitter new drawer layout.
+Twitter の新しいドロワーレイアウトの影響で崩れる場合があります
 
-## Hide navigation bar items
+## ナビゲーションバーの項目を非表示
 <img alt="hide navigation bar items" src="./images/hide_navigation_bar_items.webp" width="256" />
 
-## Disable url redirect
-Prevent Twitter redirect from `t.co` to target link when clicking on a link in Twitter.
+## URLのリダイレクトを無効化
+Twitter でリンクを開いた際に「t.co」からターゲットリンクにリダイレクトをさせないようにします
 
-## Disable Threads (live content)
+## スレッドを表示を無効化 (ライブコンテンツ)
 <img alt="disable threads" src="./images/disable_threads.webp" width="256" />
 
-## Disable Tweet Detail Related Tweets
+## ツイート詳細の関連ツイートを無効化
 <img alt="disable tweet detail related tweets" src="./images/disable_tweet_detail_related_tweets.webp" width="256" />
 
-## Remove video carousel
+## 動画カルーセルを削除
 <img alt="remove video carousel" src="./images/video_carousel.webp" width="256" />
 
-## Feature switch
-Force enable/disable Twitter experimental feature.
+## 機能スイッチ
+Twitter の実験的な機能の強制的な有効化/無効化
 
-## Disable banner view
+## バナー表示を無効にする
 <img alt="disable banner view" src="./images/disable_banner_view.webp" width="256" />
-    
+  
 </details>
 
-## 🛠️ Usage
+## 🛠️ 使い方
 
-- Long tap Twitter logo at top of the Twitter home screen OR
-- `Settings and privacy` > `Additional resources` > Tap version
+- Twitter ホーム画面の上部にある Twitter のロゴを長押しするか、
+- `設定とプライバシー` > `その他のリソース` > バージョンをタップする
 
-## 🚀 Stargazers over time
+## 🚀 スターガザーの推移
 
-[![Stargazers over time](https://starchart.cc/Dr-TSNG/TwiFucker.svg)](https://starchart.cc/Dr-TSNG/TwiFucker)
+[![スターガザーの推移](https://starchart.cc/Dr-TSNG/TwiFucker.svg)](https://starchart.cc/Dr-TSNG/TwiFucker)

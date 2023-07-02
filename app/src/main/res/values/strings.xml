@@ -26,6 +26,7 @@
     <string name="disable_sensitive_media_warning_title">Disable Sensitive Media Warning</string>
     <string name="disable_recommended_users">Disable recommended users</string>
     <string name="disable_who_to_follow_title">Disable Who to Follow</string>
+    <string name="disable_who_to_subscribe_title">Disable Creators for you</string>
     <string name="disable_topics_to_follow_title">Disable Topics to Follow</string>
     <string name="disable_threads">Disable Threads</string>
     <string name="disable_tweet_detail_related_tweets">Disable Tweet Detail Related Tweets</string>

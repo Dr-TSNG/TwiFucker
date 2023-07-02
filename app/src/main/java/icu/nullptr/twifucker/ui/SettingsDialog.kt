@@ -65,7 +65,7 @@ class SettingsDialog(context: Context) : AlertDialog.Builder(context) {
                     context.getDatabasePath(db).absolutePath, null, SQLiteDatabase.OPEN_READWRITE
                 )
                 count += database.delete(
-                    "timeline", "entity_id LIKE ?", arrayOf("promotedTweet-%")
+                    "timeline", "entity_id LIKE ?", arrayOf("promoted%")
                 )
                 database.close()
             }

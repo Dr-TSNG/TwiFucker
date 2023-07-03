@@ -12,7 +12,7 @@
     <string name="settings_dismiss">ignorer</string>
     <string name="settings_general">Général</string>
     <string name="settings_main">Principal</string>
-    <string name="settings_extra">Extras</string>
+    <string name="settings_extra">Suppléments</string>
     <string name="settings_experimental">Expérimental</string>
     <string name="settings_logging">Journalisation</string>
     
@@ -28,15 +28,17 @@
     <string name="disable_who_to_follow_title">Désactiver Qui à Suivre</string>
     <string name="disable_topics_to_follow_title">Désactiver Sujets à Suivre</string>
     <string name="disable_threads">Désactiver les topics</string>
-    <string name="disable_tweet_detail_related_tweets">Désactiver les détails de Tweet apparenté</string>
+    <string name="disable_tweet_detail_related_tweets">Désactiver le détail des Tweets associés</string>
     <string name="disable_video_carousel">Désactiver le Carousel des Vidéos</string>
+    <string name="disable_banner_view">Désactiver Affichage Bandeau</string>
     <string name="enable_download_hook">Activer Hammeçonnage Téléchargement</string>
+    <string name="download_directory">Sélectionner Emplacement Téléchargements</string>
     <string name="disable_url_redirect">Désactiver Redirection URL</string>
     <string name="hide_drawer_items">Cacher les éléments du tiroir</string>
     <string name="hide_bottom_navbar_items">Masquer les éléments de la barre inérieure de navigation</string>
     <string name="feature_switch">Commutateur de fonctionnalité</string>
-    <string name="enable_log">Activer journalisation</string>
-    <string name="export_log">Exporter journalisation</string>
+    <string name="enable_log">Activer la journalisation</string>
+    <string name="export_log">Exporter la journalisation</string>
     <string name="export_json_log">Exporter journal JSON</string>
     <string name="clear_log">Éffacer journal</string>
     <string name="delete_databases">Supprimer bases de données</string>
@@ -49,12 +51,13 @@
     <string name="disable_promoted_trends_summary">rechercher</string>
     <string name="disable_sensitive_media_warning_summary">accueil/profil chronologique et détails de tweet</string>
     <string name="disable_recommended_users_summary">Ne pas afficher les utilisateurs recommandés après avoir suivi quelqu\’un</string>
-    <string name="disable_threads_summary">Supprimer les contenus en direct sur la partie suppérieure de la chronologie</string>
-    <string name="disable_video_carousel_summary">Supprimer la ssuccession de vidéo dans l\’onglet Explorer</string>
+    <string name="disable_threads_summary">Supprimer les contenus en direct sur la partie suppérieure du fil d\’actualité</string>
+    <string name="disable_video_carousel_summary">Supprimer la succession de vidéo dans l\’onglet Explorer</string>
+    <string name="disable_banner_view_summary">Empêcher le bandeau de s\’afficher</string>
     <string name="enable_download_hook_summary">[Partager -> Télécharger ou Copier] Appuyer sur télécharger, boutton maintenu pour copier le lien</string>
     <string name="disable_url_redirect_summary">Mettre fin aux URL de redirections t.co</string>
-    <string name="hide_drawer_items_summary">Sélectionner les élément(s) du fil à masquer</string>
-    <string name="hide_bottom_navbar_items_summary">Sélectionner les élément(s) de la barre de navigation du bas à masquer</string>
+    <string name="hide_drawer_items_summary">Sélectionner les éléments du fil à masquer</string>
+    <string name="hide_bottom_navbar_items_summary">Sélectionner les éléments de la barre de navigation du bas à masquer</string>
     <string name="feature_switch_summary">Altérrer les commutateur de fonction fournis par les serveurs Twitter (A UTILISER A VOS RISQUES ET PÉRILS!)</string>
     <string name="enable_log_summary">Activer l\’ancien ameçonnage pour plus de journalisation. Le journal est enregistré dans Android/data/com.twitter.android/cache/twifucker_log</string>
     <string name="export_json_log_summary">La méthode traditionnelle est requise pour être activée.</string>
@@ -72,5 +75,8 @@
     <string name="deleted_n_database">%1$d base(s) de donnée(s) supprimée(s)</string>
 
     <string name="feature_switch_key_hint">commutateur_fonctionnalité</string>
+    <string name="feature_switch_value_decimal_hint">1.0</string>
     <string name="feature_switch_value_boolean">Booléenne</string>
+    <string name="feature_switch_value_decimal">Décimale</string>
+    <string name="feature_switch_bool_label">Forcer état Actif</string>
 </resources>

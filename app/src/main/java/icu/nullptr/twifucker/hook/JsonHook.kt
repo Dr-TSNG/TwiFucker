@@ -93,6 +93,8 @@ object JsonHook : BaseHook() {
             ?.optJSONObject("timeline_response")?.optJSONObject("timeline")
             ?: optJSONObject("timeline_response")?.optJSONObject("timeline")
             ?: optJSONObject("timeline_response")
+            ?: optJSONObject("search")?.optJSONObject("timeline_response")
+            ?.optJSONObject("timeline")
         return timeline?.optJSONArray("instructions")
     }
 
@@ -135,11 +137,16 @@ object JsonHook : BaseHook() {
             ?.optJSONObject("tweet")
             ?.has("promotedMetadata") == true || optJSONObject("content")?.optJSONObject("content")
             ?.has("tweetPromotedMetadata") == true || optJSONObject("item")?.optJSONObject("content")
-            ?.has("tweetPromotedMetadata") == true
+            ?.has("tweetPromotedMetadata") == true || optJSONObject("content")?.optJSONObject("item")
+            ?.optJSONObject("content")?.optJSONObject("eventSummary")
+            ?.has("promotedMetadata") == true
 
     private fun JSONObject.entryIsWhoToFollow(): Boolean = optString("entryId").let {
         it.startsWith("whoToFollow-") || it.startsWith("who-to-follow-") || it.startsWith("connect-module-")
     }
+
+    private fun JSONObject.entryIsWhoToSubscribe(): Boolean =
+        optString("entryId").startsWith("who-to-subscribe-")
 
     private fun JSONObject.entryIsTopicsModule(): Boolean =
         optString("entryId").startsWith("TopicsModule-")
@@ -323,6 +330,22 @@ object JsonHook : BaseHook() {
         }
     }
 
+    private fun JSONArray.entriesRemoveWhoToSubscribe() {
+        val entryRemoveIndex = mutableListOf<Int>()
+        forEachIndexed { entryIndex, entry ->
+            if (!entry.entryIsWhoToSubscribe()) return@forEachIndexed
+
+            if (modulePrefs.getBoolean("disable_who_to_subscribe", false)) {
+                Log.d("Handle whoToSubscribe $entryIndex $entry")
+                entryRemoveIndex.add(entryIndex)
+                return@forEachIndexed
+            }
+        }
+        for (i in entryRemoveIndex.reversed()) {
+            remove(i)
+        }
+    }
+
     private fun JSONArray.entriesRemoveTopicsToFollow() {
         val entryRemoveIndex = mutableListOf<Int>()
         forEachIndexed { entryIndex, entry ->
@@ -401,6 +424,7 @@ object JsonHook : BaseHook() {
     private fun JSONArray.entriesRemoveAnnoyance() {
         entriesRemoveTimelineAds()
         entriesRemoveWhoToFollow()
+        entriesRemoveWhoToSubscribe()
         entriesRemoveTopicsToFollow()
         entriesRemoveSensitiveMediaWarning()
         entriesRemoveTweetDetailRelatedTweets()

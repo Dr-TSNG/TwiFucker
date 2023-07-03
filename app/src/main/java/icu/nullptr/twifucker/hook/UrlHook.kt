@@ -19,6 +19,7 @@ object UrlHook : BaseHook() {
         MethodFinder.fromClass(Intent::class.java).filterByName("replaceExtras")
             .filterByParamTypes(Bundle::class.java).first().createHook {
                 beforeMeasure(name) { param ->
+                    param.args[0] ?: return@beforeMeasure
                     val bundle = param.args[0] as Bundle
                     val extraText = bundle.getString(Intent.EXTRA_TEXT) ?: return@beforeMeasure
                     if (extraText.isTwitterUrl()) {

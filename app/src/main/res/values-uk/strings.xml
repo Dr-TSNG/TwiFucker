@@ -1,0 +1,82 @@
+<resources>
+    <string name="app_name">TwiFucker</string>
+    <string name="twifucker_settings">Налаштування TwiFucker</string>
+    <string name="save">зберегти</string>
+    <string name="reset">скинути</string>
+    <string name="save_restart">зберегти та перезавантажити</string>
+    <string name="add">додати</string>
+    <string name="msg_yes_no">Ви впевнені?</string>
+    <string name="yes">так</string>
+    <string name="no">ні</string>
+
+    <string name="settings_dismiss">відхилити</string>
+    <string name="settings_general">Загальні</string>
+    <string name="settings_main">Головні</string>
+    <string name="settings_extra">Додаткові</string>
+    <string name="settings_experimental">Експериментальні</string>
+    <string name="settings_logging">Логування</string>
+
+    <string name="version_title">Версія</string>
+    <string name="about_title">TwiFucker від Nullptr</string>
+    <string name="show_toast_title">Показати Повідомлення під час Запуску</string>
+    <string name="use_legacy_hook">Використовувати старий hook</string>
+    <string name="disable_promoted_content_title">Вимкнути Рекламний Контент</string>
+    <string name="disable_promoted_user_title">Вимкнути Рекламу Користувачів</string>
+    <string name="disable_promoted_trends_title">Вимкнути Рекламні Тренди</string>
+    <string name="disable_sensitive_media_warning_title">Вимкнути Попередження про Чутливий Контент</string>
+    <string name="disable_recommended_users">Вимкнути рекомендацію користувачів</string>
+    <string name="disable_who_to_follow_title">Вимкнути Рекомендацію Користувачів у стрічці</string>
+    <string name="disable_topics_to_follow_title">Вимкнути Рекомендацію Тем для Слідкування</string>
+    <string name="disable_threads">Вимкнути Треди</string>
+    <string name="disable_tweet_detail_related_tweets">Вимкнути Твіти, які Пов\'язані з Деталями Твіту</string>
+    <string name="disable_video_carousel">Вимкнути Карусель Відео</string>
+    <string name="disable_banner_view">Вимкнути Банерний Вигляд</string>
+    <string name="enable_download_hook">Уввімкнути Нook для Завантаження</string>
+    <string name="download_directory">Обрати Місце Завантаження</string>
+    <string name="disable_url_redirect">Вимкнути URL Перенаправлення</string>
+    <string name="hide_drawer_items">Сховати елементи ящика</string>
+    <string name="hide_bottom_navbar_items">Сховати елементи нижньої панелі навігації</string>
+    <string name="feature_switch">Функціональний перемикач</string>
+    <string name="enable_log">Уввімкнути логування</string>
+    <string name="export_log">Експортувати логи</string>
+    <string name="export_json_log">Експортувати JSON логи</string>
+    <string name="clear_log">Очистити логування</string>
+    <string name="delete_databases">Видалити базу даних</string>
+
+    <string name="about_summary">Щоб отримати додаткову підтримку, відвідайте сторінку на GitHub</string>
+    <string name="show_toast_summary">Ви можете знайти цю сторінку в пунктах Налаштування/Додаткові/Версія</string>
+    <string name="use_legacy_hook_summary">Старий hook напряму оброблює JSON рядок</string>
+    <string name="disable_promoted_content_summary">Головна/Профіль/Пошук стрічки</string>
+    <string name="disable_promoted_user_summary">Головна/Профіль/Пошук стрічки</string>
+    <string name="disable_promoted_trends_summary">Пошук</string>
+    <string name="disable_sensitive_media_warning_summary">Головна/Профіль стрічки та у деталях твіта</string>
+    <string name="disable_recommended_users_summary">Не буде показувати рекомендованих користувачів після того, як ви підписалися на когось</string>
+    <string name="disable_threads_summary">Видаляє Live контент зверху стрічки</string>
+    <string name="disable_video_carousel_summary">Видаляє відеокарусель у вкладці огляду</string>
+    <string name="disable_banner_view_summary">Забороняє показ банера</string>
+    <string name="enable_download_hook_summary">[Поділитися -> Завантажити або Скопіювати] Натисніть, щоб завантажити, утримуйте кнопку, щоб скопіювати посилання</string>
+    <string name="disable_url_redirect_summary">Зупиняє переспрямування t.co URL-адрес</string>
+    <string name="hide_drawer_items_summary">Виберіть елементи ящика, які потрібно приховати</string>
+    <string name="hide_bottom_navbar_items_summary">Виберіть елементи нижньої панелі навігації, які потрібно приховати</string>
+    <string name="feature_switch_summary">Змінює позначки функцій, наданих сервером Twitter (ВИКОРИСТУЙТЕ НА ВЛАСНИЙ РИЗИК!)</string>
+    <string name="enable_log_summary">Вмикає застарілий Hook для більшого журналювання. Логи зберігаються у Android/data/com.twitter.android/cache/twifucker_log</string>
+    <string name="export_json_log_summary">Потребує ввімкного старого hook-у</string>
+    <string name="delete_databases_summary">Видаляє логи</string>
+
+    <string name="download_or_copy">Завантажити або Скопіювати</string>
+    <string name="download_media">Медіафайл %1$d</string>
+    <string name="download_link_copied">Посилання для завантаження скопійовано!</string>
+    <string name="downloading">Йде завантаження…</string>
+    <string name="download_failed">Не вдалося завантажити</string>
+    <string name="download_completed">Завантаження виконано</string>
+    <string name="download_all">Завантажити УСЕ</string>
+
+    <string name="deleted_n_promoted_tweet">Видалено %1$d рекламних(і,ий) твітів(и,-ів)) з бази даних програми</string>
+    <string name="deleted_n_database">Видалено %1$d датабаз(а)</string>
+
+    <string name="feature_switch_key_hint">прапорець_функціоналу</string>
+    <string name="feature_switch_value_decimal_hint">1.0</string>
+    <string name="feature_switch_value_boolean">Двійкова</string>
+    <string name="feature_switch_value_decimal">Десяткова</string>
+    <string name="feature_switch_bool_label">Примусово встановити значення True</string>
+</resources>

@@ -26,6 +26,7 @@
     <string name="disable_sensitive_media_warning_title">تعطيل تحذير المحتوى الحساس</string>
     <string name="disable_recommended_users">تعطيل الحسابات الموصى بها</string>
     <string name="disable_who_to_follow_title">تعطيل اقتراحات متابعة الحسابات</string>
+    <string name="disable_who_to_subscribe_title">تعطيل Creators لك</string>
     <string name="disable_topics_to_follow_title">تعطيل اقتراحات متابعة المواضيع</string>
     <string name="disable_threads">تعطيل سلسلة التغريدات</string>
     <string name="disable_tweet_detail_related_tweets">تعطيل التغريدات ذات الصلة بتفاصيل التغريدات</string>
@@ -36,6 +37,7 @@
     <string name="disable_url_redirect">تعطيل إعادة توجيه URL</string>
     <string name="hide_drawer_items">إخفاء عناصر الدرج</string>
     <string name="hide_bottom_navbar_items">إخفاء عناصر شريط التنقل السفلي</string>
+    <string name="hide_for_you_tab">إخفاء علامة التبويب "لك"</string>
     <string name="feature_switch">Feature switch</string>
     <string name="enable_log">تمكين السجل</string>
     <string name="export_log">تصدير السجل</string>
@@ -75,5 +77,8 @@
     <string name="deleted_n_database">تم حذف %1$d قاعدة بيانات</string>
 
     <string name="feature_switch_key_hint">feature_flag</string>
+    <string name="feature_switch_value_decimal_hint">1.0</string>
     <string name="feature_switch_value_boolean">Boolean</string>
+    <string name="feature_switch_value_decimal">Decimal</string>
+    <string name="feature_switch_bool_label">Force True</string>
 </resources>

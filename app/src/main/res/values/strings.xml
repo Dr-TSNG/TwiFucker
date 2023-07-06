@@ -37,6 +37,7 @@
     <string name="disable_url_redirect">Disable URL Redirect</string>
     <string name="hide_drawer_items">Hide drawer items</string>
     <string name="hide_bottom_navbar_items">Hide bottom navigation bar items</string>
+    <string name="hide_for_you_tab">Hide "For you" Tab</string>
     <string name="feature_switch">Feature switch</string>
     <string name="enable_log">Enable log</string>
     <string name="export_log">Export log</string>

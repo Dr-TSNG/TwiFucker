@@ -93,6 +93,9 @@
             android:key="hide_bottom_navbar_items"
             android:summary="@string/hide_bottom_navbar_items_summary"
             android:title="@string/hide_bottom_navbar_items" />
+        <SwitchPreference
+            android:key="hide_for_you_tab"
+            android:title="@string/hide_for_you_tab" />
         <Preference
             android:key="feature_switch"
             android:summary="@string/feature_switch_summary"

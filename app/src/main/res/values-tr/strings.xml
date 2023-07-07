@@ -26,7 +26,7 @@
     <string name="disable_sensitive_media_warning_title">Hassas Medya Uyarısını Devre Dışı Bırak</string>
     <string name="disable_recommended_users">Önerilen kullanıcıları devre dışı bırak</string>
     <string name="disable_who_to_follow_title">Kimin Takip Edileceğini Devre Dışı Bırak</string>
-    <string name="disable_who_to_subscribe_title">Oluşturucuları sizin için devre dışı bırakın</string>
+    <string name="disable_who_to_subscribe_title">Oluşturucuları Sizin İçin Devre Dışı Bırakın</string>
     <string name="disable_topics_to_follow_title">Takip Edilecek Konuları Devre Dışı Bırak</string>
     <string name="disable_threads">Konuları Devre Dışı Bırak</string>
     <string name="disable_tweet_detail_related_tweets">Tweet Ayrıntısı İlgili Tweetleri Devre Dışı Bırak</string>
@@ -37,6 +37,7 @@
     <string name="disable_url_redirect">URL Yönlendirmesini Devre Dışı Bırak</string>
     <string name="hide_drawer_items">Çekmece ögelerini gizle</string>
     <string name="hide_bottom_navbar_items">Alt gezinti çubuğu ögelerini gizle</string>
+    <string name="hide_for_you_tab">"Sizin İçin" Sekmesini Gizle</string>
     <string name="feature_switch">Özellik anahtarı</string>
     <string name="enable_log">Günlüğü etkinleştir</string>
     <string name="export_log">Günlüğü dışa aktar</string>

@@ -18,7 +18,7 @@ import icu.nullptr.twifucker.replaceMeasure
 object HomeTimelineHook : BaseHook() {
 
     override val name: String
-        get() = "HomeHook"
+        get() = "HomeTimelineHook"
 
     private lateinit var unhook: XC_MethodHook.Unhook
 

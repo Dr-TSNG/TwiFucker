@@ -42,10 +42,10 @@ object HomeTimelineHook : BaseHook() {
 
         MethodFinder.fromClass(homeTimelineTabClassName).filterByName("apply").first().createHook {
             beforeMeasure(name) { param ->
-                val c =
+                if (param.args[0] !is List<*>) return@beforeMeasure
+		val c =
                     FieldFinder.fromClass(homeTimelineTabClassName).filterByType(Int::class.java)
                         .first().getInt(param.thisObject)
-                if (c != 0) return@beforeMeasure
                 unhook = MethodFinder.fromClass(homeTimelineListClassName).filterByName(
                     homeTimelineListAddMethodName
                 ).first().createHook {

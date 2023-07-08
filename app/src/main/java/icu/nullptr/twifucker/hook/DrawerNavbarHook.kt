@@ -172,21 +172,22 @@ object DrawerNavbarHook : BaseHook() {
             methodParamTypes = emptyArray()
         }.first()
 
-        val bottomNavbarDesc = dexKit.findMethodUsingOpCodeSeq {
+        val bottomNavbarDesc = dexKit.findMethodUsingOpPrefixSeq {
             opSeq = intArrayOf(
+                Opcodes.OP_IGET_OBJECT,
+                Opcodes.OP_INVOKE_VIRTUAL,
+                Opcodes.OP_INVOKE_STATIC,
                 Opcodes.OP_MOVE_RESULT,
                 Opcodes.OP_IGET_OBJECT,
                 Opcodes.OP_INVOKE_INTERFACE,
                 Opcodes.OP_MOVE_RESULT,
-                Opcodes.OP_SGET_OBJECT,
-                Opcodes.OP_CONST_4,
-                Opcodes.OP_NEW_ARRAY,
-                Opcodes.OP_IF_EQZ,
-                Opcodes.OP_SGET_OBJECT,
             )
             methodReturnType = List::class.java.name
             methodParamTypes = emptyArray()
-        }.first()
+        }.first { method ->
+            val clazz = loadClass(method.declaringClassName)
+            clazz.declaredFields.size == 2 && clazz.declaredMethods.size == 1
+        }
 
         drawerItemsClassName = drawerClassDesc.declaringClassName
         drawerItemsGetMethod = drawerClassDesc.name

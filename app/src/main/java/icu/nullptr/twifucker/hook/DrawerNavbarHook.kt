@@ -81,7 +81,7 @@ object DrawerNavbarHook : BaseHook() {
                             itemName, hiddenItems?.contains(itemName) == false
                         )
                     )
-                    if (hiddenItems?.contains(itemName) == true && itemName != "HOME") {
+                    if (hiddenItems?.contains(itemName) == true) {
                         newBottomNavbarItems.remove(item)
                     }
                 }

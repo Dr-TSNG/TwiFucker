@@ -26,6 +26,7 @@
     <string name="disable_sensitive_media_warning_title">Откл. предупр. о деликатном контенте</string>
     <string name="disable_recommended_users">Откл. рекомендуемых пользователей</string>
     <string name="disable_who_to_follow_title">Откл. панель Кого читать</string>
+    <string name="disable_who_to_subscribe_title">Откл. панель Авторы для вас</string>
     <string name="disable_topics_to_follow_title">Откл. рекомендуемые темы</string>
     <string name="disable_threads">Откл. треды в прямом эфире</string>
     <string name="disable_tweet_detail_related_tweets">Откл. панель Похожие твиты</string>
@@ -36,6 +37,7 @@
     <string name="disable_url_redirect">Отключить URL-переадресацию</string>
     <string name="hide_drawer_items">Скрытие кнопок боковой панели</string>
     <string name="hide_bottom_navbar_items">Скрытие кнопок нижней панели</string>
+    <string name="hide_for_you_tab">Скрытие ленты Для вас</string>
     <string name="feature_switch">Переключение функций</string>
     <string name="enable_log">Включить логгирование</string>
     <string name="export_log">Экспортировать лог</string>

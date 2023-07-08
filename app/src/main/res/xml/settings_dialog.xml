@@ -50,6 +50,9 @@
             android:key="disable_who_to_follow"
             android:title="@string/disable_who_to_follow_title" />
         <SwitchPreference
+            android:key="disable_who_to_subscribe"
+            android:title="@string/disable_who_to_subscribe_title" />
+        <SwitchPreference
             android:key="disable_topics_to_follow"
             android:title="@string/disable_topics_to_follow_title" />
         <SwitchPreference
@@ -90,6 +93,9 @@
             android:key="hide_bottom_navbar_items"
             android:summary="@string/hide_bottom_navbar_items_summary"
             android:title="@string/hide_bottom_navbar_items" />
+        <SwitchPreference
+            android:key="hide_for_you_tab"
+            android:title="@string/hide_for_you_tab" />
         <Preference
             android:key="feature_switch"
             android:summary="@string/feature_switch_summary"

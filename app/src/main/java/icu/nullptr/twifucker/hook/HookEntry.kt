@@ -12,8 +12,11 @@ import com.github.kyuubiran.ezxhelper.finders.MethodFinder
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import icu.nullptr.twifucker.BuildConfig
 import icu.nullptr.twifucker.hook.activity.MainActivityHook
 import icu.nullptr.twifucker.hook.activity.SettingsHook
+import icu.nullptr.twifucker.hostVersionCode
+import icu.nullptr.twifucker.hostVersionName
 import icu.nullptr.twifucker.logFile
 import icu.nullptr.twifucker.logFileDir
 import icu.nullptr.twifucker.modulePrefs
@@ -90,6 +93,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                     }
 
                     Log.d("AttachContext")
+                    Log.d("Twitter: $hostVersionName ($hostVersionCode) TwiFucker: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
 
                     val hooks = arrayListOf(
                         MainActivityHook,
@@ -102,6 +106,7 @@ class HookEntry : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         DrawerNavbarHook,
                         FeatureSwitchHook,
                         ViewHook,
+                        HomeTimelineHook,
                     )
 
                     if (modulePrefs.getBoolean("use_legacy_hook", false)) {

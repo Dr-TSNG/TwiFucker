@@ -165,7 +165,6 @@ object DrawerNavbarHook : BaseHook() {
                 Opcodes.OP_SGET_OBJECT,
                 Opcodes.OP_CONST_16,
                 Opcodes.OP_APUT_OBJECT,
-                Opcodes.OP_SGET_OBJECT,
             )
             methodName = "invoke"
             methodReturnType = Object::class.java.name

@@ -2,8 +2,8 @@
     <string name="app_name">TwiFucker</string>
     <string name="twifucker_settings">Ustawienia TwiFucker</string>
     <string name="save">zapisz</string>
-    <string name="reset">uruchom ponownie</string>
-    <string name="save_restart">zapisz i uruchom ponownie</string>
+    <string name="reset">zrestartuj</string>
+    <string name="save_restart">zapisz i zrestartuj</string>
     <string name="add">dodaj</string>
     <string name="msg_yes_no">Jesteś pewny?</string>
     <string name="yes">tak</string>
@@ -25,9 +25,9 @@
     <string name="disable_promoted_trends_title">Wyłącz promowane trendy</string>
     <string name="disable_sensitive_media_warning_title">Wyłącz ostrzeżenie o treściach (18+)</string>
     <string name="disable_recommended_users">Wyłącz polecanych użytkowników</string>
-    <string name="disable_who_to_follow_title">Wyłącz "Warci obserwowania"</string>
-    <string name="disable_topics_to_follow_title">Wyłącz "Tematy do obserwowania"</string>
-    <string name="disable_who_to_subscribe_title">Wyłącz "Twórcy dla Ciebie"</string>
+    <string name="disable_who_to_follow_title">Wyłącz „Warci obserwowania”</string>
+    <string name="disable_topics_to_follow_title">Wyłącz „Tematy do obserwowania”</string>
+    <string name="disable_who_to_subscribe_title">Wyłącz „Twórcy dla Ciebie”</string>
     <string name="disable_threads">Wyłącz wątki</string>
     <string name="disable_tweet_detail_related_tweets">Wyłącz szczegóły tweetów</string>
     <string name="disable_video_carousel">Wyłącz promowane filmy</string>
@@ -37,6 +37,7 @@
     <string name="disable_url_redirect">Wyłącz przekierowanie adresów URL</string>
     <string name="hide_drawer_items">Ukryj elementy szuflady</string>
     <string name="hide_bottom_navbar_items">Ukryj elementy paska nawigacyjnego</string>
+    <string name="hide_for_you_tab">Ukryj zakładkę „Dla Ciebie”.</string>
     <string name="feature_switch">Przełącznik funkcji</string>
     <string name="enable_log">Włącz logi</string>
     <string name="export_log">Eksportuj logi</string>
@@ -52,7 +53,7 @@
     <string name="disable_promoted_trends_summary">w zakładce wyszukiwania</string>
     <string name="disable_sensitive_media_warning_summary">strona główna/oś czasu profilu i szczegóły tweeta</string>
     <string name="disable_recommended_users_summary">Nie pokazuj polecanych użytkowników po zaobserwowaniu kogoś</string>
-    <string name="disable_threads_summary">Usuń treści "na żywo" nad osią czasu</string>
+    <string name="disable_threads_summary">Usuń treści „Na żywo” nad osią czasu</string>
     <string name="disable_video_carousel_summary">Usuń promowane filmy w zakładce wyszukiwania</string>
     <string name="disable_banner_view_summary">Zapobiegaj wyświetlaniu widoku banera</string>
     <string name="enable_download_hook_summary">[Udostępnij -> Pobierz lub skopiuj] Dotknij, aby pobrać, przytrzymaj, aby skopiować link</string>
@@ -61,7 +62,7 @@
     <string name="hide_bottom_navbar_items_summary">Wybierz elementy, które chcesz ukryć</string>
     <string name="feature_switch_summary">Zmień flagę funkcji podaną przez serwer Twittera (UŻYWASZ NA WŁASNE RYZYKO!)</string>
     <string name="enable_log_summary">Włącz legacy hook, aby uzyskać więcej logów. Logi są zapisywane w Android/data/com.twitter.android/cache/twifucker_log</string>
-    <string name="export_json_log_summary">Legacy hook musi być włączone</string>
+    <string name="export_json_log_summary">Legacy hook musi być włączony</string>
     <string name="delete_databases_summary">Tylko w wersji TwiFucker-debug</string>
 
     <string name="download_or_copy">Pobierz lub skopiuj</string>

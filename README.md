@@ -35,6 +35,16 @@ You can find Beta version / Rootless integration (automatically embed latest Twi
 
 ##
 
+## 🚫 This project is currently discontinued due to [shameless plagiarism](https://t.me/TwiFucker/475)
+
+### ⚠️ Copyright Notice
+
+What we hate most about is the modification of our texts, especially our **MODULE TITLE**, which absolutely means they want others to think all the work is done by THEM instead of others, though they actually helped NOTHING with the module development.
+
+We are not opposed to integrating our module in your client, but we strongly condemn the behavior of **modifying our texts and hiding our author info**.
+
+Although our project was open source before, we didn't set up a license, so **ALL COPYRIGHTS RESERVED**. And from now on we decline ANY modification or pre-patched client. It's ok if you LSPatch Twitter with our module by yourself, but you should not release your patched apk anywhere.
+
 <details>
    <summary><h2>✨ Features</h2></summary>
 
